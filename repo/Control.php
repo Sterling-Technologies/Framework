@@ -131,51 +131,6 @@ class Control extends Eden\Core\Controller
 	}
 	
 	/**
-	 * Error trigger output
-	 *
-	 * @return void
-	 */
-	public function error(
-		$error, 
-		$event, 
-		$type, 
-		$level, 
-		$class, 
-		$file, 
-		$line, 
-		$message, 
-		$trace, 
-		$offset
-	) {
-		$history = array();
-		for(; isset($trace[$offset]); $offset++) {
-			$row = $trace[$offset];
-			 
-			//lets formulate the method
-			$method = $row['function'].'()';
-			if(isset($row['class'])) {
-				$method = $row['class'].'->'.$method;
-			}
-			 
-			$rowLine = isset($row['line']) ? $row['line'] : 'N/A';
-			$rowFile = isset($row['file']) ? $row['file'] : 'Virtual Call';
-			 
-			//add to history
-			$history[] = array($method, $rowFile, $rowLine);
-		}
-		
-		echo $this('template')
-			->set('history', $history)
-			->set('type', $type)
-			->set('level', $level)
-			->set('class', $class)
-			->set('file', $file)
-			->set('line', $line)
-			->set('message', $message)
-			->parsePhp(__DIR__.'/'.$this->application.'/template/error.phtml');
-	}
-	
-	/**
 	 * Returns the current Language
 	 *
 	 * @return Eden\Language\Base
@@ -324,9 +279,50 @@ class Control extends Eden\Core\Controller
 		
 		//get settings from config
 		$settings = $this->config($this->application.'/settings');
-		
+	
 		//if debug mode is on
 		if($settings['eden_debug']) {
+			$application = $this->application;
+			
+			$handler = function(
+				$error, 
+				$event, 
+				$type, 
+				$level, 
+				$class, 
+				$file, 
+				$line, 
+				$message, 
+				$trace, 
+				$offset
+			) use ($application){
+				$history = array();
+				for(; isset($trace[$offset]); $offset++) {
+					$row = $trace[$offset];
+					 
+					//lets formulate the method
+					$method = $row['function'].'()';
+					if(isset($row['class'])) {
+						$method = $row['class'].'->'.$method;
+					}
+					 
+					$rowLine = isset($row['line']) ? $row['line'] : 'N/A';
+					$rowFile = isset($row['file']) ? $row['file'] : 'Virtual Call';
+					 
+					//add to history
+					$history[] = array($method, $rowFile, $rowLine);
+				}
+				
+				echo Eden\Template\Base::i()
+					->set('history', $history)
+					->set('type', $type)
+					->set('level', $level)
+					->set('class', $class)
+					->set('file', $file)
+					->set('line', $line)
+					->set('message', $message)
+					->parsePhp(__DIR__.'/'.$application.'/template/error.phtml');
+			};
 			
 			//turn on error handling
 			$this('core')
@@ -335,13 +331,13 @@ class Control extends Eden\Core\Controller
 				->when(!is_null($settings['debug_mode']), function($instance) {
 					$instance->setReporting($settings['debug_mode']);
 				})
-				->listen('error', array($this, 'error'));
+				->listen('error', $handler);
 			
 			//turn on exception handling
 			$this('core')
 				->exception()
 				->register()
-				->listen('error', array($this, 'error'));
+				->listen('exception', $handler);
 			
 			return $this;
 		}
