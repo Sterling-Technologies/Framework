@@ -79,7 +79,7 @@ control()
 
 /* Save Translation
 -------------------------------*/
-->saveTranslation()
+//->saveTranslation()
 
 /* Trigger Shutdown Event
 -------------------------------*/
