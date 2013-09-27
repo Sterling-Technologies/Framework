@@ -96,16 +96,6 @@ class Control extends Eden\Core\Controller
 	}
 	
 	/**
-	 * Returns the block factory
-	 *
-	 * @return Eden\Block\Factory
-	 */
-	public function block() 
-	{
-		return $this('block');
-	}
-	
-	/**
 	 * Returns or saves the config 
 	 * data given the key
 	 *
@@ -299,10 +289,10 @@ class Control extends Eden\Core\Controller
 		
 		//get settings from config
 		$settings = $this->config($this->application.'/settings');
-	
+		
 		//if debug mode is on
 		if($settings['eden_debug']) {
-			$application = $this->application;
+			$template = $this->path('template');
 			
 			$handler = function(
 				$error, 
@@ -315,7 +305,7 @@ class Control extends Eden\Core\Controller
 				$message, 
 				$trace, 
 				$offset
-			) use ($application) { 
+			) use ($template) { 
 				$history = array();
 				for(; isset($trace[$offset]); $offset++) {
 					$row = $trace[$offset];
@@ -341,8 +331,7 @@ class Control extends Eden\Core\Controller
 					->set('file', $file)
 					->set('line', $line)
 					->set('message', $message)
-					->parsePhp(__DIR__.'/'.ucwords($application)
-					.'/template/error.phtml');
+					->parsePhp($template.'/error.php');
 			};
 			
 			//turn on error handling

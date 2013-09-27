@@ -17,6 +17,8 @@
  */
 class Page extends Eden\Block\Base 
 {
+	const TEMPLATE_EXTENSION = 'php';
+	
 	protected $meta	= array();
 	protected $head = array();
 	protected $body = array();
@@ -50,7 +52,8 @@ class Page extends Eden\Block\Base
 			$this->template = control('type', get_class($this))
 				->str_replace('\\', DIRECTORY_SEPARATOR)
 				->substr($start)
-				->strtolower().'.phtml';
+				->strtolower().'.'
+				.static::TEMPLATE_EXTENSION;
 		}
 		
 		return $this->template;
@@ -79,9 +82,14 @@ class Page extends Eden\Block\Base
 		$body = array_merge($helpers, $this->getVariables());
 		$foot = array_merge($helpers, $this->foot);
 		
-		$head = control()->trigger('head')->template($path.'/head.phtml', $head);
-		$body = control()->trigger('body')->template($path.$template, $body);
-		$foot = control()->trigger('foot')->template($path.'/foot.phtml', $foot);
+		$file = $path.'/head.'.static::TEMPLATE_EXTENSION;
+		$head = control()->trigger('head')->template($file, $head);
+		
+		$file = $path.$template;
+		$body = control()->trigger('body')->template($file, $body);
+		
+		$file = $path.'/foot.'.static::TEMPLATE_EXTENSION;
+		$foot = control()->trigger('foot')->template($file, $foot);
 		
 		$page = array_merge($helpers, array(
 			'meta' 			=> $this->meta,
@@ -93,7 +101,8 @@ class Page extends Eden\Block\Base
 			'foot'			=> $foot));
 		
 		//page
-		return control()->template($path.'/page.phtml', $page);
+		$file = $path.'/page.'.static::TEMPLATE_EXTENSION;
+		return control()->template($file, $page);
 	}
 	
 	/**

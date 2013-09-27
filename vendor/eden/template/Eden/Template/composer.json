@@ -1,0 +1,22 @@
+{
+    "name": "eden/template",
+    "type": "library",
+    "description": "Eden template component. Lazy template engine",
+    "keywords": ["eden", "library"],
+    "homepage": "http://eden-php.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Christian Blanquera",
+            "email": "cblanquera@openovate.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.1",
+		"eden/core": "1.*"
+    },
+    "autoload": {
+         "psr-0": { "Eden\\Template\\": "" }
+    },
+	"target-dir": "Eden/Template"
+}
