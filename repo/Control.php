@@ -346,14 +346,13 @@ class Control extends Eden\Core\Controller
 			};
 			
 			//turn on error handling
-			$error = $this('core')
+			$this('core')
 				->error()
 				->register()
-				->listen('error', $handler);
-			
-			$error->when(!is_null($settings['debug_mode']), function($instance) {
-				$instance->setReporting($settings['debug_mode']);
-			});
+				->listen('error', $handler)
+				->when(!is_null($settings['debug_mode']), function($instance) use ($settings) {
+					$instance->setReporting($settings['debug_mode']);
+				});
 			
 			//turn on exception handling
 			$this('core')
