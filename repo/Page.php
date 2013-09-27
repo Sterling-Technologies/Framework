@@ -38,6 +38,25 @@ class Page extends Eden\Block\Base
 	}
 	
 	/**
+	 * returns location of template file
+	 *
+	 * @return string
+	 */
+	public function getTemplate() 
+	{
+		if(!$this->template) {
+			$start = strrpos(get_class($this), '\\');
+			
+			$this->template = control('type', get_class($this))
+				->str_replace('\\', DIRECTORY_SEPARATOR)
+				->substr($start)
+				->strtolower().'.phtml';
+		}
+		
+		return $this->template;
+	}
+	
+	/**
 	 * Transform block to string
 	 *
 	 * @param array

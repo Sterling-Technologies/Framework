@@ -20,5 +20,4 @@ namespace Back\Page;
 class Index extends \Page 
 {
 	protected $title = 'Back';
-	protected $template = '/index.phtml';
 }
