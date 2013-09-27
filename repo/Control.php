@@ -76,6 +76,26 @@ class Control extends Eden\Core\Controller
 	}
 	
 	/**
+	 * Returns the given application block
+	 *
+	 * @return Eden\Block\Factory
+	 */
+	public function block($name) 
+	{
+		$args 	= func_get_args();
+		$name 	= array_shift($args);
+		$class 	= ucwords($this->application).'\\Block\\'.ucwords($name);
+
+		if(class_exists($class)) {
+			return $this('core')
+			->route()
+			->callArray($class, $args);
+		}
+
+		return null;
+	}
+	
+	/**
 	 * Returns the block factory
 	 *
 	 * @return Eden\Block\Factory
@@ -295,7 +315,7 @@ class Control extends Eden\Core\Controller
 				$message, 
 				$trace, 
 				$offset
-			) use ($application){
+			) use ($application) { 
 				$history = array();
 				for(; isset($trace[$offset]); $offset++) {
 					$row = $trace[$offset];
@@ -321,17 +341,19 @@ class Control extends Eden\Core\Controller
 					->set('file', $file)
 					->set('line', $line)
 					->set('message', $message)
-					->parsePhp(__DIR__.'/'.$application.'/template/error.phtml');
+					->parsePhp(__DIR__.'/'.ucwords($application)
+					.'/template/error.phtml');
 			};
 			
 			//turn on error handling
-			$this('core')
+			$error = $this('core')
 				->error()
 				->register()
-				->when(!is_null($settings['debug_mode']), function($instance) {
-					$instance->setReporting($settings['debug_mode']);
-				})
 				->listen('error', $handler);
+			
+			$error->when(!is_null($settings['debug_mode']), function($instance) {
+				$instance->setReporting($settings['debug_mode']);
+			});
 			
 			//turn on exception handling
 			$this('core')
