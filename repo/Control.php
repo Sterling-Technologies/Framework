@@ -391,10 +391,10 @@ class Control extends Eden\Core\Controller
 		->set('path', 'upload', $root.'/upload')
 		
 		//repo folders
-		->set('path', 'page', $repo.'/'.$this->application.'/page')
-		->set('path', 'template', $repo.'/'.$this->application.'/template')
-		->set('path', 'block', $repo.'/'.$this->application.'/block')
-		->set('path', 'public', $repo.'/'.$this->application.'/public');
+		->set('path', 'page', $repo.'/'.ucwords($this->application).'/page')
+		->set('path', 'template', $repo.'/'.ucwords($this->application).'/template')
+		->set('path', 'block', $repo.'/'.ucwords($this->application).'/block')
+		->set('path', 'public', $repo.'/'.ucwords($this->application).'/public');
 		
 		
 		//get settings from config
@@ -470,6 +470,7 @@ class Control extends Eden\Core\Controller
 	public function setResponse($default) 
 	{
 		$page = $this->registry()->get('page');
+		$default = ucwords($default);
 		
 		if(!$page || !class_exists($page)) {
 			if(!class_exists($default)) {
