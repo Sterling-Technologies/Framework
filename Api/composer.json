@@ -1,13 +1,18 @@
 {
+    "scripts": {
+        "post-install-cmd": [
+            "PhantomInstaller\\Installer::installPhantomJS"
+        ],
+        "post-update-cmd": [
+            "PhantomInstaller\\Installer::installPhantomJS"
+        ]
+    },
 	"require-dev": {
         "phpunit/phpunit": "~4.4",
         "squizlabs/php_codesniffer": "~1.5"
     },
     "require": {
-        "eden/block": "dev-master",
         "eden/mysql": "dev-master",
-        "eden/postgre": "dev-master",
-        "eden/sqlite": "dev-master",
         "eden/validation": "dev-master",
         "eden/persistent": "dev-master",
         "eden/oauth": "dev-master",
@@ -16,6 +21,10 @@
         "eden/image": "dev-master",
         "eden/timezone": "dev-master",
         "eden/language": "dev-master",
-        "eden/registry": "dev-master"
+        "eden/registry": "dev-master",
+		"ruflin/elastica": "2.3.0",
+		"videlalvaro/php-amqplib": "2.5.2",
+		"xamin/handlebars.php": "dev-develop",
+		"jakoch/phantomjs-installer": "2.0.0"
     }
 }

@@ -93,8 +93,8 @@ class Create extends Base
 		$item = $this->prepare($item);
 		
 		$password = md5($item['auth_password']);
-		$token = control()->uid();
-		$secret = control()->uid();
+		$token = control()->help()->uid();
+		$secret = control()->help()->uid();
 		$created = date('Y-m-d H:i:s');
 		$updated = date('Y-m-d H:i:s');
 		

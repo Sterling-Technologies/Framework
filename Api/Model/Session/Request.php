@@ -61,8 +61,8 @@ class Request extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$token = control()->uid();
-		$secret = control()->uid();
+		$token = control()->help()->uid();
+		$secret = control()->help()->uid();
 		$created = date('Y-m-d H:i:s');
 		$updated = date('Y-m-d H:i:s');
 		

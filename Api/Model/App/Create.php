@@ -83,8 +83,8 @@ class Create extends Base
 		$created = date('Y-m-d H:i:s');
 		$updated = date('Y-m-d H:i:s');
 		
-		$token = control()->uid();
-		$secret = control()->uid(); 
+		$token = control()->help()->uid();
+		$secret = control()->help()->uid(); 
 		
 		//SET WHAT WE KNOW
 		$model = control()

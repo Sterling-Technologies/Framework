@@ -188,7 +188,7 @@ class Create extends Base
 	public function upload($config, $data) 
 	{
 		//save the file
-		$name	= control()->uid();
+		$name	= control()->help()->uid();
 		$path 	= $this->controller.path('upload') . '/' . name;
 		
 		$data = urldecode($data);

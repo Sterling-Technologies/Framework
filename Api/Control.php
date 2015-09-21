@@ -80,9 +80,19 @@ namespace Api
         }
         
         /**
+         * Factory for helper
+         *
+         * @return Api\Helper
+         */
+        public function help() 
+        {
+            return Helper::i();
+        }
+        
+        /**
          * Returns the current Language
          *
-         * @return Eden_Language_Index
+         * @return Eden\Language\Index
          */
         public function language() 
         {
@@ -451,15 +461,5 @@ namespace Api
             
             return $this->language()->get($string);
         }
-	
-		/**
-		 * Generates an all pupose uid
-		 *
-		 * @return string
-		 */
-		public function uid() 
-		{
-			return md5('control'.time().'-'.self::$uid++);
-		}
     }
 }

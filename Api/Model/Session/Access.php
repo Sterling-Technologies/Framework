@@ -66,8 +66,8 @@ class Access extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$token = control()->uid();
-		$secret = control()->uid();
+		$token = control()->help()->uid();
+		$secret = control()->help()->uid();
 		$updated = date('Y-m-d H:i:s');
 		
 		//check the session first
