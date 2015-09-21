@@ -39,7 +39,6 @@ class Index extends Page
 			return $this->fail(self::FAIL, $errors);
 		}
 			
-		
 		//get total
 		$search = control()
 			->model('profile')

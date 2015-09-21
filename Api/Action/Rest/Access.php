@@ -27,9 +27,9 @@ class Access extends Page
 	{
 		//get the data
 		$item = $this->data['item'];
-		$item['client_id'] = $this->data['source']['access_token'];
-		$item['client_secret'] = $this->data['source']['access_secret'];
-		
+		$item['client_id'] = control()->registry()->get('source', 'access_token');
+		$item['client_secret'] = control()->registry()->get('source', 'access_secret');
+
 		//validate
 		$errors = control()
 			->model('session')
@@ -46,7 +46,6 @@ class Access extends Page
 			->access(array('data' => array(
 				'item' => $item)));
 		
-			
 		$this->success($results['session']);	
 	}
 }

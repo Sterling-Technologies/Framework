@@ -22,6 +22,7 @@ use Api\Page;
 class Logout extends Page 
 {
 	const SUCCESS = 'You are now Logged Out!';
+	
 	public function render() 
 	{
 		if(!isset($_SESSION['me'])) {
