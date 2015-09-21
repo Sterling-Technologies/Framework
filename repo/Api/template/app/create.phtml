@@ -1,0 +1,87 @@
+<div class="panel panel-default clear" >
+    <div class="panel-heading brand">
+        <div class="panel-title">Create an App</div>
+    </div>     
+
+    <div class="panel-body" >
+        <form method="post" action="/app/create">
+            <div class="form-group{{#if errors.app_name}} has-error{{/if}}">
+                <label class="control-label">Name of App</label>
+                <div>
+                    <input type="cc" name="app_name" class="form-control" value="{{item.app_name}}" />
+                    {{#if errors.app_name}}
+                    <span class="help-text">{{errors.app_name}}</span>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="form-group{{#if errors.app_domain}} has-error{{/if}}">
+                <label class="control-label">Domain Origin</label>
+                <div>
+                    <input type="cc" name="app_domain" class="form-control" value="{{item.app_domain}}" />
+                    {{#if errors.app_domain}}
+                    <span class="help-text">{{errors.app_domain}}</span>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="form-group{{#if errors.app_website}} has-error{{/if}}">
+                <label class="control-label">Website</label>
+                <div>
+                    <input type="cc" name="app_website" class="form-control" value="{{item.app_website}}" />
+                    {{#if errors.app_website}}
+                    <span class="help-text">{{errors.app_website}}</span>
+                    {{/if}}
+                </div>
+            </div>
+            
+            <div class="api-access form-group{{#if errors.app_permissions}} has-error{{/if}}">
+                <div>
+                	<label class="control-label pad-vertical">API Access</label>
+                    {{#if errors.app_permissions}}
+                    <span class="help-text"> - {{errors.app_permissions}}</span>
+                    {{/if}}
+                </div>
+                
+                {{#each roles}}
+                <div class="col-sm-3">
+                	<div class="panel panel-default">
+                        <div class="panel-heading">
+                        	<h3 class="panel-title">{{@key}}</h3>
+                        </div>
+                        <div class="panel-body">
+                        	{{#each this}}
+                        	<div class="checkbox">
+                                <label>
+                                	<input 
+                                    	name="app_permissions[]" 
+                                        value="{{name}}" 
+                                        type="checkbox" 
+                                        {{~#if checked}}
+                                        checked="checked"
+                                        {{~/if}} /> 
+                                    <span 
+                                    	data-toggle="tooltip" 
+                                        data-placement="right"
+                                        data-original-title="{{description}}">
+                                        {{title}}
+                                    </span>
+                                </label>
+                            </div>
+                        	{{/each}}
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            
+            <div class="clear form-group">
+               <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();   
+});
+</script>

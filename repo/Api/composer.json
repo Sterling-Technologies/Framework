@@ -1,0 +1,20 @@
+{
+	"config": {
+        "bin-dir": "bin"
+    },
+    "require": {
+        "eden/block": "dev-master",
+        "eden/mysql": "dev-master",
+        "eden/postgre": "dev-master",
+        "eden/sqlite": "dev-master",
+        "eden/validation": "dev-master",
+        "eden/persistent": "dev-master",
+        "eden/oauth": "dev-master",
+        "eden/language": "dev-master",
+        "eden/mail": "dev-master",
+        "eden/image": "dev-master",
+        "eden/timezone": "dev-master",
+        "eden/language": "dev-master",
+        "eden/registry": "dev-master"
+    }
+}

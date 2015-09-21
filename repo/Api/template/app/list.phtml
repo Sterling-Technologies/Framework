@@ -1,0 +1,71 @@
+<span class="pull-right pad-vertical">
+    <a class="btn btn-success" href="/app/create">
+        <i class="fa fa-plus"></i>
+        Create New App
+    </a>
+</span>
+
+<div class="panel panel-default clear" >
+    <div class="panel-heading brand">
+        <div class="panel-title">My Apps</div>
+    </div>
+    <div class="panel-body" >
+        {{#if rows}}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Actions</th>
+                    <th>Name</th>
+                    <th>Website</th>
+                    <th>Key</th>
+                    <th>Secret</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each rows}}
+                <tr data-id="{{app_id}}">
+                    <td nowrap="nowrap">
+                        <a 
+                            title="Edit" 
+                            class="btn btn-info" 
+                            href="/app/update/{{app_id}}">
+                                <i class="fa fa-edit"></i>
+                        </a>
+                        <a 
+                            title="Oauth Test" 
+                            class="btn btn-primary" 
+                            href="/dialog/login/?client_id={{app_token}}&redirect_uri=/app/list&scope=user_profile">
+                                <i class="fa fa-lock"></i>
+                        </a>
+                        <a 
+                            title="Reset Token" 
+                            class="btn btn-warning" 
+                            href="/app/refresh/{{app_id}}">
+                                <i class="fa fa-refresh"></i>
+                        </a>
+                        <a 
+                            title="Remove App" 
+                            class="btn btn-danger" 
+                            href="/app/remove/{{app_id}}">
+                                <i class="fa fa-times"></i>
+                        </a>
+                    </td>
+                    <td nowrap="nowrap" valign="middle">{{app_name}}</td>
+                    <td nowrap="nowrap" valign="middle">{{app_website}}</td>
+                    <td nowrap="nowrap" valign="middle">{{app_token}}</td>
+                    <td nowrap="nowrap" valign="middle">{{app_secret}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        {{else}}
+        <div class="alert alert-warning">No Apps. Maybe 
+            <a class="btn btn-success" href="/app/create">
+                <i class="fa fa-plus"></i>
+                Create New App
+            </a>
+            ?
+        </div>
+        {{/if}}
+    </div>
+</div>

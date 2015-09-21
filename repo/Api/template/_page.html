@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" class="{{class}}">
+	<head>
+		<meta charset="utf-8" />
+		<title>{{title}}</title>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+        {{#each meta}}
+        <meta name="{{@index}}" content="{{this}}" />
+        {{/meta}}
+	</head>
+
+	<body class="skin-3">
+    	<header>{{> 'head'}}</header>
+        <section class="body">{{body}}</section>
+        <footer>{{> 'foot'}}</footer>
+	</body>
+</html>

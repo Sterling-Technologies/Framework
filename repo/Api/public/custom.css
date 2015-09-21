@@ -1,0 +1,102 @@
+/* Common Classes
+------------------------------*/
+.clear { clear: both !important; }
+.center { text-align: center !important; }
+.pad { margin: 20px !important; }
+.pad-vertical { margin-bottom: 20px !important; margin-top: 20px !important; }
+.pad-horizontal { margin-left: 20px !important; margin-right: 20px !important; }
+.brand { background-color: #343434 !important; border: 1px solid #343434 !important; color: #ffffff !important; }
+.brand a { color: #ffffff !important; }
+.brand-background { background-color: #428bca !important; }
+.brand-text { color: #343434 !important; }
+
+form .btn-primary,
+form .btn-primary:hover,
+form .btn-primary:active,
+form .btn-primary:visited {
+    color: #fff;
+    background-color: #bb923f;
+    border-color: #bb923f;
+}
+
+/* Window
+------------------------------*/
+html, body { background-color: #FFFFFF; font-family: 'Open Sans', Arial; }
+
+/* Header
+------------------------------*/
+header { background-color: #FFFFFF; padding-bottom: 10px; }
+header .navbar { background-color: #FFFFFF; border: 0; }
+header .navbar .navbar-collapse { background-color: #FFFFFF; color: #357ebd !important; }
+
+header .navbar a,
+header .navbar a:link,
+header .navbar a:hover,
+header .navbar a:active,
+header .navbar a:visited { color: #bb923f !important; }
+
+header .navbar .navbar-brand img { margin-top: -13px; }
+header .navbar .navbar-text { color: #222222 !important; }
+header .navbar .navbar-brand,
+header .navbar .navbar-brand:link,
+header .navbar .navbar-brand:hover,
+header .navbar .navbar-brand:active,
+header .navbar .navbar-brand:visited { color: #222222 !important; font-size: 10px; }
+
+@media (max-width: 767px) {
+	header .navbar .navbar-collapse { background-color: #FFFFFF; color: #c4161c !important; }
+	
+	header .navbar a,
+	header .navbar a:link,
+	header .navbar a:hover,
+	header .navbar a:active,
+	header .navbar a:visited { color: #c4161c !important; }
+	
+	header .navbar .navbar-text { color: #c4161c !important; }
+	
+	header .navbar-default .navbar-toggle,
+	header .navbar-default .navbar-toggle:hover { background-color: #FFFFFF !important; }
+	
+	header .navbar-default .navbar-toggle .icon-bar,
+	header .navbar-default .navbar-toggle:hover .icon-bar { background-color: #c4161c !important; }
+	
+	header .navbar-default .navbar-toggle.collapsed { background-color: #c4161c !important; }
+	
+	header .navbar-default .navbar-toggle.collapsed .icon-bar { background-color: #FFFFFF !important; }
+}
+
+/* Body
+------------------------------*/
+.body { background-color: #FFFFFF; }
+
+/* Widget - Panel
+------------------------------*/
+.panel-title em { font-size: 12px; }
+
+.panel-body { overflow: auto; }
+
+/* Page - Login
+------------------------------*/
+.login .panel { margin-top: 40px; }
+
+/* Page - Access
+------------------------------*/
+.access .well { margin: auto; width: 500px; }
+.access .media { padding-top: 10px; border-top: 1px solid #CCCCCC; }
+.access .media-left { 
+	background-color: #EFEFEF; 
+	border: 1px solid #CCCCCC; 
+	color: #c4161c;
+	font-size: 30px;
+	line-height: 50px;
+	text-align: center; 
+	width: 50px;
+}
+.access .actions { padding-top: 10px; border-top: 1px solid #CCCCCC; }
+
+/* Widget - API Fieldset
+------------------------------*/
+.api-access .col-sm-3:nth-child(2) { padding-left: 0 !important; }
+.api-access .col-sm-3:last-child { padding-right: 0 !important; }
+
+.api-access .panel-body { min-height: 150px; }
