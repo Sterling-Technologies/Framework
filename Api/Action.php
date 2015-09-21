@@ -29,13 +29,14 @@ abstract class Action extends Base
     {
         try {
             return $this->render();
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
+			$this('core')->exception()->handler($e);
             $this->body['message'] = $e->getMessage();
         }
-        
+		
         try {
             return $this->fail();
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
             return $e->getMessage();
         }
     }

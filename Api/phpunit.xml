@@ -13,7 +13,45 @@
 >
   <testsuites>
     <testsuite name="Framework Test Suite">
-      <file>test/index.php</file>
+      <file>test/Model/Address/Create.php</file>
+      <file>test/Model/Address/Detail.php</file>
+      <file>test/Model/Address/Index.php</file>
+      <file>test/Model/Address/Remove.php</file>
+      <file>test/Model/Address/Search.php</file>
+      <file>test/Model/Address/Update.php</file>
+	  
+      <file>test/Model/App/Create.php</file>
+      <file>test/Model/App/Detail.php</file>
+      <file>test/Model/App/Index.php</file>
+      <file>test/Model/App/Refresh.php</file>
+      <file>test/Model/App/Remove.php</file>
+      <file>test/Model/App/Search.php</file>
+      <file>test/Model/App/Update.php</file>
+	  
+      <file>test/Model/Auth/Create.php</file>
+      <file>test/Model/Auth/Index.php</file>
+      <file>test/Model/Auth/Remove.php</file>
+      <file>test/Model/Auth/Update.php</file>
+	  
+      <file>test/Model/File/Create.php</file>
+      <file>test/Model/File/Detail.php</file>
+      <file>test/Model/File/Index.php</file>
+      <file>test/Model/File/Remove.php</file>
+      <file>test/Model/File/Search.php</file>
+	  
+      <file>test/Model/Profile/Create.php</file>
+      <file>test/Model/Profile/Detail.php</file>
+      <file>test/Model/Profile/Index.php</file>
+      <file>test/Model/Profile/Remove.php</file>
+      <file>test/Model/Profile/Search.php</file>
+      <file>test/Model/Profile/Set.php</file>
+      <file>test/Model/Profile/Update.php</file>
+	  
+      <file>test/Model/Session/Access.php</file>
+      <file>test/Model/Session/Index.php</file>
+      <file>test/Model/Session/Login.php</file>
+      <file>test/Model/Session/Logout.php</file>
+      <file>test/Model/Session/Request.php</file>
     </testsuite>
   </testsuites>
 

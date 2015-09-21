@@ -1,6 +1,7 @@
 {
-	"config": {
-        "bin-dir": "bin"
+	"require-dev": {
+        "phpunit/phpunit": "~4.4",
+        "squizlabs/php_codesniffer": "~1.5"
     },
     "require": {
         "eden/block": "dev-master",

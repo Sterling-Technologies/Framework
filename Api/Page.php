@@ -11,6 +11,7 @@ namespace Api;
 
 use Handlebars\Handlebars;
 use Handlebars\Loader\FilesystemLoader as HandlebarsLoader;
+use Handlebars\SafeString;
 
 /**
  * The base class for any class that defines a view.
@@ -22,8 +23,10 @@ use Handlebars\Loader\FilesystemLoader as HandlebarsLoader;
  */
 abstract class Page extends Action 
 {    
-    const TEMPLATE_EXTENSION = 'phtml';
+    const TEMPLATE_EXTENSION = 'html';
     
+	protected $engine = null;
+	
     protected $id = null;
     protected $title = null;
     protected $template = null;
@@ -37,6 +40,26 @@ abstract class Page extends Action
     protected $head = array();
     protected $foot = array();
     
+	public function __construct() {
+		//get the template path
+		$path = control()->path('template');
+		
+		//make a new loader
+		$loader = new HandlebarsLoader($path, array('extension' => self::TEMPLATE_EXTENSION));
+		
+		//create engine
+		$this->engine = new Handlebars(array(
+			'loader' => $loader,
+			'partials_loader' => $loader));
+		
+		//add helpers
+		$helpers = $this->getHelpers();
+		
+		foreach($helpers as $name => $callback) {
+			$this->engine->registerHelper($name, $callback);
+		}
+	}
+	
     /**
      * Transform block to string
      *
@@ -44,6 +67,22 @@ abstract class Page extends Action
      */
     protected function fail() 
     {
+		//we do it this way cuz of the parent definition
+		$args = func_get_args();
+		
+		if(isset($args[0])) {
+			$_SESSION['flash']['message'] = $args[0];
+			$_SESSION['flash']['type'] = 'error';
+		}
+		
+		if(isset($args[1])) {
+			$this->body['errors'] = $args[1];
+		}
+		
+		if(isset($args[2])) {
+			$this->body['item'] = $args[2];
+		}
+		
         return $this->build('/error');
     }
     
@@ -54,77 +93,168 @@ abstract class Page extends Action
      */
     protected function getHelpers() 
     {
-        $self = control();
+        $control = control();
         $helpers = array();
         
         //i18n
-        $helpers['_'] = function($key) use ($self) {
+        $helpers['_'] = function($key) use ($control) 
+		{
             $args = func_get_args();
             $key = array_shift($args);
+			$options = array_pop($args);
             
-            echo $self->translate($key, $args);
-        };
-        
-        //array key
-        $helpers['a'] = function(array $array, $key) {
-            if(!isset($array[$key])) {
-                return;
-            }
-
-            echo $array[$key];
-        };
-        
-        //block
-        $helpers['b'] = function($type = null) use ($self) {
-            if(!$type) {
-                return $self('block');
-            }
-            
-            return $self('block')->$type();
-        };
-        
-        //controller
-        $helpers['c'] = function() use ($self) {
-            return $self;
-        };
-        
-        //data
-        $helpers['d'] = function($data, $default) use ($self) {
-            if($data) {
-                echo $data;
-                return;
-            }
-            
-            echo $default;
-            return;
-        };
-        
-        //echo
-        $helpers['e'] = function($bool, $true = null, $false = null) use ($self) {
-            if(is_null($true)) {
-                echo $bool;
-                return;
-            }
-            
-            echo $bool ? $true : $false;
+            return $control->translate($key, $args);
         };
         
         //registry
-        $helpers['r'] = function() use ($self) {
+        $helpers['registry'] = function() use ($control) 
+		{
             $args = func_get_args();
-            $data = $self->registry()->callArray('get', $args);
+			$options = array_pop($args);
+            $data = $control->registry()->callArray('get', $args);
             
             if(is_object($data) && $data instanceof RegistryBase) {
                 $data = $data->get(false);
             }
+			
+			if(is_object($data) || is_array($data)) {
+				return $options['fn']((array) $data);
+			}
             
             return $data;
         };
         
-        //template
-        $helpers['t'] = function($file, $data = array(), $trigger = null) use ($self) {
-            echo $self->template($file, $data, $trigger);
+		//create session helpers
+		$helpers['session'] = function($key, $options) 
+		{
+			if(!isset($_SESSION[$key])) {
+				return $options['inverse']();
+			}
+			
+			if(is_object($_SESSION[$key]) || is_array($_SESSION[$key])) {
+				return $options['fn']((array) $_SESSION[$key]);
+			}
+            
+            return $_SESSION[$key];
+		};
+		
+		//create query helpers
+		$helpers['server'] = function($key, $options) 
+		{
+			if(!isset($_SERVER[$key])) {
+				return $options['inverse']();
+			}
+			
+			if(is_object($_SERVER[$key]) || is_array($_SERVER[$key])) {
+				return $options['fn']((array) $_SERVER[$key]);
+			}
+            
+            return $_SERVER[$key];
+		};
+		
+		//create query helpers
+		$helpers['query'] = function($key, $options) 
+		{
+			if(!isset($_GET[$key])) {
+				return $options['inverse']();
+			}
+			
+			if(is_object($_GET[$key]) || is_array($_GET[$key])) {
+				return $options['fn']((array) $_GET[$key]);
+			}
+            
+            return $_GET[$key];
+		};
+		
+		//create a better if helper
+		$helpers['when'] = function($value1, $operator, $value2, $options) 
+		{
+			$valid = false;
+		
+			switch (true) {
+				case $operator == 'eq' 	&& $value1 == $value2:
+				case $operator == '==' 	&& $value1 == $value2:
+				case $operator == 'req' && $value1 === $value2:
+				case $operator == '===' && $value1 === $value2:
+				case $operator == 'neq' && $value1 != $value2:
+				case $operator == '!=' 	&& $value1 != $value2:
+				case $operator == 'rneq' && $value1 !== $value2:
+				case $operator == '!==' && $value1 !== $value2:
+				case $operator == 'lt' 	&& $value1 < $value2:
+				case $operator == '<' 	&& $value1 < $value2:
+				case $operator == 'lte' && $value1 <= $value2:
+				case $operator == '<=' 	&& $value1 <= $value2:
+				case $operator == 'gt' 	&& $value1 > $value2:
+				case $operator == '>' 	&& $value1 > $value2:
+				case $operator == 'gte' && $value1 >= $value2:
+				case $operator == '>=' 	&& $value1 >= $value2:
+				case $operator == 'and' && $value1 && $value2:
+				case $operator == '&&' 	&& ($value1 && $value2):
+				case $operator == 'or' 	&& $value1 || $value2:
+				case $operator == '||' 	&& ($value1 || $value2):
+		
+				case $operator == 'startsWith'
+				&& strpos($value1, value2) === 0:
+		
+				case operator == 'endsWith'
+				&& strpos($value1, $value2) === (strlen($value1) - strlen($value2)):
+					$valid = true;
+					break;
+			}
+		
+			if($valid) {
+				return $options['fn']();
+			}
+		
+			return $options['inverse']();
+		};
+		
+		//create a better loop helper
+		$helpers['loop'] = function($object, $options) 
+		{
+			$i = 0;
+			$buffer = array();
+			$total = count($object);
+			
+			foreach($object as $key => $value) {
+				$buffer[] = $options['fn'](array(
+					'key'	=> $key,
+					'value'	=> $value,
+					'last'	=> ++$i === $total
+				));
+			}
+			
+			return implode('', $buffer);
+		};
+		
+        //array key
+        $helpers['in'] = function(array $array, $key, $options) 
+		{
+            if(!isset($array[$key])) {
+                return $options['fn']();
+            }
+
+			return $options['inverse']();
         };
+		
+		//create time helper, used in /product-create template
+		$helpers['time'] = function($offset, $options) 
+		{
+			$date = '';
+            $offset = preg_replace('/\s/is', $offset);
+			
+			try {
+				eval('$offset = ' . $offset);
+				$date = date('Y-m-d', time() + $offset);
+			} catch(Exception $e) {}
+			
+			return $date;
+        };
+		
+		$helpers['date'] = function($time, $format, $options) 
+		{
+			return date($format, strtotime($time));
+		};
         
         return $helpers;
     }
@@ -137,8 +267,8 @@ abstract class Page extends Action
     protected function getTemplate() 
     {
         if(!$this->template) {
-            $this->template = control('string', get_class($this))
-                ->replace('_', DIRECTORY_SEPARATOR)
+            $this->template = control('type', get_class($this))
+                ->str_replace('\\', DIRECTORY_SEPARATOR)
                 ->strtolower()
                 ->str_replace('api/action', '')
                 ->get();
@@ -163,20 +293,12 @@ abstract class Page extends Action
             $trigger = $data;
             $data = array();
         }
-        
-        $object = new \StdClass();
-        $object->file = $file;
-        $object->data = $data;
-        
+		
         if($trigger) {    
-            control()->trigger('template-'.$trigger, $object);
+            control()->trigger('template-'.$trigger, $file, $data);
         }
         
-        $object->data = array_merge(
-            $this->getHelpers($data), 
-            $object->data);
-        
-        return control('template')->set($object->data)->parsePhp($object->file);
+		return $this->engine->render($file, $data);
     }
     
     /**
@@ -184,20 +306,22 @@ abstract class Page extends Action
      *
      * @return string
      */
-    protected function build($template) 
+    protected function build($template = null) 
     {
-        $this->body['messages'] = array();
-        if(isset($_SESSION['messages'])) {
-            $this->body['messages'] = $_SESSION['messages'];
-            $_SESSION['messages'] = array();
+		//if no template
+		if(!is_string($template)) {
+			//get the default template
+			$template = $this->getTemplate();
+		}
+        
+        if(isset($_SESSION['flash']['message'])) {
+            $this->body['flash']['message'] = $_SESSION['flash']['message'];
+            $this->body['flash']['type'] = $_SESSION['flash']['type'];
+            unset($_SESSION['flash']);
         }
         
-        $path = control()->path('template');
-        
-        $head = $this->parse($path.'/_head.'.static::TEMPLATE_EXTENSION, $this->head);
-        $body = $this->parse($path.$template.'.'.static::TEMPLATE_EXTENSION, $this->body);
-        $foot = $this->parse($path.'/_foot.'.static::TEMPLATE_EXTENSION, $this->foot);
-        
+		$body = $this->parse($template, $this->body);
+		
         $page = array(
             'meta' => $this->meta,
             'links' => $this->links,
@@ -205,11 +329,11 @@ abstract class Page extends Action
             'scripts' => $this->scripts,
             'title' => $this->title,
             'class' => $this->id,
-            'head' => $head,
+            'head' => $this->head,
             'body' => $body,
-            'foot' => $foot);
+            'foot' => $this->foot);
             
-        return $this->parse($path.'/_page.'.static::TEMPLATE_EXTENSION, $page);
+        return $this->parse('_page', $page);
     }
     
     /**
@@ -219,6 +343,19 @@ abstract class Page extends Action
      */
     protected function success() 
     {
-       return $this->build($this->getTemplate());
+		//we do it this way cuz of the parent definition
+		$args = func_get_args();
+		
+		if(isset($args[0])) {
+			$_SESSION['flash']['message'] = $args[0];
+			$_SESSION['flash']['type'] = 'success';
+		}
+		
+		if(isset($args[1])) {
+			//this will exit anyways
+			control()->redirect($args[1]);
+		}
+		
+       	return $this->build($this->getTemplate());
     }
 }

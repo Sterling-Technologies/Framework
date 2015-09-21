@@ -15,7 +15,7 @@ namespace
      * like.
      */
     function control() {
-        $class = Api_Control::i();
+        $class = Api\Control::i();
         if(func_num_args() == 0) {
             return $class;
         }
@@ -53,7 +53,7 @@ namespace Api
         {
             try {
                 $response = (string) $this->registry()->get('response');
-            } catch(Exception $e) {
+            } catch(\Exception $e) {
                 $this('core')->exception()->handler($e);
                 $response = '';
             }
@@ -86,16 +86,16 @@ namespace Api
          */
         public function language() 
         {
-            if(is_null($this->_language)) {
-                $settings = $this->settings('settings');
+            if(is_null($this->defaultLanguage)) {
+                $config = $this->settings('config');
                 
                 $settings = $this->path('settings');
-                $path = $settings.'/i18n/'.$settings['i18n'].'.php';
+                $path = $settings.'/i18n/'.$config['i18n'].'.php';
                 
                 $translations = array();
                 
                 if(file_exists($path)) {
-                    $translations = $this->settings('i18n/'.$settings['i18n']);
+                    $translations = $this->settings('i18n/'.$config['i18n']);
                 }
                 
                 $this->defaultLanguage = $this('language', $translations);
@@ -177,12 +177,15 @@ namespace Api
         /**
          * Sets up the default database connection
          *
+		 * @param array inject a database config
          * @return Controller
          */
-        public function setDatabases() 
+        public function setDatabases(array $databases = null) 
         {
-            $databases = $this->settings('databases');
-            
+			if(!$databases) {
+            	$databases = $this->settings('databases');
+			}
+			
             foreach($databases as $key => $info) {    
                 //connect to the data as described in the settings
                 switch($info['type']) {
@@ -229,7 +232,7 @@ namespace Api
         {
             //get settings from config
             $settings = $this->settings('config');
-            $handler = new Api_Error();
+            $handler = new Error();
             $callback = array($handler, 'outputDetails');
             
             //if debug mode is on
@@ -240,18 +243,18 @@ namespace Api
                 $callback = array($handler, 'outputGeneric');
             }
             
-            //turn on error handling
-            $error = $this('handler')
+			//turn on error handling
+            $error = $this('core')
                 ->error()
                 ->register()
-                ->on('error', $callback)
+				->listen('error', $callback)
                 ->setReporting($settings['debug_mode']);
-            
-            //turn on exception handling
-            $this('handler')
+           	
+			//turn on exception handling
+            $exception = $this('core')
                 ->exception()
-                ->register()
-                ->on('exception', $callback);
+				->listen('exception', $callback)
+                ->register();
             
             return $this;
         }
@@ -296,7 +299,7 @@ namespace Api
          */
         public function setRequest() 
         {
-            $prefix = 'Api_Action';
+            $prefix = '\\Api\\Action';
             $path = $_SERVER['REQUEST_URI'];
     
             //remove ? url queries
@@ -355,7 +358,7 @@ namespace Api
                 $default = ucwords($settings['default_page']);
                 
                 if(!class_exists($action)) {
-                    $default = 'Api_Action_'.$default;
+                    $default = '\\Api\\Action\\'.$default;
                 }
                 
                 $page = $default;
@@ -404,7 +407,7 @@ namespace Api
          */
         public function setTimezone($zone = 'GMT') 
         {
-            $settings = $this->settings('settings');
+            $settings = $this->settings('config');
     
             date_default_timezone_set($settings['server_timezone']);
     

@@ -11,6 +11,11 @@ require_once __DIR__.'/../vendor/eden/handler/loader.php';
 Eden_Handler_Loader::i()
 	->addRoot(true)
 	->addRoot(__DIR__.'/../..')
-	->register();
+	->register()
+	->load('Api\\Control');
 
-require_once __DIR__.'/../control.php';
+//create db helper
+$create = include('helper/create-database.php');
+
+//just call it
+$create();
