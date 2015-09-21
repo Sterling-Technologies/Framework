@@ -217,5 +217,10 @@ pip-log.txt
 #############
 ## Custom
 #############
-vendor/
-composer.lock
+vendor
+Api/vendor/
+Api/composer.lock
+Back/vendor/
+Back/composer.lock
+Front/vendor/
+Front/composer.lock
