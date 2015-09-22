@@ -8,12 +8,12 @@
 		
         {{#each meta}}
         <meta name="{{@index}}" content="{{this}}" />
-        {{/meta}}
+        {{/each}}
 	</head>
 
 	<body class="skin-3">
-    	<header>{{> 'head'}}</header>
-        <section class="body">{{body}}</section>
-        <footer>{{> 'foot'}}</footer>
+    	<header>{{> _head}}</header>
+        <section class="body">{{{body}}}</section>
+        <footer>{{> _foot}}</footer>
 	</body>
 </html>

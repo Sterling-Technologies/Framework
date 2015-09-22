@@ -103,7 +103,7 @@ abstract class Page extends Action
             $key = array_shift($args);
 			$options = array_pop($args);
             
-            return $control->translate($key, $args);
+            return $control->translate((string) $key, $args);
         };
         
         //registry

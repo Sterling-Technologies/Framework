@@ -23,7 +23,7 @@ class Index extends Page
 {
 	
 	public function render() {
-		throw new Exception('ummm, okay');
+		//throw new \Exception('ummm, okay');
 		
 		$this->_body = array(
 			array(
@@ -39,6 +39,6 @@ class Index extends Page
 				'profile_sex' => 'no',
 			));
 		
-		return $this->_success();
+		return $this->success();
 	}
 }

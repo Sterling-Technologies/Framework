@@ -4,13 +4,8 @@
  * (c) 2011-2012 Openovate Labs
  */
 
-require_once __DIR__.'/../vendor/Eden/Core/Loader.php';
-
-Eden\Core\Loader::i()
-	->addRoot(true)
-	->addRoot(__DIR__.'/../..')
-	->register()
-	->load('Api\\Control');
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../Control.php';
 
 /* Get Application
 -------------------------------*/
