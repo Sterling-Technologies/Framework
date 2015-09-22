@@ -10,13 +10,22 @@ namespace test\Model\Profile;
 
 class Create extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testValidateFileFields() 
 	{
-        
+        $errors = control()->model('profile')->create()->errors();
+		
+		$this->assertEquals('Cannot be empty!', $errors['profile_name']);
     }
 	
-    public function testProcess() 
+     public function testCreateProfile() 
 	{
-        
+        $model = control()
+        	->model('profile')
+        	->create()
+        	->process(array(
+				'profile_name' => '123'));
+
+		$this->assertTrue(is_int($mode['profile_id']));
+		control()->registry()->set('test', 'profile', $model->get());
     }
 }

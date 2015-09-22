@@ -10,13 +10,17 @@ namespace test\Model\Address;
 
 class Update extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testUpdateAddress() 
 	{
-        
-    }
-	
-    public function testProcess() 
-	{
-        
+		$publicAddress = control()->registry()->get('test', 'public_address');
+     	
+     	$model = control()
+     		->model('address')
+     		->update()
+     		->process(array(
+				'address_id'		=> $publicAddress,
+				'address_country'	=> 'US' ));
+
+		$this->assertEquals('US', $model['address_country']);
     }
 }

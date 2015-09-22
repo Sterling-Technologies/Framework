@@ -10,13 +10,30 @@ namespace test\Model\Auth;
 
 class Create extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testValidateAuthFields() 
 	{
-        
+        $errors = control()->model('auth')->create()->errors();
+
+		$this->assertEquals('Cannot be empty!', $errors['auth_slug']);
+		$this->assertEquals('Cannot be empty!', $errors['auth_permissions']);
+		$this->assertEquals('Cannot be empty!', $errors['auth_password']);
+		$this->assertEquals('Cannot be empty!', $errors['confirm']);
     }
 	
-    public function testProcess() 
-	{
-        
+    public function testCreateAuth() 
+	{	
+		$now = explode(" ", microtime());
+
+	    $model = control()
+        	->model('auth')
+        	->create()
+        	->process(array(
+				'auth_slug' => 'TEST AUTH ' + $now[1],
+				'auth_permissions' => 'test_permissions_1,test_permissions_2',
+				'auth_password'	=> '123456',
+				'confirm' => '123456' ));
+
+		$this->assertTrue(is_int($model['auth_id']));
+		control()->registry()->set('test', 'auth', $model->get());
     }
 }

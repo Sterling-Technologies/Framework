@@ -10,13 +10,14 @@ namespace test\Model\Auth;
 
 class Update extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testUpdateAuth() 
 	{
-        
-    }
-	
-    public function testProcess() 
-	{
-        
+		$auth = control()->registry()->get('test', 'auth');
+		
+        $model = control()->model('auth')->update()->process(array(
+			'auth_id' => $auth['auth_id'],
+			'auth_facebook_token' => '1234567890'));
+
+		$this->assertEquals('1234567890', $model['auth_facebook_token']);
     }
 }

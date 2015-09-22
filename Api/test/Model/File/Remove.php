@@ -10,9 +10,18 @@ namespace test\Model\File;
 
 class Remove extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testRemoveFile() 
 	{
-        
+        $file = control()->registry()->get('test', 'file');
+
+        $row = control()
+        	->model('file')
+        	->remove()
+        	->process(array( 
+				'file_id' => $file['file_id']));
+
+        //TODO
+		// $this->assertEquals(null, error);
     }
 	
     public function testProcess() 

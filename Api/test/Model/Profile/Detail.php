@@ -10,13 +10,15 @@ namespace test\Model\Profile;
 
 class Detail extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testGetProfile() 
 	{
-        
-    }
-	
-    public function testProcess() 
-	{
-        
+		$profile = control()->registry()->get('test', 'profile');
+     
+        $row = control()
+			->model('profile')
+			->detail()
+			->process(array('profile_id' => $profile['profile_id']));
+		
+		$this->assertNull($row);
     }
 }

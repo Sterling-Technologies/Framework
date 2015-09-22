@@ -10,13 +10,25 @@ namespace test\Model\Address;
 
 class Remove extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
-	{
-        
+    public function testRemovePublicAddress() 
+	{	
+		$publicAddress = control()->registry()->get('test', 'public_address');
+
+        $row = control()->model('address')->remove()->process(array( 
+			'address_id' => $publicAddress));
+
+        // TODO
+        $this->assertEquals();
     }
-	
-    public function testProcess() 
-	{
-        
+
+    public function testRemovePrivvateAddress() 
+	{	
+		$privateAddress = control()->registry()->get('test', 'private_address');
+
+        $row = control()->model('address')->remove()->process(array( 
+			'address_id' => $privateAddress));
+
+        //TODO
+        $this->assertEquals();
     }
 }

@@ -10,13 +10,17 @@ namespace test\Model\Auth;
 
 class Remove extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testRemoveAuth() 
 	{
-        
-    }
-	
-    public function testProcess() 
-	{
-        
+		$auth = control()->registry()->get('test', 'auth');
+
+        $row = control()
+        	->model('auth')
+        	->remove()
+        	->process(array( 
+				'auth_id' => $auth['auth_id']));
+
+        //TODO
+		// $this->assertEquals(null, error);
     }
 }

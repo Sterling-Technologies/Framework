@@ -10,13 +10,15 @@ namespace test\Model\File;
 
 class Detail extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testGetFile() 
 	{
-        
-    }
-	
-    public function testProcess() 
-	{
-        
+		$file = control()->registry()->get('test', 'file');
+     
+        $row = control()
+			->model('file')
+			->detail()
+			->process(array('file_id' => $file['file_id']));
+		
+		$this->assertEquals('http://example.com/sample.jpg', $row['file_link']);
     }
 }

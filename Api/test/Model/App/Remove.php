@@ -10,13 +10,17 @@ namespace test\Model\App;
 
 class Remove extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testRemoveApp() 
 	{
-        
-    }
-	
-    public function testProcess() 
-	{
-        
+		$app = control()->registry()->get('test', 'app');
+
+        $row = control()
+        	->model('app')
+        	->remove()
+        	->process(array( 
+				'app_id' => $app['app_id'] ));
+
+        // TODO
+		// $this->assertEquals(null, error);
     }
 }

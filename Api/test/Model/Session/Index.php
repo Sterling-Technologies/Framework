@@ -10,13 +10,15 @@ namespace test\Model\Session;
 
 class Index extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testGetProfileByToken() 
 	{
-        
-    }
-	
-    public function testProcess() 
-	{
-        
+		$session = control()->registry()->get('test', 'session');
+		$profile = control()->registry()->get('test', 'profile');
+
+        $row = control()
+        	->model('session')
+        	->getProfileByToken($session['access_token']);
+
+		$this->assertEquals($profile['profile_name'], $row['profile_name']);
     }
 }

@@ -10,13 +10,15 @@ namespace test\Model\File;
 
 class Search extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testGetFiles() 
 	{
-        
-    }
-	
-    public function testProcess() 
-	{
-        
+     	$rows = control()
+			->model('file')
+			->list()
+			->process();
+		
+		foreach ($rows as $row) {
+			$this->assertEquals(1, $row['file_active']);
+		}
     }
 }

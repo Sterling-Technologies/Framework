@@ -10,13 +10,17 @@ namespace test\Model\Profile;
 
 class Update extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testUpdateProfile() 
 	{
-        
-    }
-	
-    public function testProcess() 
-	{
-        
+		$profile = control()->registry()->get('test', 'profile');
+
+        $model = control()
+        	->model('profile')
+        	->update()
+        	->process(array(
+				'profile_id' => $profile['profile_id'],
+				'profile_name' => '0987654321'));
+
+		$this->assertEquals('0987654321', $model['profile_name']);
     }
 }

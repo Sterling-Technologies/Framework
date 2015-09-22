@@ -10,13 +10,23 @@ namespace test\Model\File;
 
 class Create extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testValidateFileFields() 
 	{
-        
+        $errors = control()->model('file')->create()->errors();
+		
+		$this->assertEquals('Cannot be empty!', $errors['file_data']);
+		$this->assertEquals('Cannot be empty!', $errors['file_link']);
     }
 	
-    public function testProcess() 
+    public function testCreateFile() 
 	{
-        
+        $model = control()
+        	->model('file')
+        	->create()
+        	->process(array(
+				'file_link' => 'http://example.com/sample.jpg'));
+
+		$this->assertTrue(is_int($model['file_id']));
+		control()->registry()->set('test', 'file', $model->get());
     }
 }

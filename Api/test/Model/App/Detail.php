@@ -10,13 +10,16 @@ namespace test\Model\App;
 
 class Detail extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
-	{
-        
-    }
-	
-    public function testProcess() 
-	{
-        
+    public function testGetApp() 
+	{	
+		$app = control()->registry()->get('test', 'app');
+
+        $row =control()
+        	->model('app')
+        	->detail()
+        	->process(array('app_id' => $app['app_id']))
+        	->getRow();
+		
+		$this->assertEquals('TEST APP', $row['app_name']);
     }
 }

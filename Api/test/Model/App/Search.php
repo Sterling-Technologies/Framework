@@ -10,13 +10,16 @@ namespace test\Model\App;
 
 class Search extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testGetActiveApps() 
 	{
-        
-    }
-	
-    public function testProcess() 
-	{
-        
+        $rows = control()
+        	->model('app')
+        	->list()
+        	->process()
+        	->getRows();
+		
+		foreach ($rows as $row) {
+			$this->assertEquals(1, $row['app_active']);
+		}
     }
 }

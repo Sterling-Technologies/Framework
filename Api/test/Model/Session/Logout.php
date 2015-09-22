@@ -10,13 +10,23 @@ namespace test\Model\Session;
 
 class Logout extends PHPUnit_Framework_TestCase
 {
-    public function testErrors() 
+    public function testValidateLogoutFields() 
 	{
-        
+        $errors = control()->model('session')->logout()->errors();
+		
+		$this->assertEquals('Invalid ID!', $errors['auth_id']);
     }
 	
-    public function testProcess() 
+    public function testLogout() 
 	{
-        
-    }
+		$auth = control()->registry()->get('test', 'auth');
+
+		$model = control()
+        	->model('profile')
+        	->logout()
+        	->process(array(
+				'auth_id' => $auth['auth_id']));
+
+		$this->assertTrue(is_array($model));
+	}
 }
