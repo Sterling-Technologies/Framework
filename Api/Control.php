@@ -528,5 +528,44 @@ namespace Api
             
             return $this->language()->get($string);
         }
+
+
+        /**
+         * Gives the ability to add Queues
+         *
+         * @param *string
+         * @param *array
+         * @return string
+         */        
+        public function queue($task, array $data)
+        {   
+            $config = $this->path('settings');
+            $config = $config['queue'];
+
+            return Queue::i(
+                $config['host'],
+                $config['port'], 
+                $config['username'], 
+                $config['password'],
+                $task,
+                $data);
+        }
+
+        /**
+         * Provides instance of the Job
+         *
+         * @param *string
+         * @param *array
+         * @return string
+         */
+        public function job($task, array $data)
+        {   
+            $class = 'Api\\Job\\' . str_replace('-', '\\', $task); 
+            if (class_exists($class)) {
+                return $this->class();
+            }
+
+            return null;
+        }
     }
 }
