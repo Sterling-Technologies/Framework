@@ -6,17 +6,20 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-
 namespace
 {
+	require_once __DIR__ . '/vendor/autoload.php';
+	
     /**
      * The starting point of every application call. If you are only
      * using the framework you can rename this function to whatever you
      * like.
      */
-    function control() {
-        $class = Api\Control::i();
-        if(func_num_args() == 0) {
+    function control() 
+	{
+		$class = Api\Control::i();
+        
+		if(func_num_args() == 0) {
             return $class;
         }
     
@@ -34,7 +37,7 @@ namespace Api
      *
      * @package Api
      */
-    class Control extends Base 
+    class Control extends \Eden\Server\Index
     {
         const INSTANCE = 1;
         
@@ -42,25 +45,337 @@ namespace Api
         public $defaultRegistry = null;
         public $defaultLanguage = null;
         
-		protected static $uid = 1;
+		/**
+         * Runs the default bootstrap from start to finish
+		 * If you wish to add process between these steps
+		 * you should copy the method details and paste to 
+		 * index.php
+         *
+         * @return this
+         */
+		public function defaultBootstrap() 
+		{
+			return $this
+				->defaultPaths()
+				->defaultDebugging()
+				->defaultErrorHandler()
+				//->defaultDatabases()
+				->defaultEvents()
+				->trigger('config')
+				->defaultTimezone('Asia/Manila')
+				->trigger('init')
+				->defaultSession()
+				->trigger('session')
+				->defaultRouting()
+				->trigger('request')
+				->defaultResponse()
+				->trigger('response')
+				->render()
+				->trigger('render')
+				->trigger('shutdown');
+		}
 		
         /**
-         * Calls response __toString
+         * Sets up the default database connection
          *
-         * @return string
+		 * @param array inject a database config
+         * @return this
          */
-        public function __toString() 
+        public function defaultDatabases(array $databases = null) 
         {
-            try {
-                $response = (string) $this->registry()->get('response');
-            } catch(\Exception $e) {
-                $this('core')->exception()->handler($e);
-                $response = '';
+			if(!$databases) {
+            	$databases = $this->settings('databases');
+			}
+			
+            foreach($databases as $key => $info) {    
+                //connect to the data as described in the settings
+                switch($info['type']) {
+                    case 'postgre':
+                        $database = $this(
+                            'postgre',
+                            $info['host'], 
+                            $info['name'], 
+                            $info['user'], 
+                            $info['pass']);
+                        break;
+                    case 'mysql':
+                        $database = $this(
+                            'mysql',
+                            $info['host'], 
+                            $info['name'], 
+                            $info['user'], 
+                            $info['pass']);
+                        break;
+                    case 'sqlite':
+                        $database = $this('sqlite', $info['file']);
+                        break;
+                }
+                
+                $this->registry()->set('database', $key, $database);
+                
+                if($info['default']) {
+                    $this->defaultDatabase = $database;
+                }
             }
             
-            return (string) $response;
+            return $this;
         }
         
+        /**
+         * Lets the framework handle exceptions.
+         * This is useful in the case that you 
+         * use this framework on a server with
+         * no xdebug installed.
+         *
+         * @return this
+         */
+        public function defaultDebugging() 
+        {
+			//get settings from config
+			$config = $this->settings('config');
+			
+			//save it for later
+			$this->registry()->set('config', $config);
+			
+			//if debug mode is on
+			if(!$config['debug_mode']) {
+				//stop argument testing
+				Argument::i()->stop();
+			}
+			
+			//turn on error handling
+			$error = $this('handler')
+				->error()
+				->register()
+				->setReporting($config['debug_mode']);
+			
+			//turn on exception handling
+			$exception = $this('handler')
+				->exception()
+				->register();
+			
+            return $this;
+        }
+		
+		/**
+         * Sets Default Error Handlers
+         *
+         * @return this
+         */
+		public function defaultErrorHandler() 
+		{
+			//this happens on an error
+			$this->error(function($request, $response) {
+				$args = func_get_args();
+				$request = array_shift($args);
+				$response = array_shift($args);
+				
+				$mode = $this->registry()->get('config', 'debug_mode');
+				
+				$type = 'text/plain';
+				if(!$response->isKey('headers', 'Content-Type')) {
+					$response->set('headers', 'Content-Type', $type);
+				} else {
+					$type = $response->get('headers', 'Content-Type');
+				}
+				
+				$handler = new Error();
+				
+				switch(true) {
+					case strpos($type, 'html') !== false && $mode:
+						$body = $handler->callArray('htmlDetails', $args);
+						break;
+					case strpos($type, 'html') !== false:
+						$body = $handler->callArray('htmlGeneric', $args);
+						break;
+					case strpos($type, 'json') !== false && $mode:
+						$body = $handler->callArray('jsonDetails', $args);
+						break;
+					case strpos($type, 'json') !== false:
+						$body = $handler->callArray('jsonGeneric', $args);
+						break;
+					case strpos($type, 'plain') !== false && $mode:
+						$body = $handler->callArray('plainDetails', $args);
+						break;
+					case strpos($type, 'plain') !== false:
+					default:
+						$body = $handler->callArray('plainGeneric', $args);
+						break;
+				}
+				
+				$response->set('body', $body);
+			});
+			
+			return $this;
+		}
+    
+        /**
+         * Starts a event
+         *
+         * @return this
+         */
+        public function defaultEvents() 
+        {
+            //traverse through the event folder
+			$path = $this->path('event');
+			$files = $this('folder')->set($path)->getFiles();
+            
+			//from
+			//   /root/Api/Event/request-filter.php
+			//  control()->on('request', function() {
+			//		// IF registry()->get('request', 'path') startswith /rest/
+			//		// THEN check against database
+			//		// if invalid, output invalid and exit.
+			//  });
+            return $this;
+        }
+		
+        /**
+         * Sets the application absolute paths
+         * for later referencing
+         * 
+         * @return this
+         */
+        public function defaultPaths() 
+        {
+            $root = __DIR__;
+            
+            $this->registry()
+                //root paths
+                ->set('path', 'root', $root)
+                
+                //paths that are dynamic and should not be committed
+                ->set('path', 'settings', $root.'/settings')
+                ->set('path', 'upload', $root.'/upload')
+                ->set('path', 'vendor', $root.'/vendor')
+                
+                //PHP folders
+                ->set('path', 'action', $root.'/Action')
+                ->set('path', 'event', $root.'/Event')
+                ->set('path', 'job', $root.'/Job')
+                ->set('path', 'model', $root.'/Model')
+                
+                //Other Folders
+                ->set('path', 'template', $root.'/template')
+                ->set('path', 'public', $root.'/public');
+            
+            return $this;
+        }
+        
+        /**
+         * Sets response
+         *
+         * @param string|null the request object
+         * @return this
+         */
+        public function defaultResponse() 
+        {
+			$this->all('*', function($request, $response) {
+				//if there is already a body
+				if($response->isKey('body')
+				|| !$response->isKey('action')) {
+					//do nothing
+					return;
+				}
+				
+				$class = $response->get('action');
+				$action = new $class();
+				$body = $action->render();
+				$response->set('body', $body);
+			});
+			
+            return $this;
+        }
+		
+		/**
+         * Sets Dynamic routes base on the request
+         *
+         * @return this
+         */
+		public function defaultRouting()
+		{
+			//just call the parent
+			$this->all('*', function($request, $response) {
+				//if there is already a body
+				if($response->isKey('body')) {
+					//do nothing
+					return;
+				}
+				
+				$prefix = '\\Api\\Action';
+	
+				$path = $request['path']['string'];
+				$array = $request['path']['array'];
+				
+				$variables = array();
+				$action = null;
+				$buffer = $array;
+				
+				while(count($buffer) > 1) {
+					$parts = ucwords(implode(' ', $buffer));
+					$class = $prefix.str_replace(' ', '\\', $parts);
+					
+					if(class_exists($class)) {
+						$action = $class;
+						break;
+					}
+			
+					$variable = array_pop($buffer);
+					array_unshift($variables, $variable);
+				}
+				
+				
+				
+				if(!$action || !class_exists($action)) {
+					$default = $this->registry()->get('config', 'default_page');
+					$default = ucwords($default);
+					$default = '\\Api\\Action\\'.$default;
+					
+					if(class_exists($default)) {
+						$action = $default;
+					}
+				}
+				
+				//set the reuqest
+				$request->set('path', 'variables', $variables);
+				
+				//if we have an action
+				if($action) {
+					//set the action
+					$response->set('action', $action);
+				}
+			});
+			
+			return $this;
+		}
+    
+        /**
+         * Starts a session
+         *
+         * @return this
+         */
+        public function defaultSession() 
+        {
+            session_start();
+            
+            return $this;
+        }
+        
+        /**
+         * Sets the PHP timezone
+         *
+         * @param *string
+         * @return this
+         */
+        public function defaultTimezone($zone = 'GMT') 
+        {
+            $settings = $this->settings('config');
+    
+            date_default_timezone_set($settings['server_timezone']);
+    
+            return $this;
+        }
+		
         /**
          * Returns the default database instance
          *
@@ -148,18 +463,6 @@ namespace Api
         }
         
         /**
-         * Browser Redirect
-         *
-         * @param path
-         * @return void
-         */
-        public function redirect($path) 
-        {
-            header('Location: '.$path);
-            exit;
-        }
-        
-        /**
          * Returns the current Registry
          *
          * @return Eden_Registry_Index
@@ -171,215 +474,6 @@ namespace Api
             }
             
             return $this->defaultRegistry;
-        }
-        
-        /**
-         * Force renders
-         *
-         * @return Control
-         */
-        public function render() 
-        {
-            echo $this;        
-            return $this->trigger('render')->trigger('shutdown');    
-        }
-        
-        /**
-         * Sets up the default database connection
-         *
-		 * @param array inject a database config
-         * @return Controller
-         */
-        public function setDatabases(array $databases = null) 
-        {
-			if(!$databases) {
-            	$databases = $this->settings('databases');
-			}
-			
-            foreach($databases as $key => $info) {    
-                //connect to the data as described in the settings
-                switch($info['type']) {
-                    case 'postgre':
-                        $database = $this(
-                            'postgre',
-                            $info['host'], 
-                            $info['name'], 
-                            $info['user'], 
-                            $info['pass']);
-                        break;
-                    case 'mysql':
-                        $database = $this(
-                            'mysql',
-                            $info['host'], 
-                            $info['name'], 
-                            $info['user'], 
-                            $info['pass']);
-                        break;
-                    case 'sqlite':
-                        $database = $this('sqlite', $info['file']);
-                        break;
-                }
-                
-                $this->registry()->set('database', $key, $database);
-                
-                if($info['default']) {
-                    $this->defaultDatabase = $database;
-                }
-            }
-            
-            return $this;
-        }
-        
-        /**
-         * Lets the framework handle exceptions.
-         * This is useful in the case that you 
-         * use this framework on a server with
-         * no xdebug installed.
-         *
-         * @return Controller
-         */
-        public function setDebug() 
-        {
-            //get settings from config
-            $settings = $this->settings('config');
-            $handler = new Error();
-            $callback = array($handler, 'outputDetails');
-            
-            //if debug mode is on
-            if(!$settings['debug_mode']) {
-                //stop argument testing
-                Argument::i()->stop();
-                
-                $callback = array($handler, 'outputGeneric');
-            }
-            
-			//turn on error handling
-            $error = $this('core')
-                ->error()
-                ->register()
-				->listen('error', $callback)
-                ->setReporting($settings['debug_mode']);
-           	
-			//turn on exception handling
-            $exception = $this('core')
-                ->exception()
-				->listen('exception', $callback)
-                ->register();
-            
-            return $this;
-        }
-        
-        /**
-         * Sets the application absolute paths
-         * for later referencing
-         * 
-         * @return Controller
-         */
-        public function setPaths() 
-        {
-            $root = __DIR__;
-            
-            $this->registry()
-                //root paths
-                ->set('path', 'root', $root)
-                
-                //paths that are dynamic and should not be committed
-                ->set('path', 'settings', $root.'/settings')
-                ->set('path', 'upload', $root.'/upload')
-                ->set('path', 'vendor', $root.'/vendor')
-                
-                //PHP folders
-                ->set('path', 'action', $root.'/Action')
-                ->set('path', 'event', $root.'/Event')
-                ->set('path', 'job', $root.'/Job')
-                ->set('path', 'model', $root.'/Model')
-                
-                //Other Folders
-                ->set('path', 'template', $root.'/template')
-                ->set('path', 'public', $root.'/public');
-            
-            return $this;
-        }
-        
-        /**
-         * Sets request
-         *
-         * @param EdenRegistry|null the request object
-         * @return Control
-         */
-        public function setRequest() 
-        {
-            $prefix = '\\Api\\Action';
-            $path = $_SERVER['REQUEST_URI'];
-    
-            //remove ? url queries
-            if(strpos($path, '?') !== false) {
-                list($path, $tmp) = explode('?', $path, 2);
-            }
-    
-            $array = explode('/',  $path);
-            $variables = array();
-            $action = null;
-            $buffer = $array;
-    
-            while(count($buffer) > 1) {
-                $parts = ucwords(implode(' ', $buffer));
-                $class = $prefix.str_replace(' ', '_', $parts);
-                
-                if(class_exists($class)) {
-                    $action = $class;
-                    break;
-                }
-    
-                $variable = array_pop($buffer);
-                array_unshift($variables, $variable);
-            }
-    
-            $path = array(
-                'string' => $path,
-                'array' => $array,
-                'variables' => $variables);
-    
-            //set the request
-            $this->registry()
-                ->set('server', $_SERVER)
-                ->set('cookie', $_COOKIE)
-                ->set('get', $_GET)
-                ->set('post', $_POST)
-                ->set('files', $_FILES)
-                ->set('request', $path)
-                ->set('action', $action);
-    
-            return $this;
-        }
-        
-        /**
-         * Sets response
-         *
-         * @param string|null the request object
-         * @return Control
-         */
-        public function setResponse() 
-        {
-            $action = $this->registry()->get('action');
-            
-            if(!$action || !class_exists($action)) {
-                $settings = $this->settings('config');
-                $default = ucwords($settings['default_page']);
-                
-                if(!class_exists($action)) {
-                    $default = '\\Api\\Action\\'.$default;
-                }
-                
-                $page = $default;
-            }
-            
-            //set the response data
-            $response = new $page();
-    
-            $this->registry()->set('response', $response);
-            
-            return $this;
         }
         
         /**
@@ -395,7 +489,7 @@ namespace Api
             
             $path = $this->path('settings');
             
-            $file = $this('system')->file($path.'/'.$key.'.php');
+            $file = $this('file')->set($path.'/'.$key.'.php');
             
             if(is_array($data)) {
                 $file->setData($data);
@@ -407,33 +501,6 @@ namespace Api
             }
             
             return $file->getData();
-        }
-        
-        /**
-         * Sets the PHP timezone
-         *
-         * @param *string
-         * @return Controller
-         */
-        public function setTimezone($zone = 'GMT') 
-        {
-            $settings = $this->settings('config');
-    
-            date_default_timezone_set($settings['server_timezone']);
-    
-            return $this;
-        }
-    
-        /**
-         * Starts a session
-         *
-         * @return Control
-         */
-        public function startSession() 
-        {
-            session_start();
-            
-            return $this;
         }
         
         /**

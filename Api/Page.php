@@ -267,7 +267,8 @@ abstract class Page extends Action
     protected function getTemplate() 
     {
         if(!$this->template) {
-            $this->template = control('type', get_class($this))
+            $this->template = control('string')
+				->set(get_class($this))
                 ->str_replace('\\', DIRECTORY_SEPARATOR)
                 ->strtolower()
                 ->str_replace('api/action', '')
