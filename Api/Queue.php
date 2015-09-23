@@ -135,18 +135,20 @@ class Queue
      */
 	public function save()
 	{	
-		// if no delay queue it now
-		if($this->delay) {
-			// declare queue container
-			$this->channel->queue_declare('queue', false, false, false, false);
+		// declare queue container
+		$this->channel->queue_declare('queue', false, false, false, false);
+		$this->channel->exchange_declare('queue-xchnge', 'direct');
+		$this->channel->queue_bind('queue', 'queue-xchnge');
 
-			// set message
-			$msg = new AMQPMessage($this->message, array(
-				'delivery_mode' => $this->persistent, 
-				'priority' => $this->priority));
-				
-			// publish queue
-			$this->channel->basic_publish($msg, '', 'queue');
+		// set message
+		$msg = new AMQPMessage($this->message, array(
+			'delivery_mode' => $this->persistent, 
+			'priority' => $this->priority));
+
+		// if no delay queue it now
+		if($this->delay) {	
+			// queue it up main queue container
+			$this->channel->basic_publish($msg, 'queue-xchnge');
 
 			return $this;
 		}
@@ -165,12 +167,15 @@ class Queue
 	        array(
 	            'x-message-ttl' => array('I', $this->delay*1000), // delay in seconds to milliseconds
 	            "x-expires" => array("I", $this->delay*1000+1000), // set an expiration to assigned seconds of delay + 1 sec 
-	            'x-dead-letter-exchange' => array('S', 'queue') // after message expiration in delay queue, move message to the main queue
+	            'x-dead-letter-exchange' => array('S', 'queue-xchnge') // after message expiration in delay queue, move message to the main queue
 	        )
 		);
 
 		$this->channel->exchange_declare('xchnge-delay', 'direct');
 		$this->channel->queue_bind('que-delay', 'xchnge-delay');
+
+		// queue it up on delay container
+		$this->channel->basic_publish($msg, 'xchnge-delay');
 
 		return $this;
 	}
