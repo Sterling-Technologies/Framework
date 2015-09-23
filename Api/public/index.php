@@ -6,4 +6,7 @@
 
 require_once __DIR__ . '/../Control.php';
 
-control()->defaultBootstrap();
+control()
+//Add any middleware here
+//and this is the default
+->defaultBootstrap();

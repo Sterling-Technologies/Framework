@@ -19,7 +19,7 @@ use Api\Page;
  * @vendor Openovate
  * @package Framework
  */
-class Index extends Page 
+class Create extends Page 
 {
 	const FAIL_EXISTS = 'Email exists.';
 	const FAIL_VALIDATION = 'There are some errors on the form.';
