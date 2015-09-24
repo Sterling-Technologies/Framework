@@ -1,6 +1,8 @@
 {
 	"autoload": {
-        "psr-4": {"Api\\": ""}
+        "psr-4": {
+			"Api\\": ""
+		}
     },
     "scripts": {
         "post-install-cmd": [
@@ -10,11 +12,12 @@
             "PhantomInstaller\\Installer::installPhantomJS"
         ]
     },
+	"minimum-stability": "dev",
 	"require-dev": {
         "phpunit/phpunit": "~4.4",
         "squizlabs/php_codesniffer": "~1.5"
     },
     "require": {
-        "eve-php/framework": "dev-master",
+        "eve-php/framework": "dev-master"
     }
 }
