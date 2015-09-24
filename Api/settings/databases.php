@@ -2,7 +2,7 @@
 return array (
 	'default' => array(
 		'host' 		=> '127.0.0.1',
-		'name' 		=> 'testing_db',
+		'name' 		=> 'eden_v4',
 		'user' 		=> 'root',
 		'pass' 		=> '',
 		'type' 		=> 'mysql',

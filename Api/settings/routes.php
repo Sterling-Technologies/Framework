@@ -60,7 +60,7 @@ return array(
             'method' => 'GET',
             'role' => 'public_profile'
         ),
-        '/rest/profile/detail/ =>id' => array(
+        '/rest/profile/detail/*' => array(
             'method' => 'GET',
             'role' => 'public_profile'
         ),

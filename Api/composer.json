@@ -19,5 +19,6 @@
     },
     "require": {
         "eve-php/framework": "dev-master"
+        "openovate/eden-middleware-htpasswd": "dev-master"
     }
 }
