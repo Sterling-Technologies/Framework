@@ -9,9 +9,9 @@
 
 namespace Api\Model\Profile;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Remove
@@ -35,7 +35,8 @@ class Remove extends Base
 		$item = $this->prepare($item);
 		
 		// profile_id			Required
-		if(!$this->isInteger($item['profile_id'])) {
+		if(isset($item['profile_id'])
+			&& !$this('validation', $item['profile_id'])->isType('integer', true)) {
 			$errors['profile_id'] = self::INVALID_ID;
 		}
 		
@@ -58,7 +59,7 @@ class Remove extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$model = control()->database()
+		$model = eve()->database()
 			->model()
 			->setProfileId($item['profile_id'])
 			->setProfileActive('0');

@@ -9,9 +9,9 @@
 
 namespace Api\Model\App;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model TODO
@@ -31,7 +31,8 @@ class TODO extends Base
 	 */
 	public function errors(array $item = array(), array $errors = array()) 
     {
-		if(!$this->isInteger($item['app_id'])) {
+		if(isset($item['app_id'])
+			&& !$this('validation', $item['app_id'])->isType('integer', true)) {
 			$errors['app_id'] = self::INVALID_ID;
 		}
 		
@@ -57,11 +58,11 @@ class TODO extends Base
 		//generate dates
 		$updated = date('Y-m-d H:i:s');
 		
-		$token = control()->help()->uid();
-		$secret = control()->help()->uid(); 
+		$token = md5(uniqid());
+		$secret = md5(uniqid()); 
 		
 		//SET WHAT WE KNOW
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			

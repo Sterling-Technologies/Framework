@@ -9,9 +9,9 @@
 
 namespace Api\Model\Session;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Login
@@ -61,7 +61,7 @@ class Login extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$search = control()->database()
+		$search = eve()->database()
 			->search('auth')
 			->setColumns('profile.*', 'file_link AS profile_image', 'auth.*')
 			->innerJoinOn('auth_profile', 'auth_profile_auth = auth_id')

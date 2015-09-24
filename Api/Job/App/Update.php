@@ -35,7 +35,7 @@ class Remove extends Base
 		// item 	- app item
 		$item = $this->data['item'];
 		
-		$model = control()
+		$model = eve()
 			->model('app')
 			->remove()
 			->update($item);

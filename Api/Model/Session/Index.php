@@ -9,9 +9,9 @@
 
 namespace Api\Model\Session;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Index
@@ -23,7 +23,7 @@ class Index extends Base
 	/**
 	 * Factory for access
 	 *
-	 * @return Api\Model\Session\Access
+	 * @return Eve\Framework\Model\Session\Access
 	 */
 	public function access()
 	{
@@ -39,7 +39,7 @@ class Index extends Base
 	 */
 	public function getProfileByToken($token) 
 	{
-		return control()
+		return eve()
 			->database()
 			->search('session')
 			->setColumns('profile.*')
@@ -59,7 +59,7 @@ class Index extends Base
 	/**
 	 * Factory for login
 	 *
-	 * @return Api\Model\Session\Login
+	 * @return Eve\Framework\Model\Session\Login
 	 */
 	public function login()
 	{
@@ -69,7 +69,7 @@ class Index extends Base
 	/**
 	 * Factory for logout
 	 *
-	 * @return Api\Model\Session\Logout
+	 * @return Eve\Framework\Model\Session\Logout
 	 */
 	public function logout()
 	{
@@ -79,7 +79,7 @@ class Index extends Base
 	/**
 	 * Factory for request
 	 *
-	 * @return Api\Model\Session\Request
+	 * @return Eve\Framework\Model\Session\Request
 	 */
 	public function request()
 	{

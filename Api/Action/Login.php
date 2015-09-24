@@ -62,7 +62,7 @@ class Login extends Html
 			return $this->fail($response, self::FAIL_VALIDATION, $errors, $item);
 		}
 		
-		$row = control()
+		$row = eve()
 			->model('session')
 			->login()
 			->process($item);

@@ -58,14 +58,15 @@ class Logout extends Base
 		$item = $this->prepare($item);
 		
 		//remove the tokens associated with this user
-		$search = control()->database()
+		$search = eve()->database()
 			->search('session')
 			->innerJoinOn(
 				'session_auth', 
 				'session_auth_session = session_id')
 			->filterBySessionAuthAuth($item['auth_id']);
 		
-		if($item['session_token']) {
+		if(isset($item['session_token']) 
+			&& $item['session_token']) {
 			$search->addFilter(
 				'session_token = %s OR session_status = %s', 
 				$item['session_token'], 

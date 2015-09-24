@@ -9,9 +9,9 @@
 
 namespace Api\Model\Profile;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Factory
@@ -52,7 +52,7 @@ class Index extends Base
 		//argument test
 		Argument::i()->test(1, 'int')->test(2, 'int');
 		
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			->setProfileFileProfile($profileId)
@@ -106,7 +106,7 @@ class Index extends Base
 		//argument test
 		Argument::i()->test(1, 'int');
 		
-		$search = control()
+		$search = eve()
 			->database()
 			->search('profile_file')
 			->innerJoinOn(
@@ -123,7 +123,7 @@ class Index extends Base
 				$or[] = $type;
 			}
 			
-			array_unshift($or, '(' + implode(' OR ', $where) + ')');
+			array_unshift($or, '(' . implode(' OR ', $where) . ')');
 			
 			$search->callArray('addFilter', $or);
 		}	
@@ -146,16 +146,16 @@ class Index extends Base
 	 * @param int address id
 	 * @return Eden\Mysql\Model
 	 */
-	public function unlinkFile($profileId, $addressId) 
+	public function unlinkFile($profileId, $fileId) 
 	{
 		//argument test
 		Argument::i()->test(1, 'int')->test(2, 'int');
 		
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
-			->setProfileFileProfile($item['profile_id'])
-			->setProfileFileFile($item['file_id'])
+			->setProfileFileProfile($profileId)
+			->setProfileFileFile($fileId)
 			->remove('profile_file');
 		
 		$this->trigger('profile-unlink-file', $model);

@@ -34,7 +34,7 @@ class Remove extends Page
 
 		//validate
 		//get errors
-		$errors = control()
+		$errors = eve()
 			->model('app')
 			->remove()
 			->errors($item);
@@ -45,7 +45,7 @@ class Remove extends Page
 		}
 
 		//check permissions
-		$yes = control()->model('app')
+		$yes = eve()->model('app')
 			->permissions(
 				$item['app_id'], 
 				$item['profile_id']);
@@ -55,7 +55,7 @@ class Remove extends Page
 			return $this->fail(self::FAIL_PERMISSIONS, '/app/list');
 		}
 
-		control()->job('app')
+		eve()->job('app')
 			->remove(array(
 				'data' => array(
 					'item' => $item))

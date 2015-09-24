@@ -9,9 +9,9 @@
 
 namespace Api\Model\Session;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Request
@@ -61,8 +61,8 @@ class Request extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$token = control()->help()->uid();
-		$secret = control()->help()->uid();
+		$token = md5(uniqid());
+		$secret = md5(uniqid());
 		$created = date('Y-m-d H:i:s');
 		$updated = date('Y-m-d H:i:s');
 		
@@ -70,7 +70,7 @@ class Request extends Base
 			$item['session_permissions'] = 'public_sso';
 		}
 		
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			//session
@@ -86,7 +86,7 @@ class Request extends Base
 			->setSessionAuthAuth($item['auth_id']);
 		
 		//remove user pending states
-		$search = control()->database()
+		$search = eve()->database()
 			->search('session')
 			->innerJoinOn('session_auth', 'session_auth_session = session_id')
 			->innerJoinOn('session_app', 'session_app_session = session_id')

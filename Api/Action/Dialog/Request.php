@@ -67,7 +67,7 @@ class Request extends Page
 			//go back to the login
 			//pass the request query
 			$query = $_SERVER['QUERY_STRING'];
-			control()->redirect('/dialog/login?' + $query);
+			eve()->redirect('/dialog/login?' + $query);
 			return;
 		}
 		
@@ -78,7 +78,7 @@ class Request extends Page
 		
 		//no post, so we need to render
 		//we want to sparse the user and other permissions(global)
-		$roles = control()->config('roles');
+		$roles = eve()->config('roles');
 		
 		$userPermissions 	= [];
 		$globalPermissions 	= [];
@@ -136,7 +136,7 @@ class Request extends Page
 			return $this->redirect(array('error' => 'access_denied'));
 		}
 
-		$errors = control()
+		$errors = eve()
 			->model('session')
 			->request()
 			->errors($item);
@@ -146,7 +146,7 @@ class Request extends Page
 		}
 		
 		//process
-		$results = control()
+		$results = eve()
 			->job('session')
 			->request(array(
 				'data' => array(
@@ -177,7 +177,7 @@ class Request extends Page
 		$query = http_build_query($query);
 		
 		if(empty($query)) {
-			control()->redirect($url);
+			eve()->redirect($url);
 		}
 		
 		$separator = '?';
@@ -185,6 +185,6 @@ class Request extends Page
 			$separator = '&';
 		}
 		
-		control()->redirect($url + $separator + $query);
+		eve()->redirect($url + $separator + $query);
 	}
 }

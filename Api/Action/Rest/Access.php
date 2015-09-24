@@ -27,11 +27,11 @@ class Access extends Page
 	{
 		//get the data
 		$item = $this->data['item'];
-		$item['client_id'] = control()->registry()->get('source', 'access_token');
-		$item['client_secret'] = control()->registry()->get('source', 'access_secret');
+		$item['client_id'] = eve()->registry()->get('source', 'access_token');
+		$item['client_secret'] = eve()->registry()->get('source', 'access_secret');
 
 		//validate
-		$errors = control()
+		$errors = eve()
 			->model('session')
 			->access()
 			->errors($item);
@@ -41,7 +41,7 @@ class Access extends Page
 		}
 		
 		//process
-		$results = control()
+		$results = eve()
 			->job('session')
 			->access(array('data' => array(
 				'item' => $item)));

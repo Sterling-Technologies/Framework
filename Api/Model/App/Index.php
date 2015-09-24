@@ -9,9 +9,9 @@
 
 namespace Api\Model\App;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Factory
@@ -42,7 +42,7 @@ class Index extends Base
 		//argument test
 		Argument::i()->test(1, 'string');
 		
-		return control()
+		return eve()
 			->database()
 			->search('app')
 			->setColumns(
@@ -80,7 +80,7 @@ class Index extends Base
 		//argument test
 		Argument::i()->test(1, 'int')->test(2, 'int');
 		
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			->setAppProfileProfile($profileId)
@@ -163,7 +163,7 @@ class Index extends Base
 		//argument test
 		Argument::i()->test(1, 'int')->test(2, 'int');
 		
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			->setAppProfileProfile($profileId)

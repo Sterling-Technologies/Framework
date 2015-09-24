@@ -42,7 +42,7 @@ class Index extends Page
 			$item['session_token'] = $_GET['session_token'];
 		}
 		
-		$errors = control()
+		$errors = eve()
 			->model('session')
 			->logout()
 			->errors($item);
@@ -51,7 +51,7 @@ class Index extends Page
 			return $this->redirect(array('error' => 'user_invalid'));
 		}
 		
-		control()
+		eve()
 			->model('session')
 			->logout()
 			->process($item);
@@ -80,7 +80,7 @@ class Index extends Page
 		$query = http_build_query($query);
 		
 		if(empty($query)) {
-			control()->redirect($url);
+			eve()->redirect($url);
 		}
 		
 		$separator = '?';
@@ -88,6 +88,6 @@ class Index extends Page
 			$separator = '&';
 		}
 		
-		control()->redirect($url + $separator + $query);
+		eve()->redirect($url + $separator + $query);
 	}
 }

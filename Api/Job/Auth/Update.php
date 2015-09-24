@@ -37,13 +37,13 @@ class Update extends Base
 		$results = array();
 		
 		//update profile
-		$results['profile'] = control()
+		$results['profile'] = eve()
 			->model('profile')
 			->update()
 			->process($item);
 		
 		//update auth
-		$results['auth'] = control()
+		$results['auth'] = eve()
 			->model('auth')
 			->update()
 			->process($item);

@@ -9,9 +9,9 @@
 
 namespace Api\Model\Session;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Access
@@ -66,12 +66,12 @@ class Access extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$token = control()->help()->uid();
-		$secret = control()->help()->uid();
+		$token = md5(uniqid());
+		$secret = md5(uniqid());
 		$updated = date('Y-m-d H:i:s');
 		
 		//check the session first
-		$search = control()
+		$search = eve()
 			->database()
 			->search('session')
 			->innerJoinOn('session_app', 'session_app_session = session_id')

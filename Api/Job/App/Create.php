@@ -41,12 +41,12 @@ class Create extends Base
 		$item = $this->data['item'];
 		$profileId = $this->data['profile_id'];
 		
-		$model = control()
+		$model = eve()
 			->model('app')
 			->create()
 			->process($item);
 			
-		control()
+		eve()
 			->model('app')
 			->linkProfile(
 				$model['app_id'], 

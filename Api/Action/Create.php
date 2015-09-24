@@ -30,6 +30,7 @@ class Create extends Html
 
 	public function render() 
 	{
+		
 		//if it's a post
 		if(!empty($_POST)) {
 			return $this->check();
@@ -46,23 +47,25 @@ class Create extends Html
 	 */
 	protected function check() 
 	{
-		$item = $this->request->get('post');
+
+		$item = ($this->request->get(false,'post'));
+
 		$item['auth_slug'] = $item['profile_email'];
-		$item['auth_permissions'] = implode(',', control()->config('scope'));
+		$item['auth_permissions'] = implode(',', eve()->settings('scope'));
 		$item['profile_type'] = 'buyer';
 		
-		$config = eve()->config('s3');
+		$config = eve()->settings('s3');
 		
-		$item['file_link'] = $config['host'] + '/' 
-			+ $config['bucket'] + '/avatar/avatar-' 
-			+ ((floor(rand() * 1000) % 11) + 1) + '.png';
+		$item['file_link'] = $config['host'] . '/' 
+			. $config['bucket'] . '/avatar/avatar-' 
+			. ((floor(rand() * 1000) % 11) + 1) . '.png';
 		
-		$errors = control()
+		$errors = eve()
 			->model('auth')
 			->create()
 			->errors($item);
 		
-		$errors = control()
+		$errors = eve()
 			->model('profile')
 			->create()
 			->errors($item, $errors);
@@ -72,11 +75,10 @@ class Create extends Html
 			return $this->fail(self::FAIL_VALIDATION, $errors, $item);
 		}
 		
-		$auth = control()
-			->job('auth')
-			->create(
-				array('data' => array(
-				'item' => $item)));
+		$auth = eve()
+			->job('Auth-Create')
+			->setData(array('item' => $item))
+			->run();
 
 		return $this->success(self::SUCCESS, '/developer/login');
 	}

@@ -37,7 +37,7 @@ class Refresh extends Page
 		$item['profile_id'] = $_SESSION['me']['profile_id'];
 
 		//get app
-		$row = control()
+		$row = eve()
 			->model('app')
 			->detail()
 			->process($item)
@@ -55,7 +55,7 @@ class Refresh extends Page
 			return $this->fail(self::FAIL_PERMISSIONS, '/app/list');
 		}
 		
-		control()->job('app')
+		eve()->job('app')
 			->referesh(array(
 				'data' => array(
 					'item' => $item)));

@@ -9,9 +9,9 @@
 
 namespace Api\Model\Profile;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Detail
@@ -34,7 +34,8 @@ class Detail extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		if(!$this->isInteger($item['profile_id'])) {
+		if(isset($item['profile_id'])
+			&& !$this('validation', $item['profile_id'])->isType('integer', true)) {
 			$errors['profile_id'] = self::INVALID_ID;
 		}
 		
@@ -57,12 +58,13 @@ class Detail extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$search = control()
+		$search = eve()
 			->database()
 			->search('profile')
 			->filterByProfileId($item['profile_id']);
 		
-		if($item['public']) {
+		if(isset($item['public']) 
+			&& $item['public']) {
 			$search->setColumns(
 				'profile_id', 
 				'profile_name',

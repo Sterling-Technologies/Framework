@@ -9,9 +9,9 @@
 
 namespace Api\Model\App;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Update
@@ -44,7 +44,8 @@ class Update extends Base
 		//REQUIRED
 		
 		// app_id			Required
-		if(!$this->isInteger($item['app_id'])) {
+		if(isset($item['app_id'])
+			&& !$this('validation', $item['app_id'])->isType('integer', true)) {
 			$errors['app_id'] = self::INVALID_ID;
 		}
 		
@@ -64,7 +65,7 @@ class Update extends Base
 		
 		// app_flag
 		if(isset($item['app_flag']) 
-		&& !$this->isSmall($item['app_flag'])) {
+		&& !$this('validation', $item['app_flag'])->isType('small', true)) {
 			$errors['app_flag'] = self::INVALID_SMALL;
 		}
 		
@@ -91,7 +92,7 @@ class Update extends Base
 		$updated = date('Y-m-d H:i:s');
 		
 		//SET WHAT WE KNOW
-		$model = control()->database()->model()
+		$model = eve()->database()->model()
 			// app_id
 			->setAppId($item['app_id'])
 			// app_updated
@@ -127,7 +128,8 @@ class Update extends Base
 		}
 		
 		// app_flag
-		if($this->isSmall($item['app_flag'])) {
+		if(isset($item['app_flag'])
+			&& $this('validation', $item['app_flag'])->isType('small', true)) {
 			$model->setAppFlag($item['app_flag']);
 		}
 		

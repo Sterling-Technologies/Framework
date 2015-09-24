@@ -9,9 +9,9 @@
 
 namespace Api\Model\App;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Detail
@@ -34,7 +34,8 @@ class Detail extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		if(!$this->isInteger($item['app_id'])) {
+		if(isset($item['app_id'])
+			&& !$this('validation', $item['app_id'])->isType('integer', true)) {
 			$errors['app_id'] = self::INVALID_ID;
 		}
 		
@@ -57,7 +58,7 @@ class Detail extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$search = control()->database()
+		$search = eve()->database()
 			->search('app')
 			->filterByAppId($item['app_id']);
 		

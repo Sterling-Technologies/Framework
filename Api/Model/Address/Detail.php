@@ -9,9 +9,9 @@
 
 namespace Api\Model\Address;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Detail
@@ -35,7 +35,8 @@ class Detail extends Base
 		$item = $this->prepare($item);
 		
 		//REQUIRED
-		if(!$this->isInteger($item['address_id'])) {
+		if(isset($item['address_id'])
+			&& !$this('validation', $item['address_id'])->isType('integer', true)) {
 			$errors['address_id'] = self::INVALID_ID;
 		}
 		
@@ -58,7 +59,7 @@ class Detail extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$search = control()
+		$search = eve()
 			->database()
 			->search('address')
 			->filterByAddressId($item['address_id']);

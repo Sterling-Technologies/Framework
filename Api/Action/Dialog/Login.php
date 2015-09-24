@@ -41,7 +41,7 @@ class Login extends Page
 		if(isset($_SESSION['me'])) {
 			//no need to login
 			$query = $_SERVER['QUERY_STRING'];
-			control()->redirect('/dialog/request?' + $query);
+			eve()->redirect('/dialog/request?' + $query);
 		}
 		
 		$this->data['logo'] = true;
@@ -67,7 +67,7 @@ class Login extends Page
 	protected function check() {
 		//validate
 		//get errors
-		$errors = control()
+		$errors = eve()
 			->model('session')
 			->login()
 			->errors($item);
@@ -78,7 +78,7 @@ class Login extends Page
 		}
 		
 		//login
-		$row = control()
+		$row = eve()
 			->model('session')
 			->login()
 			->process($item);
@@ -94,7 +94,7 @@ class Login extends Page
 		
 		//pass the request query
 		$query = $_SERVER['QUERY_STRING'];
-		control()->redirect('/dialog/request?' + $query);
+		eve()->redirect('/dialog/request?' + $query);
 	
 	}
 }

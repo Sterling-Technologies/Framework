@@ -28,8 +28,8 @@ class Detail extends Page
 		//get data
 		$item = $this->data['item'];
 
-		$id = control()->registry()->get('request', 'variables', 0);
-		$profileId = control()->registry()->get('source', 'profile_id');
+		$id = eve()->registry()->get('request', 'variables', 0);
+		$profileId = eve()->registry()->get('source', 'profile_id');
 		
 		$item = array('profile_id' => $id ||  $profileId);
 	
@@ -38,7 +38,7 @@ class Detail extends Page
 		}
 		
 		//validate
-		$errors = control()
+		$errors = eve()
 			->model('profile')
 			->detail()
 			->errors($item);
@@ -48,7 +48,7 @@ class Detail extends Page
 		}
 		
 		//process
-		$row = control()
+		$row = eve()
 			->model('profile')
 			->detail()
 			->process($item)

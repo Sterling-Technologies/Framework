@@ -61,16 +61,16 @@ class Create extends Page
 		$item = $this->data['item'];
 		
 		$item['auth_slug'] = $item['profile_email'];
-		$item['auth_permissions'] = implode(',', control()->config('scope'));
+		$item['auth_permissions'] = implode(',', eve()->config('scope'));
 		$item['profile_type'] = 'buyer';
 		
 		//validate
-		$errors = control()
+		$errors = eve()
 			->model('auth')
 			->create()
 			->errors($item);
 		
-		$errors = control()
+		$errors = eve()
 			->model('profile')
 			->create()
 			->errors($item, $errors);
@@ -81,7 +81,7 @@ class Create extends Page
 		}
 			
 		//process
-		$results = control()
+		$results = eve()
 			->job('auth')
 			->create(array(
 				'data' => array(
@@ -94,6 +94,6 @@ class Create extends Page
 		$_SESSION['message'] = self::SUCCESS;
 		$_SESSION['type'] = 'success';
 
-		control()->redirect('/dialog/login?' + $query);
+		eve()->redirect('/dialog/login?' + $query);
 	}
 }

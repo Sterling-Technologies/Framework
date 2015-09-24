@@ -143,7 +143,7 @@ class Validator extends Base
 					->filterBySessionStatus('ACCESS')
 					->addFilter(
 						'session_permissions LIKE ?', 
-						'%' + $meta['role'] + '%');
+						'%' + $meta['role'] . '%');
 				
 				if($secret) {
 					$search->filterBySessionSecret($secret);
@@ -180,7 +180,7 @@ class Validator extends Base
 			if(isset($meta['role'])) {
 				$search->addFilter(
 					'app_permissions LIKE ?', 
-					'%' + $meta['role'] + '%');
+					'%' . $meta['role'] . '%');
 			}
 			
 			if($secret) {

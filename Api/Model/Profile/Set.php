@@ -9,9 +9,9 @@
 
 namespace Api\Model\Profile;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Set
@@ -43,14 +43,15 @@ class Set extends Base
 		//	and if found, update it
 		//	otherwise, insert it
 		if(!is_numeric($item['profile_id'])
-		&& !$this->isEmail($item['profile_email'])) {
+		&& !$this('validation', $item['profile_email'])->isType('email', true)) {
 			$errors['profile_id'] 		= self::INVALID_REFERENCE;
 			$errors['profile_email'] 	= self::INVALID_REFERENCE;
 		}
 		
 		//if we do have a number, just update it
-		if(is_numeric($item['profile_id'])) {
-			return $this->model('profile')->update()->errors($item, $errors);
+		if(isset($item['profile_id']) 
+			&& is_numeric($item['profile_id'])) {
+			return eve()->model('profile')->update()->errors($item, $errors);
 		}
 		
 		//at this point we should have an email at least
@@ -88,7 +89,7 @@ class Set extends Base
 		
 		//at this point we should have an email at least
 		//search for it
-		$search = control()
+		$search = eve()
 			->database()
 			->search('profile')
 			->filterByProfileEmail($item['profile_email']);
