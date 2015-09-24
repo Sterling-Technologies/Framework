@@ -3,8 +3,8 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>{{title}}</title>
-
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		
         {{#each meta}}
         <meta name="{{@index}}" content="{{this}}" />
@@ -22,16 +22,8 @@
 	</head>
 
 	<body>
-    	<div class="container">
-			<header>{{> _head}}</header>
-            
-            {{#if flash.message}}
-			<div class="clear alert alert-{{flash.type}}">{{flash.message}}</div>
-			{{/if}}
-			
-			<section class="body">{{{body}}}</section>
-            
-			<header>{{> _foot}}</header>
-		</div>
+        <div class="container pad-vertical">
+            {{{body}}}
+        </div>
 	</body>
 </html>

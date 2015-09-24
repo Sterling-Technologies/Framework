@@ -8,8 +8,8 @@
  */
 namespace Api\Action;
 
-use Api\Action;
-use Api\Page;
+use Eve\Framework\Action\Json;
+use Eve\Framework\Action\Html;
 
 /**
  * The base class for any class that defines a view.
@@ -19,17 +19,21 @@ use Api\Page;
  * @vendor Openovate
  * @package Framework
  */
-class Login extends Page 
+class Login extends Html 
 {
 	const FAIL_NOT_EXISTS = 'User or Password is incorrect';
 	const FAIL_VALIDATION = 'There are some errors on the form.';
 	
 	protected $title = 'Log In';
-
+	protected $layout = '_blank';
+	
+	/**
+	 * Main method used for rendering output
+	 *
+	 * @return void
+	 */
 	public function render() 
 	{
-		$this->data['logo'] = true;
-		
 		//if it's a post
 		if(!empty($_POST)) {
 			return $this->check();
@@ -46,15 +50,16 @@ class Login extends Page
 	 */
 	protected function check() 
 	{
-		$item = $this->data['item'];
+		$item = $this->request->get('post');
 
 		//get errors
-		$errors = control()->model('session')
+		$errors = eve()
+			->model('session')
 			->login()
 			->errors($item);
 
 		if(!empty($errors)) {
-			return $this->fail(self::FAIL_VALIDATION, $errors, $item);
+			return $this->fail($response, self::FAIL_VALIDATION, $errors, $item);
 		}
 		
 		$row = control()
@@ -71,7 +76,7 @@ class Login extends Page
 		//assign a new session
 		$_SESSION['me'] = $row;
 
-		control()->redirect('/app/list');
+		eve()->redirect('/app/list');
 	}
 }
 

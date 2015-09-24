@@ -8,8 +8,8 @@
  */
 namespace Api\Action;
 
-use Api\Action;
-use Api\Page;
+use Eve\Framework\Action\Json;
+use Eve\Framework\Action\Html;
 
 /**
  * The base class for any class that defines a view.
@@ -19,19 +19,17 @@ use Api\Page;
  * @vendor Openovate
  * @package Framework
  */
-class Create extends Page 
+class Create extends Html 
 {
 	const FAIL_EXISTS = 'Email exists.';
 	const FAIL_VALIDATION = 'There are some errors on the form.';
 	const SUCCESS = 'You can now Log In!';
 
-
+	protected $layout = '_blank';
 	protected $title = 'Sign Up';
 
 	public function render() 
 	{
-		$this->data['logo'] = true;
-		
 		//if it's a post
 		if(!empty($_POST)) {
 			return $this->check();
@@ -48,12 +46,12 @@ class Create extends Page
 	 */
 	protected function check() 
 	{
-		$item = $this->data['item'];
+		$item = $this->request->get('post');
 		$item['auth_slug'] = $item['profile_email'];
 		$item['auth_permissions'] = implode(',', control()->config('scope'));
 		$item['profile_type'] = 'buyer';
 		
-		$config = control()->config('s3');
+		$config = eve()->config('s3');
 		
 		$item['file_link'] = $config['host'] + '/' 
 			+ $config['bucket'] + '/avatar/avatar-' 

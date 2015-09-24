@@ -1,6 +1,14 @@
+<div class="center clear pad">
+    <img width="400" src="/logo.png" />
+</div>
+    
+{{#if flash.message}}
+<div class="clear alert alert-{{flash.type}}">{{flash.message}}</div>
+{{/if}}
+
 <div class="panel panel-default" >
     <div class="panel-heading brand">
-        <span class="pull-right"><a href="/developer/login">Have a Login ?</a></span>
+        <span class="pull-right"><a href="/login">Have a Login ?</a></span>
         <div class="panel-title">Developer Sign Up</div>
     </div>     
 

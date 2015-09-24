@@ -8,8 +8,8 @@
  */
 namespace Api\Action;
 
-use Api\Action;
-use Api\Page;
+use Eve\Framework\Action\Json;
+use Eve\Framework\Action\Html;
 
 /**
  * The base class for any class that defines a view.
@@ -19,26 +19,10 @@ use Api\Page;
  * @vendor Openovate
  * @package Framework
  */
-class Index extends Page 
+class Index extends Html 
 {
-	
 	public function render() {
 		//throw new \Exception('ummm, okay');
-		
-		$this->_body = array(
-			array(
-				'profile_id' => 1,
-				'profile_name' => 'Ana',
-				'profile_age' => 18,
-				'profile_sex' => 'yes',
-			),
-			array(
-				'profile_id' => 1,
-				'profile_name' => 'Jane',
-				'profile_age' => 16,
-				'profile_sex' => 'no',
-			));
-		
-		return $this->success();
+		$this->success('yay');
 	}
 }

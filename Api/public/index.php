@@ -4,9 +4,9 @@
  * (c) 2011-2012 Openovate Labs
  */
 
-require_once __DIR__ . '/../Control.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-control()
+Eve\Framework\Index::i(dirname(__DIR__), 'Api')
 //Add any middleware here
 //and this is the default
 ->defaultBootstrap();

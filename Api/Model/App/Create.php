@@ -56,7 +56,7 @@ class Create extends Base
 		
 		// app_flag
 		if(isset($item['app_flag']) 
-		&& !$this->isSmall($item['app_flag'])) {
+		&& !$this('validate', $item['app_flag'])->isType('small', true)) {
 			$errors['app_flag'] = self::INVALID_SMALL;
 		}
 		
