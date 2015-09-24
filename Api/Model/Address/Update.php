@@ -9,9 +9,9 @@
 
 namespace Api\Model\Address;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Update
@@ -44,7 +44,8 @@ class Update extends Base
 		//REQUIRED
 		
 		// address_id			Required
-		if(!$this->isInteger($item['address_id'])) {
+		if(isset($item['address_id'])
+			&& !$this('validation', $item['address_id'])->isType('integer', true)) {
 			$errors['address_id'] = self::INVALID_ID;
 		}
 		
@@ -76,13 +77,13 @@ class Update extends Base
 		
 		// address_flag
 		if(isset($item['address_flag']) 
-		&& !$this->isSmall($item['address_flag'])) {
+		&& !$this('validation', $item['address_flag'])->isType('small', true)) {
 			$errors['address_flag'] = self::INVALID_SMALL;
 		}
 		
 		// address_public
 		if(isset($item['address_public']) 
-		&& !$this->isBool($item['address_public'])) {
+		&& !$this('validation', $item['address_public'])->isType('bool', true)) {
 			$errors['address_public'] = self::INVALID_BOOL;
 		}
 		
@@ -121,7 +122,7 @@ class Update extends Base
 		$updated = date('Y-m-d H:i:s');
 		
 		//SET WHAT WE KNOW
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			// address_id
@@ -154,7 +155,8 @@ class Update extends Base
 		//OPTIONAL
 		
 		// address_flag
-		if($this->isSmall($item['address_flag'])) {
+		if(isset($item['address_flag'])
+			&& $this('validation', $item['address_flag'])->isType('small', true)) {
 			$model->setAddressFlag($item['address_flag']);
 		}
 		
@@ -164,7 +166,8 @@ class Update extends Base
 		}
 		
 		// address_public
-		if($this->isInteger($item['address_public'])) {
+		if(isset($item['address_public']) 
+			&& $this('validation', $item['address_public'])->isType('bool', true)) {
 			$model->setAddressPublic($item['address_public']);
 		}
 		
@@ -184,12 +187,14 @@ class Update extends Base
 		}
 		
 		// address_latitude
-		if(is_numeric($item['address_latitude'])) {
+		if(isset($item['address_latitude'])
+			&& is_numeric($item['address_latitude'])) {
 			$model->setAddressLatitude($item['address_latitude']);
 		}
 		
 		// address_longitude
-		if(is_numeric($item['address_longitude'])) {
+		if(isset($item['address_longitude'])
+			&& is_numeric($item['address_longitude'])) {
 			$model->setAddressLongitude($item['address_longitude']);
 		}
 		
@@ -202,7 +207,7 @@ class Update extends Base
 		$model->save('address');
 		
 		//i need to requery to get the rest of the data
-		$search = control()
+		$search = eve()
 			->database()
 			->search('address')
 			->filterByAddressId($item['address_id']);

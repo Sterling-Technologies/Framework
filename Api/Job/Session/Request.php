@@ -36,7 +36,7 @@ class Request extends Base
 		$item = $this->data['item'];
 		$results = array('image' => array());
 		
-		$results['session'] = control()
+		$results['session'] = eve()
 			->model('session')
 			->request()
 			->process($item);

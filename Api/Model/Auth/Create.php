@@ -9,9 +9,9 @@
 
 namespace Api\Model\Auth;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Create
@@ -69,7 +69,7 @@ class Create extends Base
 		
 		// auth_flag
 		if(isset($item['auth_flag']) 
-		&& !$this->isSmall($item['auth_flag'])) {
+		&& !$this('validation', $item['auth_flag'])->isType('small', true)) {
 			$errors['auth_flag'] = self::INVALID_SMALL;
 		}
 		
@@ -93,12 +93,12 @@ class Create extends Base
 		$item = $this->prepare($item);
 		
 		$password = md5($item['auth_password']);
-		$token = control()->help()->uid();
-		$secret = control()->help()->uid();
+		$token = md5(uniqid());
+		$secret = md5(uniqid());
 		$created = date('Y-m-d H:i:s');
 		$updated = date('Y-m-d H:i:s');
 		
-		$model = control()->database()->model()
+		$model = eve()->database()->model()
 			//auth_slug			Required
 			->setAuthSlug($item['auth_slug'])
 			
@@ -126,7 +126,8 @@ class Create extends Base
 		}
 		
 		// auth_flag
-		if($this->isSmall($item['auth_flag'])) {
+		if(isset($item['auth_flag']) 
+			&& $this('validation', $item['auth_flag'])->isType('small', true)) {
 			$model->setAuthFlag($item['auth_flag']);
 		}
 		

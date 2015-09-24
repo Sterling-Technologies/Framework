@@ -9,9 +9,9 @@
 
 namespace Api\Model\Profile;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Create
@@ -54,19 +54,19 @@ class Create extends Base
 		
 		//profile_email	
 		if(isset($item['profile_email'])
-		&& !$this->isEmail($item['profile_email'])) {
+		&& !$this('validation', $item['profile_email'])->isType('email', true)) {
 			$errors['profile_email'] = self::INVALID_EMAIL;
 		}
 		
 		//profile_birth
 		if(isset($item['profile_birth'])
-		&& !$this->isDate($item['profile_birth'])) {
+		&& !$this('validation', $item['profile_birth'])->isType('date', true)) {
 			$errors['profile_birth'] = self::INVALID_DATE;
 		}
 		
 		// profile_flag
 		if(isset($item['profile_flag']) 
-		&& !$this->isSmall($item['profile_flag'])) {
+		&& !$this('validation', $item['profile_flag'])->isType('small', true)) {
 			$errors['profile_flag'] = self::INVALID_SMALL;
 		}
 		
@@ -94,7 +94,7 @@ class Create extends Base
 		$updated = date('Y-m-d H:i:s');
 		
 		//SET WHAT WE KNOW
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			
@@ -173,7 +173,8 @@ class Create extends Base
 		}
 		
 		// profile_flag
-		if($this->isSmall($item['profile_flag'])) {
+		if(isset($item['profile_flag'])
+			&& $this('validation', $item['profile_flag'])->isType('small', true)) {
 			$model->setProfileFlag($item['profile_flag']);
 		}
 		

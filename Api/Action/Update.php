@@ -53,12 +53,12 @@ class Update extends Page
 		$item['profile_id'] = $_SESSION['me']['profile_id'];
 
 		//validate
-		$errors = control()
+		$errors = eve()
 			->model('auth')
 			->update()
 			->errors($item);
 			
-		$errors = control()
+		$errors = eve()
 			->model('profile')
 			->update()
 			->errors($item, $errors);
@@ -68,7 +68,7 @@ class Update extends Page
 			return $this->fail(self::FAIL_VALIDATION, $errors, $item);
 		}	
 
-		$exists = control()
+		$exists = eve()
 			->model('auth')
 			->exists($item['profile_email'];
 
@@ -77,7 +77,7 @@ class Update extends Page
 			return $this->fail(self::FAIL_NOT_ME);
 		}
 		
-		$results = control()
+		$results = eve()
 			->job('auth')
 			->update(array('data' => array(
 					'item' => $item)));

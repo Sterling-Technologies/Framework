@@ -9,9 +9,9 @@
 
 namespace Api\Model\Profile;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Search
@@ -76,12 +76,12 @@ class Search extends Base
         	$keyword = $item['keyword'];
         }
 			
-		$search = control()->database()
+		$search = eve()->database()
 			->search('profile')
 			->setStart($start)
 			->setRange($range);
 			
-		if($item['public']) {
+		if(isset($item['public']) && $item['public']) {
 			$search->setColumns(
 				'profile_id', 
 				'profile_name',
@@ -95,23 +95,23 @@ class Search extends Base
 		
 		//add filters
 		foreach($filter as $column => $value) {
-            if(preg_match('^[a-zA-Z0-9-_]+$', $column)) {
-                $search->addFilter($column + ' = %s', $value);
+            if(preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
+                $search->addFilter($column.' = %s', $value);
             }
 		}
 		
 		//keyword?
 		if($keyword) {
-			$search->addFilter('(' + implode(' OR ', array(
+			$search->addFilter('(' . implode(' OR ', array(
 				'profile_name LIKE %s',
 				'profile_email LIKE %s',
 				'profile_company LIKE %s',
 				'profile_phone LIKE %s'
-			)) + ')', 
-				'%'+keyword+'%', 
-				'%'+keyword+'%', 
-				'%'+keyword+'%', 
-				'%'+keyword+'%');
+			)) . ')', 
+				'%'.$keyword.'%', 
+				'%'.$keyword.'%', 
+				'%'.$keyword.'%', 
+				'%'.$keyword.'%');
 		}
 		
 		//add sorting

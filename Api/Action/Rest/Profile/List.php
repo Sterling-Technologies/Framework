@@ -30,7 +30,7 @@ class Index extends Page
 		$item['public'] = true;
 		
 		//validate
-		$errors = control()
+		$errors = eve()
 			->model('profile')
 			->list()
 			->errors($item);
@@ -40,7 +40,7 @@ class Index extends Page
 		}
 			
 		//get total
-		$search = control()
+		$search = eve()
 			->model('profile')
 			->list()
 			->process($item);

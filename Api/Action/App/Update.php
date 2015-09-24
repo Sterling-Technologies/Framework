@@ -43,7 +43,7 @@ class Update extends Page
 			'profile_id' => $_SESSION['me']['profile_id']);
 
 		//check permissions
-		$yes = control()
+		$yes = eve()
 			->model('app')
 			->permissions(
 				$item['app_id'], 
@@ -54,7 +54,7 @@ class Update extends Page
 			return $this->fail(self::FAIL_PERMISSIONS, '/app/list');
 		}
 		
-		$row = control()
+		$row = eve()
 			->model('app')
 			->detail()
 			->process($item)
@@ -92,7 +92,7 @@ class Update extends Page
 		
 
 		//validate
-		$errors = control()
+		$errors = eve()
 			->model('app')
 			->update()
 			->errors($item);
@@ -102,7 +102,7 @@ class Update extends Page
 			return $this->fail(self::FAIL_VALIDATION, $errors, $item);
 		}
 			
-		control()->job('app')
+		eve()->job('app')
 			->update(array(
 				'data' => array(
 					'item' => $item))
@@ -120,7 +120,7 @@ class Update extends Page
 	protected function getRoles(array $permissions = array())
 		$permissions = $permissions || [];
 
-        $roles = control()->config('roles');
+        $roles = eve()->config('roles');
 
         //try not to use the global roles
         $label = $role = $max = 0;

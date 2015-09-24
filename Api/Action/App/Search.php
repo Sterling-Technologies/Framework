@@ -26,7 +26,7 @@ class Search extends Page
 	public function render() 
 	{
 		//get rows
-		$rows = control()->model('app')
+		$rows = eve()->model('app')
 			->list()
 			->process()
 			->innerJoinOn(

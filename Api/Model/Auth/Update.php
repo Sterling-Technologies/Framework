@@ -9,9 +9,9 @@
 
 namespace Api\Model\Auth;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Update
@@ -45,7 +45,8 @@ class Update extends Base
 		//REQUIRED
 		
 		// auth_id			Required
-		if(!$this->isInteger($item['auth_id'])) {
+		if(isset($item['auth_id'])
+			&& !$this('validation', $item['auth_id'])->isType('integer', true)) {
 			$errors['auth_id'] = self::INVALID_ID;
 		}
 		
@@ -72,7 +73,7 @@ class Update extends Base
 		
 		// auth_flag
 		if(isset($item['auth_flag']) 
-		&& !$this->isSmall($item['auth_flag'])) {
+		&& !$this('validation', $item['auth_flag'])->isType('small', true)) {
 			$errors['auth_flag'] = self::INVALID_SMALL;
 		}
 		
@@ -97,7 +98,7 @@ class Update extends Base
 		
 		$updated = date('Y-m-d H:i:s');
 		
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			
@@ -128,7 +129,8 @@ class Update extends Base
 		}
 		
 		// auth_flag
-		if($this->isSmall($item['auth_flag'])) {
+		if(isset($item['auth_flag'])
+			&& $this('validation', $item['auth_flag'])->isType('small', true)) {
 			$model->setAuthFlag($item['auth_flag']);
 		}
 		

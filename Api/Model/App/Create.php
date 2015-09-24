@@ -9,9 +9,9 @@
 
 namespace Api\Model\App;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Create
@@ -56,7 +56,7 @@ class Create extends Base
 		
 		// app_flag
 		if(isset($item['app_flag']) 
-		&& !$this('validate', $item['app_flag'])->isType('small', true)) {
+		&& !$this('validation', $item['app_flag'])->isType('small', true)) {
 			$errors['app_flag'] = self::INVALID_SMALL;
 		}
 		
@@ -83,11 +83,11 @@ class Create extends Base
 		$created = date('Y-m-d H:i:s');
 		$updated = date('Y-m-d H:i:s');
 		
-		$token = control()->help()->uid();
-		$secret = control()->help()->uid(); 
+		$token = md5(uniqid());
+		$secret = md5(uniqid()); 
 		
 		//SET WHAT WE KNOW
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 	
@@ -125,7 +125,8 @@ class Create extends Base
 		}
 		
 		// app_flag
-		if($this->isSmall($item['app_flag'])) {
+		if(isset($item['app_flag'])
+			&& $this('validation', $item['app_flag'])->isType('small', true)) {
 			$model->setAppFlag($item['app_flag']);
 		}
 		

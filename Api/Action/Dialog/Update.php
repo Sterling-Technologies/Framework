@@ -82,12 +82,12 @@ class Create extends Page
 		$item['profile_id'] = $_SESSION['me']['profile_id'];
 		
 		//validate 
-		$errors = control()
+		$errors = eve()
 			->model('auth')
 			->update()
 			->errors($item);
 		
-		$errors = control()
+		$errors = eve()
 			->model('profile')
 			->update()
 			->errors($item, $errors);
@@ -98,7 +98,7 @@ class Create extends Page
 		}
 		
 		//validate exists
-		$exists = control()
+		$exists = eve()
 			->model('auth')
 			->exists($item['profile_email']);
 		
@@ -108,7 +108,7 @@ class Create extends Page
 			return $this->fail(self::FAIL_NOT_ME);	
 		}
 		
-		$results = control()
+		$results = eve()
 			->job('auth')
 			->update(array('data' => array(
 				'item' => $item)));
@@ -146,7 +146,7 @@ class Create extends Page
 				return $url;
 			}
 			
-			control()->redirect($url);
+			eve()->redirect($url);
 			return;
 		}
 		
@@ -155,6 +155,6 @@ class Create extends Page
 			$separator = '&';
 		}
 		
-		control()->redirect($url + $separator + $query);
+		eve()->redirect($url + $separator + $query);
 	}
 }

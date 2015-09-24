@@ -9,9 +9,9 @@
 
 namespace Api\Model\Auth;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Remove
@@ -37,7 +37,8 @@ class Remove extends Base
 		//REQUIRED
 		
 		// auth_id			Required
-		if(!$this->isInteger($item['auth_id'])) {
+		if(isset($item['auth_id'])
+			&& !$this('validation', $item['auth_id'])->isType('integer', true)) {
 			$errors['auth_id'] = self::INVALID_ID;
 		}
 		
@@ -60,7 +61,7 @@ class Remove extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			->setAuthId($item['auth_id'])

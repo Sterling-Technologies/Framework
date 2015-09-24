@@ -28,7 +28,7 @@ class Update extends Page
 	{
 		//get the data
 		$item = $this->data['item'];
-		$profileId = control()->registry()->get('source', 'profile_id');
+		$profileId = eve()->registry()->get('source', 'profile_id');
 
 		//they cannot change their profile type
 		if($item['profile_type']) {
@@ -36,7 +36,7 @@ class Update extends Page
 		}
 		
 		//validate
-		$errors = control()
+		$errors = eve()
 			->model('profile')
 			->update()
 			->errors($item);

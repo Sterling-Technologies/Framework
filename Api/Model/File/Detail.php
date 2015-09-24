@@ -9,9 +9,9 @@
 
 namespace Api\Model\File;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Detail
@@ -35,7 +35,8 @@ class Detail extends Base
 		$item = $this->prepare($item);
 		
 		// file_id			Required
-		if(!$this->isInteger($item['file_id'])) {
+		if(isset($item['file_id'])
+			&& !$this('validation', $item['file_id'])->isType('integer', true)) {
 			$errors['file_id'] = self::INVALID_ID;
 		}
 		
@@ -58,7 +59,7 @@ class Detail extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$search = control()
+		$search = eve()
 			->database()
 			->search('file')
 			->filterByFileId($item['file_id']);

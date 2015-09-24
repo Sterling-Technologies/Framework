@@ -37,7 +37,7 @@ class Update extends Base
 		$results = array('image' => array());
 		
 		//update profile
-		$results['profile'] = control()
+		$results['profile'] = eve()
 			->model('profile')
 			->update()
 			->process($item)
@@ -49,7 +49,7 @@ class Update extends Base
 		}
 	
 		//first unlink all files
-		control()
+		eve()
 			->model('profile')
 			->unlinkAllFiles(
 				$item['profile_id'], 
@@ -67,7 +67,7 @@ class Update extends Base
 			//1. Validate
 			$file['imageOnly'] = true;
 			
-			$errors = control()
+			$errors = eve()
 				->model('file')
 				->create()
 				->errors($file);
@@ -77,13 +77,13 @@ class Update extends Base
 			}
 			
 			// 2. Process
-			$results['images'][] = $model = control()
+			$results['images'][] = $model = eve()
 				->model('file')
 				->create()
 				->process($file);
 				
 			//link
-			control()
+			eve()
 				->model('profile')
 				->linkFile(
 					$item['profile_id'], 

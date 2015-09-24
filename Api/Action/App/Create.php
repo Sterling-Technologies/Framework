@@ -61,7 +61,7 @@ class Create extends Page
 		//validate
 
 		//get errors
-		$errors = control()
+		$errors = eve()
 			->model('app')
 			->create()
 			->errors($item);
@@ -72,7 +72,7 @@ class Create extends Page
 		}
 
 		//process
-		control()
+		eve()
 			->job('app')
 			->create(array(
 				'data' => array(
@@ -92,7 +92,7 @@ class Create extends Page
      */
 	protected function getRoles(array $permissions = array())
 	{
-        $roles = control()->config('roles');
+        $roles = eve()->config('roles');
 
         //try not to use the global roles
         $label = $role = $max = 0;

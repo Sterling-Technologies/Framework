@@ -32,7 +32,7 @@ class Logout extends Page
 		
 		$item = array('auth_id' => $_SESSION['me']['auth_id']);
 
-		$errors = control()
+		$errors = eve()
 			->model('session')
 			->logout()
 			->errors($item);
@@ -41,7 +41,7 @@ class Logout extends Page
 			return $this->fail($errors['auth_id'], '/app/list');
 		}
 		
-		control()->model('session')
+		eve()->model('session')
 			->logout()
 			->process($item);
 		

@@ -9,9 +9,9 @@
 
 namespace Api\Model\App;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Search
@@ -76,7 +76,7 @@ class Search extends Base
         	$keyword = $item['keyword'];
         }
 			
-		$search = control()->database()
+		$search = eve()->database()
 			->search('app')
 			->setStart($start)
 			->setRange($range);
@@ -87,23 +87,23 @@ class Search extends Base
 		
 		//add filters
 		foreach($filter as $column => $value) {
-            if(preg_match('^[a-zA-Z0-9-_]+$', $column)) {
-                $search->addFilter($column + ' = %s', $value);
+            if(preg_match('/^[a-zA-Z0-9-_]+$/', $column)) {
+                $search->addFilter($column . ' = %s', $value);
             }
 		}
 		
 		//keyword?
 		if($keyword) {
-			$search->addFilter('(' + implode(' OR ', array(
+			$search->addFilter('(' . implode(' OR ', array(
 				'app_name LIKE %s',
 				'app_domain LIKE %s',
 				'app_website LIKE %s',
 				'app_type LIKE %s'
-			)) + ')', 
-				'%'+keyword+'%', 
-				'%'+keyword+'%', 
-				'%'+keyword+'%', 
-				'%'+keyword+'%');
+			)) . ')', 
+				'%'.$keyword.'%', 
+				'%'.$keyword.'%', 
+				'%'.$keyword.'%', 
+				'%'.$keyword.'%');
 		}
 		
 		//add sorting

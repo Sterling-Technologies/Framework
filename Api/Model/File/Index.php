@@ -9,9 +9,9 @@
 
 namespace Api\Model\File;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Factory
@@ -23,7 +23,7 @@ class Index extends Base
 	/**
 	 * Factory for create
 	 *
-	 * @return Api\Model\File\Create
+	 * @return Eve\Framework\Model\File\Create
 	 */
 	public function create()
 	{
@@ -33,7 +33,7 @@ class Index extends Base
 	/**
 	 * Factory for detail
 	 *
-	 * @return Api\Model\File\Detail
+	 * @return Eve\Framework\Model\File\Detail
 	 */
 	public function detail()
 	{
@@ -43,7 +43,7 @@ class Index extends Base
 	/**
 	 * Factory for search
 	 *
-	 * @return Api\Model\File\Search
+	 * @return Eve\Framework\Model\File\Search
 	 */
 	public function search()
 	{
@@ -53,7 +53,7 @@ class Index extends Base
 	/**
 	 * Factory for remove
 	 *
-	 * @return Api\Model\File\Remove
+	 * @return Eve\Framework\Model\File\Remove
 	 */
 	public function remove()
 	{

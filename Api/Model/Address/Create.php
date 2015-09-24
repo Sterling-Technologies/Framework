@@ -9,9 +9,9 @@
 
 namespace Api\Model\Address;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Create
@@ -67,13 +67,13 @@ class Create extends Base
 		
 		// address_flag
 		if(isset($item['address_flag']) 
-		&& !$this->isSmall($item['address_flag'])) {
+		&& !$this('validation', $item['address_flag'])->isType('small', true)) {
 			$errors['address_flag'] = self::INVALID_SMALL;
 		}
 		
 		// address_public
 		if(isset($item['address_public']) 
-		&& !$this->isBool($item['address_public'])) {
+		&& !$this('validation', $item['address_public'])->isType('bool', true)) {
 			$errors['address_public'] = self::INVALID_BOOL;
 		}
 		
@@ -120,7 +120,7 @@ class Create extends Base
 		));
 		
 		//SET WHAT WE KNOW
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			// address_label
@@ -145,7 +145,8 @@ class Create extends Base
 			->setAddressUpdated($updated);
 		
 		// address_flag
-		if($this->isSmall($item['address_flag'])) {
+		if(isset($item['address_flag'])
+			&& $this('validation', $item['address_flag'])->isType('small', true)) {
 			$model->setAddressFlag($item['address_flag']);
 		}
 		
@@ -155,7 +156,8 @@ class Create extends Base
 		}
 		
 		// address_public
-		if($this->isBool($item['address_public'])) {
+		if(isset($item['address_public'])
+			&& $this('validation', $item['address_public'])->isType('bool', true)) {
 			$model->setAddressPublic($item['address_public']);
 		}
 		
@@ -175,12 +177,14 @@ class Create extends Base
 		}
 		
 		// address_latitude
-		if(is_numeric($item['address_latitude'])) {
+		if(isset($item['address_latitude'])
+			&& is_numeric($item['address_latitude'])) {
 			$model->setAddressLatitude($item['address_latitude']);
 		}
 		
 		// address_longitude
-		if(is_numeric($item['address_longitude'])) {
+		if(isset($item['address_longitude'])
+			&& is_numeric($item['address_longitude'])) {
 			$model->setAddressLongitude($item['address_longitude']);
 		}
 		

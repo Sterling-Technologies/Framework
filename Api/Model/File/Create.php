@@ -9,9 +9,9 @@
 
 namespace Api\Model\File;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Create
@@ -52,7 +52,9 @@ class Create extends Base
 		&& empty($item['file_link'])) {
 			$errors['file_data'] = self::INVALID_EMPTY;
 			$errors['file_link'] = self::INVALID_EMPTY;
-		} else if($item['imageOnly'] && !empty($item['file_data'])) {
+		} else if(isset($item['imageOnly']) 
+			&& $item['imageOnly'] 
+			&& !empty($item['file_data'])) {
 			$data = decodeURIComponent($item['file_data']);
 		
 			//data:mime;base64,data
@@ -64,12 +66,14 @@ class Create extends Base
 			if(strpos($mime, 'image/') !== 0) {
 				$errors['file_data'] = self::IMAGE_ONLY;
 			}
-		} else if($item['imageOnly'] && !empty($item['file_link'])) {
+		} else if(isset($item['imageOnly']) 
+			&& $item['imageOnly'] 
+			&& !empty($item['file_link'])) {
 			$ext = array_pop(explode('.', $item['file_link']));
 		
 			$mime = $this->types[$ext] || '';
 			
-			if(mime.indexOf('image/') !== 0) {
+			if($mime.indexOf('image/') !== 0) {
 				$errors['file_link'] = self::IMAGE_ONLY;
 			}
 		}
@@ -78,7 +82,7 @@ class Create extends Base
 		
 		// file_flag
 		if(isset($item['file_flag']) 
-		&& !$this->isSmall($item['file_flag'])) {
+		&& !$this('validation', $item['file_flag'])->isType('small', true)) {
 			$errors['file_flag'] = self::INVALID_SMALL;
 		}
 		
@@ -101,10 +105,10 @@ class Create extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$config = control()->config('s3');
+		$config = eve()->settings('s3');
 		
 		
-		if($item['file_data']) {
+		if(isset($item['file_data']) && $item['file_data']) {
 			//upload
 			$meta = $this->upload($config, $item['file_data']);
 			
@@ -121,7 +125,8 @@ class Create extends Base
 		}
 		
 		//parse the file_link
-		$ext = array_pop(explode('.', $item['file_link']));
+		$ext = explode('.', $item['file_link']);
+		$ext = array_pop($ext);
 		
 		if(!$ext) {
 			$ext = self::UNKNOWN_EXTENSION;
@@ -143,7 +148,7 @@ class Create extends Base
 		$updated = date('Y-m-d H:i:s');
 		
 		//SET WHAT WE KNOW
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			
@@ -162,7 +167,8 @@ class Create extends Base
 		}
 		
 		// file_flag
-		if($this->isSmall($item['file_flag'])) {
+		if(isset($item['file_flag']) 
+			&& $this('validation', $item['file_flag'])->isType('small', true)) {
 			$model->setFileFlag($item['file_flag']);
 		}
 		
@@ -188,7 +194,7 @@ class Create extends Base
 	public function upload($config, $data) 
 	{
 		//save the file
-		$name	= control()->help()->uid();
+		$name	= md5(uniqid());
 		$path 	= $this->controller.path('upload') . '/' . name;
 		
 		$data = urldecode($data);
@@ -210,10 +216,10 @@ class Create extends Base
 		$data = implode(';base64,', $chunks);
 		
 		//TODO
-		$buffer	= new Buffer(data, 'base64');
+		$buffer	= new Buffer($data, 'base64');
 		
 		//the new way
-		$AWS->config->update(array( 
+		$AWS->settings->update(array( 
 			'accessKeyId' => $config['token'], 
 			'secretAccessKey' => $config['secret'] ));
 		

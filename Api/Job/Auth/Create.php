@@ -9,9 +9,9 @@
 
 namespace Api\Job\Auth;
 
-use Api\Job\Base;
-use Api\Job\Argument;
-use Api\Job\Exception;
+use Eve\Framework\Job\Base;
+use Eve\Framework\Job\Argument;
+use Eve\Framework\Job\Exception;
 
 /**
  * Job Create
@@ -37,7 +37,7 @@ class Create extends Base
 		$results = array();
 		
 		//see if the email exists first
-		$exists = control()
+		$exists = eve()
 			->model('auth')
 			->exists($item['profile_email']);
 		
@@ -48,7 +48,7 @@ class Create extends Base
 		}
 		
 		//find the profile by email
-		$row = control()
+		$row = eve()
 			->model('profile')
 			->search()
 			->process() 
@@ -58,7 +58,7 @@ class Create extends Base
 		//if no profile
 		if(empty($row)) {
 			//create one
-			$row = control()
+			$row = eve()
 				->model('profile')
 				->create()
 				->process($item)
@@ -71,7 +71,7 @@ class Create extends Base
 		//if there's a file
 		if(isset($item['file_link'])) {
 			//store the file
-			$results['file'] = control()
+			$results['file'] = eve()
 				->model('file')
 				->create()
 				->process(array( 
@@ -80,21 +80,21 @@ class Create extends Base
 				->get();
 			
 			//link the file
-			control()
-				->model('file')
+			eve()
+				->model('profile')
 				->linkFile(
 					$results['profile']['profile_id'], 
 					$results['file']['file_id']);
 		}
 		
 		//create the auth
-		$results['auth'] = control()
+		$results['auth'] = eve()
 			->model('auth')
 			->create()
 			->process($item);
 		
 		//link profile
-		control()
+		eve()
 			->model('auth')
 			->linkProfile(
 				$results['auth']['auth_id'],

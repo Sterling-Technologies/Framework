@@ -9,9 +9,9 @@
 
 namespace Api\Model\Auth;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Factory
@@ -23,7 +23,7 @@ class Index extends Base
 	/**
 	 * Factory for create
 	 *
-	 * @return Api\Model\Auth\Create
+	 * @return this
 	 */
 	public function create()
 	{
@@ -41,7 +41,7 @@ class Index extends Base
 		//argument test
 		Argument::i()->test(1, 'string');
 			
-		$total = control()
+		$total = eve()
 			->database()
 			->search('auth')
 			->filterByAuthSlug($slug)
@@ -62,7 +62,7 @@ class Index extends Base
 		//argument test
 		Argument::i()->test(1, 'int')->test(2, 'int');
 		
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			->setAuthProfileProfile($profileId)
@@ -77,7 +77,7 @@ class Index extends Base
 	/**
 	 * Factory for remove
 	 *
-	 * @return Api\Model\Auth\Remove
+	 * @return Eve\Framework\Model\Auth\Remove
 	 */
 	public function remove()
 	{
@@ -96,7 +96,7 @@ class Index extends Base
 		//argument test
 		Argument::i()->test(1, 'int')->test(2, 'int');
 			
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			->setAuthProfileProfile($profileId)
@@ -111,7 +111,7 @@ class Index extends Base
 	/**
 	 * Factory for update
 	 *
-	 * @return Api\Model\Auth\Update
+	 * @return Eve\Framework\Model\Auth\Update
 	 */
 	public function update()
 	{

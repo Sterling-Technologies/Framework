@@ -9,9 +9,9 @@
 
 namespace Api\Model\Address;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Remove
@@ -34,7 +34,8 @@ class Remove extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		if(!$this->isInteger($item['address_id'])) {
+		if(isset($item['address_id'])
+			&&!$this('validation', $item['address_id'])->isType('integer', true)) {
 			$errors['address_id'] = self::INVALID_ID;
 		}
 		
@@ -57,7 +58,7 @@ class Remove extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			->setAddressId($item['address_id'])

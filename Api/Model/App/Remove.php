@@ -9,9 +9,9 @@
 
 namespace Api\Model\App;
 
-use Api\Model\Base;
-use Api\Model\Argument;
-use Api\Model\Exception;
+use Eve\Framework\Model\Base;
+use Eve\Framework\Model\Argument;
+use Eve\Framework\Model\Exception;
 
 /**
  * Model Remove
@@ -31,7 +31,8 @@ class Remove extends Base
 	 */
 	public function errors(array $item = array(), array $errors = array()) 
     {
-		if(!$this->isInteger($item['app_id'])) {
+		if(isset($item['app_id'])
+			&& !$this('validation', $item['app_id'])->isType('integer', true)) {
 			$errors['app_id'] = self::INVALID_ID;
 		}
 		
@@ -54,7 +55,7 @@ class Remove extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$model = control()
+		$model = eve()
 			->database()
 			->model()
 			->setAppId($item['app_id'])
