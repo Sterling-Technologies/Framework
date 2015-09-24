@@ -6,29 +6,27 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\Address;
 
-class Remove extends PHPUnit_Framework_TestCase
+class ApiModelAddressRemoveTest extends PHPUnit_Framework_TestCase
 {
     public function testRemovePublicAddress() 
 	{	
-		$publicAddress = control()->registry()->get('test', 'public_address');
+		$publicAddress = eve()->registry()->get('test', 'public_address');
 
-        $row = control()->model('address')->remove()->process(array( 
+        $row = eve()->model('address')->remove()->process(array( 
 			'address_id' => $publicAddress));
-
         // TODO
-        $this->assertEquals();
+        $this->assertEquals(0, $row['address_active']);
     }
 
-    public function testRemovePrivvateAddress() 
+    public function testRemovePrivateAddress() 
 	{	
-		$privateAddress = control()->registry()->get('test', 'private_address');
+		$privateAddress = eve()->registry()->get('test', 'private_address');
 
-        $row = control()->model('address')->remove()->process(array( 
+        $row = eve()->model('address')->remove()->process(array( 
 			'address_id' => $privateAddress));
 
         //TODO
-        $this->assertEquals();
+        $this->assertEquals(0, $row['address_active']);
     }
 }

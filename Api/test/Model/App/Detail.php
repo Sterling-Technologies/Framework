@@ -6,15 +6,14 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\App;
 
-class Detail extends PHPUnit_Framework_TestCase
+class ApiModelAppDetailTest extends PHPUnit_Framework_TestCase
 {
     public function testGetApp() 
 	{	
-		$app = control()->registry()->get('test', 'app');
+		$app = eve()->registry()->get('test', 'app');
 
-        $row =control()
+        $row =eve()
         	->model('app')
         	->detail()
         	->process(array('app_id' => $app['app_id']))

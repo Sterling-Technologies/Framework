@@ -53,11 +53,11 @@ class Request extends Base
 	 */
 	public function process(array $item = array()) 
 	{
+
 		//prevent uncatchable error
 		if(count($this->errors($item))) {
 			throw new Exception(self::INVALID_PARAMETERS);
 		}
-		
 		//prepare
 		$item = $this->prepare($item);
 		
@@ -95,11 +95,12 @@ class Request extends Base
 			->filterBySessionStatus('PENDING');
 		
 		$collection = $search->getCollection();
-		
-		$collection
-			->remove('session')
-			->remove('session_auth')
-			->remove('session_app');
+
+		// Both Physical and Virtual method Eden\Sql\Collection->remove() does not exist.
+		// $collection
+		// 	->remove('session')
+		// 	->remove('session_auth')
+		// 	->remove('session_app');
 		
 		$model
 			->save('session')

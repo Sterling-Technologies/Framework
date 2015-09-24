@@ -6,21 +6,19 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\App;
 
-class Remove extends PHPUnit_Framework_TestCase
+class ApiModelAppRemoveTest extends PHPUnit_Framework_TestCase
 {
     public function testRemoveApp() 
 	{
-		$app = control()->registry()->get('test', 'app');
+		$app = eve()->registry()->get('test', 'app');
 
-        $row = control()
+        $row = eve()
         	->model('app')
         	->remove()
         	->process(array( 
 				'app_id' => $app['app_id'] ));
 
-        // TODO
-		// $this->assertEquals(null, error);
+		$this->assertEquals(0, $row['app_active']);
     }
 }

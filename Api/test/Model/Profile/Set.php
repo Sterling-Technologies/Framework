@@ -6,49 +6,48 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\Profile;
 
-class Set extends PHPUnit_Framework_TestCase
+class ApiModelProfileSetTest extends PHPUnit_Framework_TestCase
 {
     public function testValidateProfileFields() 
 	{
-    	$errors = control()->model('profile')->create()->errors();
+    	$errors = eve()->model('profile')->create()->errors();
 		
-		$this->assertEquals('You need to provide either an email or id.', $errors['profile_id']);
-		$this->assertEquals('You need to provide either an email or id.', $errors['profile_email']);
+		$this->assertEquals('Cannot be empty!', $errors['profile_name']);
     }
 	
     public function testCreateProfile() 
 	{
-		$model = control()
+		$model = eve()
         	->model('profile')
         	->create()
         	->process(array(
 				'profile_name' => 'Automated Test',
 				'profile_email' => 'test@test.com'));
 
-		$this->assertTrue(is_int($model['profile_id']));
-		control()->registry()->set('test', 'set', $model->get());
+		$this->assertTrue(is_numeric($model['profile_id']));
+		eve()->registry()->set('test', 'set', $model->get());
     }
 
     public function testUpdateProfile() 
 	{
-		$set = control()->registry()->get('test', 'set');
+		$set = eve()->registry()->get('test', 'set');
 
-        $model = control()
+        $model = eve()
         	->model('profile')
         	->update()
         	->process(array(
-				'profile_name' => 'test@test.com'));
+				'profile_id' => $set['profile_id'],
+				'profile_email' => 'test@test.com'));
 
-		$this->assertEquals($set['profile-id'], $model['profile_id']);
+		$this->assertEquals($set['profile_id'], $model['profile_id']);
     }
 
     public function testChangeEmail() 
 	{
-		$set = control()->registry()->get('test', 'set');
-
-		$model = control()
+		$set = eve()->registry()->get('test', 'set');
+		
+		$model = eve()
 			->model('profile')
 			->set()
 			->process(array(

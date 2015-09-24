@@ -6,15 +6,14 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\Profile;
 
-class Update extends PHPUnit_Framework_TestCase
+class ApiModelProfileUpdateTest extends PHPUnit_Framework_TestCase
 {
     public function testUpdateProfile() 
 	{
-		$profile = control()->registry()->get('test', 'profile');
+		$profile = eve()->registry()->get('test', 'profile');
 
-        $model = control()
+        $model = eve()
         	->model('profile')
         	->update()
         	->process(array(

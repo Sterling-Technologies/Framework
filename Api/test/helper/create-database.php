@@ -2,19 +2,19 @@
 //not cool to just run it..
 return function() {
 	//Bootstrap
-	control()->setPaths()->setDebug()->setTimezone('Asia/Manila');
+	eve()->setPaths()->setDebug()->setTimezone('Asia/Manila');
 	
 	//get test configs
-	$config = control()->settings('test');
+	$config = eve()->settings('test');
 	
 	//create the test db
-	control()->setDatabases($config['database']);
-	control()->database('build')->query('DROP DATABASE IF EXISTS `'.$db_name.'`');
-	control()->database('build')->query('CREATE DATABASE `'.$db_name.'`');
+	eve()->setDatabases($config['database']);
+	eve()->database('build')->query('DROP DATABASE IF EXISTS `'.$db_name.'`');
+	eve()->database('build')->query('CREATE DATABASE `'.$db_name.'`');
 	
 	//get schema
-	$schema = control('system')
-		->file(control()->path('root').'/schema.sql')
+	$schema = eve('system')
+		->file(eve()->path('root').'/schema.sql')
 		->getContent();
 	
 	//add queries
@@ -145,6 +145,6 @@ return function() {
 			continue;
 		}
 		
-		control()->database()->query($query);
+		eve()->database()->query($query);
 	}
 };

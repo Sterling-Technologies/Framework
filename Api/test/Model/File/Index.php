@@ -6,9 +6,8 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\File;
 
-class Index extends PHPUnit_Framework_TestCase
+class ApiModelFileIndexTest extends PHPUnit_Framework_TestCase
 {
     public function testErrors() 
 	{

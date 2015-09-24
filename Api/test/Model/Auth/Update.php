@@ -6,15 +6,14 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\Auth;
 
-class Update extends PHPUnit_Framework_TestCase
+class ApiModelAuthUpdateTest extends PHPUnit_Framework_TestCase
 {
     public function testUpdateAuth() 
 	{
-		$auth = control()->registry()->get('test', 'auth');
+		$auth = eve()->registry()->get('test', 'auth');
 		
-        $model = control()->model('auth')->update()->process(array(
+        $model = eve()->model('auth')->update()->process(array(
 			'auth_id' => $auth['auth_id'],
 			'auth_facebook_token' => '1234567890'));
 

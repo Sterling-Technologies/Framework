@@ -6,15 +6,14 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\Auth;
 
-class Index extends PHPUnit_Framework_TestCase
+class ApiModelAuthIndexTest extends PHPUnit_Framework_TestCase
 {
     public function testExist() 
 	{
-        $auth = control()->registry()->get('test', 'auth');
+        $auth = eve()->registry()->get('test', 'auth');
 
-		$total = control()
+		$total = eve()
 			->model('auth')
 			->exists($auth['auth_slug']);
 
@@ -23,21 +22,21 @@ class Index extends PHPUnit_Framework_TestCase
 	
     public function testCreateAndLinkProfile() 
 	{
-        $model = control()
+        $model = eve()
         	->model('profile')
         	->create()
         	->process(array(
 				'profile_name' => 'TEST FOR AUTH'));
 		
-		control()->registry()->set('test', 'profile', $model->get());
+		eve()->registry()->set('test', 'profile', $model->get());
 
-        $profile = control()->registry()->get('test', 'profile');
-        $auth = control()->registry()->get('test', 'auth');
+        $profile = eve()->registry()->get('test', 'profile');
+        $auth = eve()->registry()->get('test', 'auth');
 
-		$model = control()->model('auth')
+		$model = eve()->model('auth')
 			->linkProfile(
 				$auth['auth_id'], 
-				$profile['profile_id']));
+				$profile['profile_id']);
 
 		$this->assertEquals(
 			$auth['auth_id'],
@@ -48,12 +47,13 @@ class Index extends PHPUnit_Framework_TestCase
 			$model['auth_profile_profile']);
     }
 
-    public function testCreateAndLinkProfile() 
+    public function testCreateAndUnlinkProfile() 
     {
-    	$profile = control()->registry()->get('test', 'profile');
-        $auth = control()->registry()->get('test', 'auth');
+    	$profile = eve()->registry()->get('test', 'profile');
+        $auth = eve()->registry()->get('test', 'auth');
 
-    	$model = model('auth')
+    	$model = eve()
+    		->model('auth')
     		->unlinkProfile(
     			$auth['auth_id'], 
     			$profile['profile_id']);

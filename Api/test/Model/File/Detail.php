@@ -6,19 +6,19 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\File;
 
-class Detail extends PHPUnit_Framework_TestCase
+class ApiModelFileDetailTest extends PHPUnit_Framework_TestCase
 {
     public function testGetFile() 
 	{
-		$file = control()->registry()->get('test', 'file');
+		$file = eve()->registry()->get('test', 'file');
      
-        $row = control()
+        $row = eve()
 			->model('file')
 			->detail()
-			->process(array('file_id' => $file['file_id']));
-		
+			->process(array('file_id' => $file['file_id']))
+			->getRow();
+			
 		$this->assertEquals('http://example.com/sample.jpg', $row['file_link']);
     }
 }

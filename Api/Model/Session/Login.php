@@ -69,10 +69,12 @@ class Login extends Base
 			->innerJoinOn('profile_file', 'profile_file_profile = profile_id')
 			->innerJoinOn('file', 'profile_file_file = file_id AND file_type = \'main_profile\'')
 			->filterByAuthSlug($item['auth_slug'])
-			->filterByAuthPassword(md5($item['auth_password']));
+			->filterByAuthPassword($item['auth_password']);
 		
+
 		$row = $search->getRow();
-		
 		$this->trigger('app-login', $row);
+
+		return $row;
 	}
 }

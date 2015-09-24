@@ -6,15 +6,14 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\File;
 
-class Search extends PHPUnit_Framework_TestCase
+class ApiModelFileSearchTest extends PHPUnit_Framework_TestCase
 {
     public function testGetFiles() 
 	{
-     	$rows = control()
+     	$rows = eve()
 			->model('file')
-			->list()
+			->search()
 			->process();
 		
 		foreach ($rows as $row) {

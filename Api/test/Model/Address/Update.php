@@ -6,15 +6,14 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\Address;
 
-class Update extends PHPUnit_Framework_TestCase
+class ApiModelAddressUpdateTest extends PHPUnit_Framework_TestCase
 {
     public function testUpdateAddress() 
 	{
-		$publicAddress = control()->registry()->get('test', 'public_address');
+		$publicAddress = eve()->registry()->get('test', 'public_address');
      	
-     	$model = control()
+     	$model = eve()
      		->model('address')
      		->update()
      		->process(array(

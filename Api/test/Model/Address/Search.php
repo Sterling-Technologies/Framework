@@ -6,15 +6,14 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\Address;
 
-class Search extends PHPUnit_Framework_TestCase
+class ApiModelAddressSeachTest extends PHPUnit_Framework_TestCase
 {
     public function testGetPublicAddress() 
 	{
-        $rows = control()
+        $rows = eve()
         	->model('address')
-        	->list()
+        	->search()
         	->process()
         	->getRows();
 		
@@ -25,9 +24,9 @@ class Search extends PHPUnit_Framework_TestCase
 	
     public function testGetPrivateAddress() 
 	{
-        $rows = control()
+        $rows = eve()
         	->model('address')
-        	->list()
+        	->search()
         	->process(array( 
 				'filter' => array( 
 					'address_active' => 1, 

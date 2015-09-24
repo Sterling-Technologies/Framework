@@ -84,10 +84,10 @@ class Access extends Base
 			->filterByAppToken($item['client_id'])
 			->filterByAppSecret($item['client_secret'])
 			->filterBySessionToken($item['code']);
-		
+			
 		$model = $search->getModel();
-		
-		if(!$model || $model->session_status !== 'PENDING') {
+
+		if(!$model || $model['session_status'] !== 'PENDING') {
 			throw new Exception(self::EXPIRED);
 		}
 		

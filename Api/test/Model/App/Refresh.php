@@ -6,9 +6,8 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\App;
 
-class Refresh extends PHPUnit_Framework_TestCase
+class ApiModelAppRefreshTest extends PHPUnit_Framework_TestCase
 {
     public function testErrors() 
 	{

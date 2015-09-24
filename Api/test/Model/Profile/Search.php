@@ -6,15 +6,14 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\Profile;
 
-class Search extends PHPUnit_Framework_TestCase
+class ApiModelProfileSeachTest extends PHPUnit_Framework_TestCase
 {
     public function testGetActiveApps() 
 	{
-        $rows = control()
+        $rows = eve()
         	->model('profile')
-        	->list()
+        	->search()
         	->process()
         	->getRows();
 		

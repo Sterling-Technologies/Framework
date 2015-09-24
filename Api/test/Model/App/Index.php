@@ -6,23 +6,22 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\App;
 
-class Index extends PHPUnit_Framework_TestCase
+class ApiModelAppIndexTest extends PHPUnit_Framework_TestCase
 {
     public function testCreateAndLinkProfile() 
 	{
-		$model = control()
+		$model = eve()
 			->model('profile')
 			->create()
 			->process(array('profile_name' => 'TEST FOR APP'));
 
-		control()->registry()->set('test', 'profile') = $model->get();
+		eve()->registry()->set('test', 'profile', $model->get());
 
-		$app = control()->registry()->get('test', 'app');
-		$profile = control()->registry()->get('test', 'profile');
+		$app = eve()->registry()->get('test', 'app');
+		$profile = eve()->registry()->get('test', 'profile');
 
-		$model = control()
+		$model = eve()
 			->model('app')
 			->linkProfile(
 				$app['app_id'],
@@ -39,9 +38,9 @@ class Index extends PHPUnit_Framework_TestCase
 	
     public function testGetProfileByToken() 
 	{	
-		$app = control()->registry()->get('test', 'app');
+		$app = eve()->registry()->get('test', 'app');
 
-		$profile = control()
+		$profile = eve()
 			->model('app')
 			->getProfileByToken($app['app_token']);
 
@@ -50,10 +49,10 @@ class Index extends PHPUnit_Framework_TestCase
 
     public function testApprovePermissions() 
     {	
-    	$app = control()->registry()->get('test', 'app');
-    	$profile = control()->registry()->get('test', 'profile');
+    	$app = eve()->registry()->get('test', 'app');
+    	$profile = eve()->registry()->get('test', 'profile');
 
-		$yes = control()
+		$yes = eve()
 			->model('app')
 			->permissions(
 				$app['app_id'], 
@@ -61,7 +60,7 @@ class Index extends PHPUnit_Framework_TestCase
 		
 		$this->assertTrue($yes);
 
-		$yes = control()
+		$yes = eve()
 			->model('app')
 			->permissions($app['app_id'], 222);
 
@@ -70,14 +69,14 @@ class Index extends PHPUnit_Framework_TestCase
 
     public function testUnlinkAndRemoveProfile() 
     {
-    	$app = control()->registry()->get('test', 'app');
-    	$profile = control()->registry()->get('test', 'profile');
+    	$app = eve()->registry()->get('test', 'app');
+    	$profile = eve()->registry()->get('test', 'profile');
 
-		$model = control()
+		$model = eve()
 			->model('app')
 			->unlinkProfile(
 				$app['app_id'],
-				$profile['profile_id']));
+				$profile['profile_id']);
 		
 		$this->assertEquals(
 			$app['app_id'],

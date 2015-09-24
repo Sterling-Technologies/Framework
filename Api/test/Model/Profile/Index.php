@@ -6,24 +6,23 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\Profile;
 
-class Index extends PHPUnit_Framework_TestCase
+class ApiModelProfileIndexTest extends PHPUnit_Framework_TestCase
 {
     public function tesCreateAndLinkFile() 
 	{
-     	$model = control()
+     	$model = eve()
      		->model('file')
      		->create()
      		->process(array(
 				'file_link' => 'http://example.com/sample.gif'));
 		
-		control()->registry()->set('test', 'file', $model->get());
+		eve()->registry()->set('test', 'file', $model->get());
 
-		$file = control()->registry()->get('test', 'file');
-		$profile = control()->registry()->get('test', 'profile');
+		$file = eve()->registry()->get('test', 'file');
+		$profile = eve()->registry()->get('test', 'profile');
 
-		$model = control()
+		$model = eve()
 			->model('profile')
 			->linkFile($profile['profile_id'], $file['file_id']);
 
@@ -38,12 +37,12 @@ class Index extends PHPUnit_Framework_TestCase
 	
     public function testUnlinkAndRemoveFile() 
 	{
-		$file = control()->registry()->get('test', 'file');
-		$profile = control()->registry()->get('test', 'profile');
-
-        $model = control()
+		$file = eve()->registry()->get('test', 'file');
+		$profile = eve()->registry()->get('test', 'profile');
+		
+        $model = eve()
         	->model('profile')
-        	->unlinkFile($profile['profile_id'], $file['file_id']);
+        	->unlinkFile((int)$profile['profile_id'], (int) $file['file_id']);
 		
 		$this->assertEquals(
 			$profile['profile_id'], 
@@ -56,9 +55,9 @@ class Index extends PHPUnit_Framework_TestCase
 
     public function testUnlinkAllFiles() 
     {
-		$profile = control()->registry()->get('test', 'profile');
+		$profile = eve()->registry()->get('test', 'profile');
 
-    	$model = control()
+    	$model = eve()
     		->model('profile')
     		->unlinkAllFiles(
 				$profile['profile_id'], []);

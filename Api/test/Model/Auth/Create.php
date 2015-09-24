@@ -6,13 +6,12 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\Auth;
 
-class Create extends PHPUnit_Framework_TestCase
+class ApiModelAuthCreateTest extends PHPUnit_Framework_TestCase
 {
     public function testValidateAuthFields() 
 	{
-        $errors = control()->model('auth')->create()->errors();
+        $errors = eve()->model('auth')->create()->errors();
 
 		$this->assertEquals('Cannot be empty!', $errors['auth_slug']);
 		$this->assertEquals('Cannot be empty!', $errors['auth_permissions']);
@@ -24,7 +23,7 @@ class Create extends PHPUnit_Framework_TestCase
 	{	
 		$now = explode(" ", microtime());
 
-	    $model = control()
+	    $model = eve()
         	->model('auth')
         	->create()
         	->process(array(
@@ -33,7 +32,7 @@ class Create extends PHPUnit_Framework_TestCase
 				'auth_password'	=> '123456',
 				'confirm' => '123456' ));
 
-		$this->assertTrue(is_int($model['auth_id']));
-		control()->registry()->set('test', 'auth', $model->get());
+		$this->assertTrue(is_numeric($model['auth_id']));
+		eve()->registry()->set('test', 'auth', $model->get());
     }
 }

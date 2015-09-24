@@ -6,15 +6,14 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\Address;
 
-class Detail extends PHPUnit_Framework_TestCase
+class ApiModelAddressDetailTest extends PHPUnit_Framework_TestCase
 {
     public function testGetPublicAddress() 
 	{	
-		$publicAddress = control()->registry()->get('test', 'public_address');
+		$publicAddress = eve()->registry()->get('test', 'public_address');
      	
-     	$row = control()
+     	$row = eve()
      		->model('address')
 			->detail()
 			->process(array('address_id' => $publicAddress))
@@ -25,13 +24,13 @@ class Detail extends PHPUnit_Framework_TestCase
 	
     public function testGetPrivateAddress() 
 	{	
-		$privateAddress = control()->registry()->get('test', 'private_address');
-     	$row = control()
+		$privateAddress = eve()->registry()->get('test', 'private_address');
+     	$row = eve()
      		->model('address')
 			->detail()
 			->process(array('address_id' => $privateAddress))
 			->getRow();
 		
-		$this->assertEquals('TEST PUBLIC 123 Sesame Street', $row['address_street']);
+		$this->assertEquals('TEST PRIVATE 123 Sesame Street', $row['address_street']);
     }
 }

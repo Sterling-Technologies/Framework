@@ -6,18 +6,17 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\App;
 
-class Search extends PHPUnit_Framework_TestCase
+class ApiModelAppSearchTest extends PHPUnit_Framework_TestCase
 {
     public function testGetActiveApps() 
 	{
-        $rows = control()
+        $rows = eve()
         	->model('app')
-        	->list()
+        	->search()
         	->process()
         	->getRows();
-		
+            
 		foreach ($rows as $row) {
 			$this->assertEquals(1, $row['app_active']);
 		}

@@ -6,34 +6,33 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\Session;
 
-class Request extends PHPUnit_Framework_TestCase
+class ApiModelSessionRequestTest extends PHPUnit_Framework_TestCase
 {
      public function testValidateRequestFields() 
 	{
-        $errors = control()->model('session')->request()->errors();
+        $errors = eve()->model('session')->request()->errors();
 		
-		$this->assertEquals('Invalid ID!', $errors['app_id']);
-		$this->assertEquals('Invalid ID!', $errors['auth_id']);
+		$this->assertEquals('Invalid ID', $errors['app_id']);
+		$this->assertEquals('Invalid ID', $errors['auth_id']);
     }
 	
     public function testRequest() 
 	{
-		$auth = control()->registry()->get('test', 'auth');
-
-		$model = control()
-        	->model('profile')
+		$auth = eve()->registry()->get('test', 'auth');
+		$app = eve()->registry()->get('test', 'app');
+		$config = eve()->settings('test');
+		
+		$model = eve()
+        	->model('session')
         	->request()
         	->process(array(
 				'app_id' => $app['app_id'],
 				'auth_id' => $auth['auth_id'],
-				'session_permissions' => implode(',', $config['scope']))
-        	);
-
+				'session_permissions' => implode(',', $config['scope'])));
 
 		$this->assertTrue(is_string($model['session_token']));
 
-		control()->registry()->set('test', 'session', $model->get());
+		eve()->registry()->set('test', 'session', $model->get());
 	}
 }

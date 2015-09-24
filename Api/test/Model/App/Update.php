@@ -6,15 +6,14 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-namespace test\Model\App;
 
-class Update extends PHPUnit_Framework_TestCase
+class ApiModelAppUpdateTest extends PHPUnit_Framework_TestCase
 {
     public function testUpdateApp() 
 	{
-		$app = control()->registry()->get('test', 'app');
-
-        $model = control()
+		$app = eve()->registry()->get('test', 'app');
+        
+        $model = eve()
         	->model('app')
         	->update()
         	->process(array(
