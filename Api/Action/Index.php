@@ -23,8 +23,8 @@ class Index extends Html
 {
 	public function render() {
 		//throw new \Exception('ummm, okay');
-		$this->success('yay');
+		return $this->success('yay');
 
-		eve()->queue('app-create', array('name' => 'april'))->save();
+		//eve()->queue('app-create', array('name' => 'april'))->save();
 	}
 }

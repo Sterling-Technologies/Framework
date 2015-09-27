@@ -218,19 +218,8 @@ pip-log.txt
 ## Custom
 #############
 archives
-vendor
 Api/vendor
 Api/settings/databases.php
 Api/settings/mail.php
 Api/settings/s3.php
 Api/composer.lock
-Back/vendor
-Back/settings/databases.php
-Back/settings/mail.php
-Back/settings/s3.php
-Back/composer.lock
-Front/vendor
-Front/settings/databases.php
-Front/settings/mail.php
-Front/settings/s3.php
-Front/composer.lock
