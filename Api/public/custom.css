@@ -100,3 +100,27 @@ header .navbar .navbar-brand:visited { color: #222222 !important; font-size: 10p
 .api-access .col-sm-3:last-child { padding-right: 0 !important; }
 
 .api-access .panel-body { min-height: 150px; }
+
+
+/* Page - Search
+------------------------------*/
+.bulk-form { margin-top: 20px; }
+
+.bulk-form .nav-pills {
+	margin-top: -2px;
+}
+
+.bulk-form .nav-pills > li > a:hover {
+	color: #343434 !important;
+}
+
+.bulk-form .nav-pills > li.active > a:hover {
+	color: #FFFFFF !important;
+}
+
+.bulk-form tbody input[type=checkbox] {
+    margin: -7px 0 0;
+}
+
+.bulk-form thead th,
+.bulk-form tbody td { white-space: nowrap; }
