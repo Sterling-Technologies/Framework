@@ -27,19 +27,19 @@ class Create extends Base
 	 */
 	public function run() 
 	{
-		if(!isset($this->data['item'])) {
-			throw new Exception('Missing item key in data.');
-		}
-		
-		//need to have
-		// item 	- auth/profile/file item
-		$item = $this->data['item'];
-		$results = array();
-		
+		//if no data
+        if(empty($this->data)) {
+            //there should be a global catch somewhere
+            throw new Exception(self::FAIL_406);
+        }
+        
+        //this will be returned at the end
+        $results = array();
+        
 		//see if the email exists first
 		$exists = eve()
 			->model('auth')
-			->exists($item['profile_email']);
+			->exists($this->data['profile_email']);
 		
 		//if it does
 		if($exists) {
@@ -52,7 +52,7 @@ class Create extends Base
 			->model('profile')
 			->search()
 			->process() 
-			->filterByProfileEmail($item['profile_email'])
+			->filterByProfileEmail($this->data['profile_email'])
 			->getRow();
 		
 		//if no profile
@@ -61,7 +61,7 @@ class Create extends Base
 			$row = eve()
 				->model('profile')
 				->create()
-				->process($item)
+				->process($this->data)
 				->get();
 		}
 		
@@ -69,13 +69,13 @@ class Create extends Base
 		$results['profile'] = $row;
 		
 		//if there's a file
-		if(isset($item['file_link'])) {
+		if(isset($this->data['file_link'])) {
 			//store the file
 			$results['file'] = eve()
 				->model('file')
 				->create()
 				->process(array( 
-					'file_link' => $item['file_link'], 
+					'file_link' => $this->data['file_link'], 
 					'file_type' => 'main_profile'))
 				->get();
 			
@@ -91,7 +91,7 @@ class Create extends Base
 		$results['auth'] = eve()
 			->model('auth')
 			->create()
-			->process($item);
+			->process($this->data);
 		
 		//link profile
 		eve()

@@ -21,16 +21,14 @@ use Eve\Framework\Action\Html;
  */
 class Create extends Html 
 {
-	const FAIL_EXISTS = 'Email exists.';
-	const FAIL_VALIDATION = 'There are some errors on the form.';
-	const SUCCESS = 'You can now Log In!';
+	const FAIL_406 = 'There are some errors on the form.';
+	const SUCCESS_200 = 'You can now Log In!';
 
 	protected $layout = '_blank';
 	protected $title = 'Sign Up';
 
 	public function render() 
 	{
-		
 		//if it's a post
 		if(!empty($_POST)) {
 			return $this->check();
@@ -47,40 +45,57 @@ class Create extends Html
 	 */
 	protected function check() 
 	{
+		//-----------------------//
+        // 1. Get Data
+		$data = array();
+		
+		$data['item'] = $this->request->get('post');
 
-		$item = ($this->request->get(false,'post'));
-
-		$item['auth_slug'] = $item['profile_email'];
-		$item['auth_permissions'] = implode(',', eve()->settings('scope'));
-		$item['profile_type'] = 'buyer';
+		$data['item']['auth_slug'] = $data['item']['profile_email'];
+		$data['item']['auth_permissions'] = implode(',', eve()->settings('scope'));
 		
 		$config = eve()->settings('s3');
 		
-		$item['file_link'] = $config['host'] . '/' 
+		$data['item']['file_link'] = $config['host'] . '/' 
 			. $config['bucket'] . '/avatar/avatar-' 
 			. ((floor(rand() * 1000) % 11) + 1) . '.png';
 		
+        //-----------------------//
+        // 2. Validate
 		$errors = eve()
 			->model('auth')
 			->create()
-			->errors($item);
+			->errors($data['item']);
 		
 		$errors = eve()
 			->model('profile')
 			->create()
-			->errors($item, $errors);
+			->errors($data['item'], $errors);
 		
 		//if there are errors
 		if(!empty($errors)) {
-			return $this->fail(self::FAIL_VALIDATION, $errors, $item);
+			return $this->fail(
+				self::FAIL_406, 
+				$errors, 
+				$data['item']);
 		}
 		
-		$auth = eve()
-			->job('Auth-Create')
-			->setData(array('item' => $item))
-			->run();
-
-		return $this->success(self::SUCCESS, '/developer/login');
+        //-----------------------//
+        // 3. Process
+		try {
+			$auth = eve()
+				->job('auth-create')
+				->setData($data['item'])
+				->run();
+		} catch(\Exception $e) {
+			return $this->fail(
+				$e->getMessage(),
+				array(),
+				$data['item']
+			);
+		}
+		
+		return $this->success(self::SUCCESS_200, '/login');
 	}
 }
 

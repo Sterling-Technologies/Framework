@@ -8,8 +8,8 @@
  */
 namespace Api\Action\App;
 
-use Api\Action;
-use Api\Page;
+use Eve\Framework\Action\Json;
+use Eve\Framework\Action\Html;
 
 /**
  * The base class for any class that defines a view.
@@ -19,17 +19,15 @@ use Api\Page;
  * @vendor Openovate
  * @package Framework
  */
-class Create extends Page 
+class Create extends Html 
 {
-	const FAIL_VALIDATION = 'There are some errors on the form.';
-    const SUCCESS = 'App successfully created!';
+	const FAIL_406 = 'There are some errors on the form.';
+    const SUCCESS_200 = 'App successfully created!';
 	
 	protected $title = 'Create an App';
 
 	public function render() 
-	{
-		$this->data['logo'] = true;
-		
+	{	
 		//if it's a post
 		if(!empty($_POST)) {
 			return $this->check();
@@ -46,16 +44,20 @@ class Create extends Page
 	 */
 	protected function check()
 	{
-		$item = $this->data['item'];
+		//-----------------------//
+        // 1. Get Data
+		$data = array();
+		
+		$data['item'] = $this->request->get('post');
 
-		$item['profile_id'] = $_SESSION['me']['profile_id'];
+		$data['profile_id'] = $_SESSION['me']['profile_id'];
 		
 		//add permissions
-		if(is_array($item['app_permissions']) {
-			$item['app_permissions'] = implode(',', $item['app_permissions']);
+		if(is_array($data['item']['app_permissions'])) {
+			$data['item']['app_permissions'] = implode(',', $data['item']['app_permissions']);
 			
 			//reset the roles
-			$this->data['roles'] = explode(',' $this->getRoles($item['app_permissions']));
+			$data['roles'] = explode(',', $this->getRoles($data['item']['app_permissions']));
 		}
 
 		//validate
@@ -64,24 +66,24 @@ class Create extends Page
 		$errors = eve()
 			->model('app')
 			->create()
-			->errors($item);
+			->errors($data['item']);
 		
 		//if there are errors
 		if(!empty($errors)) {
-			return $this->fail(self::FAIL_VALIDATION, $errors, $this.item);
+			return $this->fail(
+				self::FAIL_406, 
+				$errors, 
+				$data['item']);
 		}
 
 		//process
-		eve()
-			->job('app')
-			->create(array(
-				'data' => array(
-					'item' => $item,
-					'profile_id' => $item['profile_id'])
-				));
+		$results = eve()
+			->job('app-create')
+			->setData($data['item'])
+			->run();
 
 		//success
-		$this->success(self::SUCCESS, '/app/list');
+		$this->success(self::SUCCESS_200, '/app/list');
 	}
 
 	/**
@@ -98,16 +100,17 @@ class Create extends Page
         $label = $role = $max = 0;
         $localRoles = array();
         //reset all the roles
-        for($roles as $label) {
-            $localRoles[$label] = [];
-                for($roles[$label] as $role) {
-                $localRoles[$label][] = array(
-                    'name' => $role,
-                    'title' => $roles[$label][$role]['title'],
-                    'description' => $roles[$label][$role]['description'],
-                    'checked' => array_key_exists($role, $permissions) == 1 ? false : true
-                });
-            }
+        foreach($roles as $label) {
+            $localRoles[$label] = array();
+			
+			foreach($roles[$label] as $role) {
+				$localRoles[$label][] = array(
+					'name' => $role,
+					'title' => $roles[$label][$role]['title'],
+					'description' => $roles[$label][$role]['description'],
+					'checked' => array_key_exists($role, $permissions) == 1 ? false : true
+				);
+			}
         }
     	
     	return $localRoles;

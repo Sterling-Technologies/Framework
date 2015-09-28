@@ -61,7 +61,8 @@ class Login extends Base
 		//prepare
 		$item = $this->prepare($item);
 		
-		$search = eve()->database()
+		$search = eve()
+			->database()
 			->search('auth')
 			->setColumns('profile.*', 'file_link AS profile_image', 'auth.*')
 			->innerJoinOn('auth_profile', 'auth_profile_auth = auth_id')
@@ -69,10 +70,11 @@ class Login extends Base
 			->innerJoinOn('profile_file', 'profile_file_profile = profile_id')
 			->innerJoinOn('file', 'profile_file_file = file_id AND file_type = \'main_profile\'')
 			->filterByAuthSlug($item['auth_slug'])
-			->filterByAuthPassword($item['auth_password']);
+			->filterByAuthPassword(md5($item['auth_password']));
 		
 
 		$row = $search->getRow();
+		
 		$this->trigger('app-login', $row);
 
 		return $row;

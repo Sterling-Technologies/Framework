@@ -17,7 +17,7 @@
             <div class="form-group{{#if errors.profile_name}} has-error{{/if}}">
                 <label class="control-label">Name</label>
                 <div>
-                    <input type="text" name="profile_name" class="form-control" value="{{profile_name}}" />
+                    <input type="text" name="profile_name" class="form-control" value="{{item.profile_name}}" />
                     {{#if errors.profile_name}}
                     <span class="help-text">{{errors.profile_name}}</span>
                     {{/if}}
@@ -26,7 +26,7 @@
             <div class="form-group{{#if errors.profile_email}} has-error{{/if}}">
                 <label class="control-label">Email</label>
                 <div>
-                    <input type="text" name="profile_email" class="form-control" value="{{profile_email}}" />
+                    <input type="text" name="profile_email" class="form-control" value="{{item.profile_email}}" />
                     {{#if errors.profile_email}}
                     <span class="help-text">{{errors.profile_email}}</span>
                     {{/if}}
@@ -35,7 +35,7 @@
             <div class="form-group{{#if errors.auth_password}} has-error{{/if}}">
                 <label class="control-label">Password</label>
                 <div>
-                    <input type="password" name="auth_password" class="form-control" value="{{auth_password}}" />
+                    <input type="password" name="auth_password" class="form-control" value="{{item.auth_password}}" />
                     {{#if errors.auth_password}}
                     <span class="help-text">{{errors.auth_password}}</span>
                     {{/if}}
@@ -44,7 +44,7 @@
             <div class="form-group{{#if errors.confirm}} has-error{{/if}}">
                 <label class="control-label">Confirm</label>
                 <div>
-                    <input type="password" name="confirm" class="form-control" value="{{confirm}}" />
+                    <input type="password" name="confirm" class="form-control" value="{{item.confirm}}" />
                     {{#if errors.confirm}}
                     <span class="help-text">{{errors.confirm}}</span>
                     {{/if}}

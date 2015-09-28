@@ -73,12 +73,20 @@ return array(
             'type' => 'string',
             'field' => 'password',
             'holder' => 'Sample Password',
-            'valid' => 'required'
+            'valid' => 'required',
+			'encoding' => 'md5'
+        ),
+        'sink_token' => array(
+            'label' => 'Token',
+            'type' => 'string',
+            'field' => false,
+			'encoding' => 'uuid'
         ),
         'sink_date' => array(
             'label' => 'Date Example',
             'type' => 'datetime',
-            'field' => 'date'
+            'field' => 'date',
+			'default' => '+30 days'
         ),
         'sink_alphanum' => array(
             'label' => 'Alpha Numeric Example',
@@ -101,7 +109,7 @@ return array(
         'sink_file' => array(
             'label' => 'File Example',
             'type' => 'string',
-            'field' => 'file',
+            'field' => array('file', 'image/*', false),
 			'valid' => 'required'
         ),
         'sink_cc' => array(

@@ -21,8 +21,8 @@ use Eve\Framework\Action\Html;
  */
 class Login extends Html 
 {
-	const FAIL_NOT_EXISTS = 'User or Password is incorrect';
-	const FAIL_VALIDATION = 'There are some errors on the form.';
+	const FAIL_404 = 'User or Password is incorrect';
+	const FAIL_406 = 'There are some errors on the form.';
 	
 	protected $title = 'Log In';
 	protected $layout = '_blank';
@@ -50,25 +50,34 @@ class Login extends Html
 	 */
 	protected function check() 
 	{
-		$item = $this->request->get('post');
+		$data = array();
+		
+		$data['item'] = $this->request->get('post');
 
 		//get errors
 		$errors = eve()
 			->model('session')
 			->login()
-			->errors($item);
+			->errors($data['item']);
 
 		if(!empty($errors)) {
-			return $this->fail($response, self::FAIL_VALIDATION, $errors, $item);
+			return $this->fail(
+				$response, 
+				self::FAIL_406, 
+				$errors, 
+				$data['item']);
 		}
 		
 		$row = eve()
 			->model('session')
 			->login()
-			->process($item);
+			->process($data['item']);
 
 		if(empty($row)) {
-			return $this->fail(self::FAIL_NOT_EXISTS);
+			return $this->fail(
+				self::FAIL_404,
+				array(),
+				$data['item']);
 		}
 
 		unset($row['auth_password']);
@@ -76,7 +85,7 @@ class Login extends Html
 		//assign a new session
 		$_SESSION['me'] = $row;
 
-		eve()->redirect('/app/list');
+		eve()->redirect('/app/search');
 	}
 }
 

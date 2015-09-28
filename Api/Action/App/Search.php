@@ -8,8 +8,8 @@
  */
 namespace Api\Action\App;
 
-use Api\Action;
-use Api\Page;
+use Eve\Framework\Action\Json;
+use Eve\Framework\Action\Html;
 
 /**
  * The base class for any class that defines a view.
@@ -19,15 +19,16 @@ use Api\Page;
  * @vendor Openovate
  * @package Framework
  */
-class Search extends Page 
+class Search extends Html 
 {
 	protected $title = 'Apps';
 	
 	public function render() 
 	{
 		//get rows
-		$rows = eve()->model('app')
-			->list()
+		$rows = eve()
+			->model('app')
+			->search()
 			->process()
 			->innerJoinOn(
 				'app_profile', 
@@ -35,7 +36,7 @@ class Search extends Page
 			->filterByAppProfileProfile($_SESSION['me']['profile_id'])
 			->getRows();
 
-		$this->data['rows'] = $rows || [];
+		$this->data['rows'] = $rows;
 		$this->success();
 	}
 }
