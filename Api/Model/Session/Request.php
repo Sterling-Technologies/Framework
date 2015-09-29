@@ -1,9 +1,8 @@
 <?php //-->
 /*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+ * A Custom Library
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
@@ -14,32 +13,43 @@ use Eve\Framework\Model\Argument;
 use Eve\Framework\Model\Exception;
 
 /**
- * Model Request
+ * SessionModel Request
  *
- * @vendor Api
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
  */
 class Request extends Base
-{
-	const INVALID_PARAMETERS = 'Invalid Parameters';
-	const INVALID_ID = 'Invalid ID';
-	
+{	
 	/**
-	 * Returns errors if any
-	 *
-	 * @param array submitted item
-	 * @return array error
-	 */
-	public function errors(array $item = array(), array $errors = array()) 
+     * Returns errors if any
+     *
+     * @param array submitted data
+     * @param array existing errors
+     * @return array error
+     */
+	public function errors(array $data = array(), array $errors = array()) 
     {
 		//prepare
-		$item = $this->prepare($item);
+		$data = $this->prepare($data);
 		
-		if(empty($item['app_id'])) {
-			$errors['app_id'] = self::INVALID_ID;
+		if(empty($data['app_id'])) {
+			$errors['app_id'] = self::INVALID_REQUIRED;
 		}
 		
-		if(empty($item['auth_id'])) {
-			$errors['auth_id'] = self::INVALID_ID;
+		if(empty($data['auth_id'])) {
+			$errors['auth_id'] = self::INVALID_REQUIRED;
 		}
 		
 		return $errors;
@@ -48,26 +58,27 @@ class Request extends Base
 	/**
 	 * Processes the form
 	 *
-	 * @param array item
-	 * @return void
+	 * @param array data
+	 * @return mixed
 	 */
-	public function process(array $item = array()) 
+	public function process(array $data = array()) 
 	{
 
 		//prevent uncatchable error
-		if(count($this->errors($item))) {
-			throw new Exception(self::INVALID_PARAMETERS);
-		}
+        if(count($this->errors($data))) {
+            throw new Exception(self::FAIL_406);
+        }
+		
 		//prepare
-		$item = $this->prepare($item);
+		$data = $this->prepare($data);
 		
 		$token = md5(uniqid());
 		$secret = md5(uniqid());
 		$created = date('Y-m-d H:i:s');
 		$updated = date('Y-m-d H:i:s');
 		
-		if(!$item['session_permissions']) {
-			$item['session_permissions'] = 'public_sso';
+		if(!$data['session_permissions']) {
+			$data['session_permissions'] = 'public_sso';
 		}
 		
 		$model = eve()
@@ -76,31 +87,37 @@ class Request extends Base
 			//session
 			->setSessionToken($token)
 			->setSessionSecret($secret)
-			->setSessionPermissions($item['session_permissions'])
+			->setSessionPermissions($data['session_permissions'])
 			->setSessionState('PENDING')
 			->setSessionCreated($created)
 			->setSessionUpdated($updated)
 			//session_app
-			->setSessionAppApp($item['app_id'])
+			->setSessionAppApp($data['app_id'])
 			//session_auth
-			->setSessionAuthAuth($item['auth_id']);
+			->setSessionAuthAuth($data['auth_id']);
 		
 		//remove user pending states
 		$search = eve()->database()
 			->search('session')
 			->innerJoinOn('session_auth', 'session_auth_session = session_id')
 			->innerJoinOn('session_app', 'session_app_session = session_id')
-			->filterBySessionAppApp($item['app_id'])
-			->filterBySessionAuthAuth($item['auth_id'])
+			->filterBySessionAppApp($data['app_id'])
+			->filterBySessionAuthAuth($data['auth_id'])
 			->filterBySessionStatus('PENDING');
 		
 		$collection = $search->getCollection();
 
 		// Both Physical and Virtual method Eden\Sql\Collection->remove() does not exist.
-		// $collection
-		// 	->remove('session')
-		// 	->remove('session_auth')
-		// 	->remove('session_app');
+		$collection->loop(function($i) {
+			if(!$this[$i]) {
+				return false;	
+			}
+			
+			$this[$i]
+				->remove('session')
+				->remove('session_auth')
+				->remove('session_app');
+		});	
 		
 		$model
 			->save('session')
@@ -109,7 +126,7 @@ class Request extends Base
 			->insert('session_app')
 			->insert('session_auth');
 			
-		$this->trigger('user-request', $model);
+		eve()->trigger('session-request', $model);
 			
 		return $model;
 	}

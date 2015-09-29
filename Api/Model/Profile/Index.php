@@ -1,9 +1,8 @@
 <?php //-->
 /*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+ * A Custom Library
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
@@ -14,162 +13,83 @@ use Eve\Framework\Model\Argument;
 use Eve\Framework\Model\Exception;
 
 /**
- * Model Factory
+ * Profile Model Factory
  *
- * @vendor Api
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
  */
 class Index extends Base
 {
-	/**
-	 * Factory for create
-	 *
-	 * @return Api\Model\Profile\Create
-	 */
-	public function create()
-	{
-		return Create::i();
-	}
-	
-	/**
-	 * Factory for detail
-	 *
-	 * @return Api\Model\Profile\Detail
-	 */
-	public function detail()
-	{
-		return Detail::i();
-	}
-	
-	/**
-	 * Link file to profile
-	 *
-	 * @param int profile id
-	 * @param int file id
-	 * @return Eden\Mysql\Model
-	 */
-	public function linkFile($profileId, $fileId) 
-	{
-		//argument test
-		Argument::i()->test(1, 'int')->test(2, 'int');
-		
-		$model = eve()
-			->database()
-			->model()
-			->setProfileFileProfile($profileId)
-			->setProfileFileFile($fileId)
-			->insert('profile_file');
-		
-		$this->trigger('profile-link-file', $model);
-		
-		return $model;
-	}
-	
-	/**
-	 * Factory for search
-	 *
-	 * @return Api\Model\Profile\Search
-	 */
-	public function search()
-	{
-		return Search::i();
-	}
-	
-	/**
-	 * Factory for remove
-	 *
-	 * @return Api\Model\Profile\Remove
-	 */
-	public function remove()
-	{
-		return Remove::i();
-	}
-	
-	/**
-	 * Factory for set
-	 *
-	 * @return Api\Model\Profile\Set
-	 */
-	public function set()
-	{
-		return Set::i();
-	}
-	
-	/**
-	 * Unlink all Files to Profile
-	 *
-	 * @param int profile id
-	 * @param array types
-	 * @return Eden\Mysql\Model
-	 */
-	public function unlinkAllFiles($profileId, array $types = array()) 
-	{
-		//argument test
-		Argument::i()->test(1, 'int');
-		
-		$search = eve()
-			->database()
-			->search('profile_file')
-			->innerJoinOn(
-				'file', 
-				'profile_file_file = file_id')
-			->filterByProfileFileProfile($profileId);
-		
-		if(!empty($types)) {
-			$or = array();
-			$where = array();
-			
-			foreach($types as $type) {
-				$where[] = 'file_type = %s';
-				$or[] = $type;
-			}
-			
-			array_unshift($or, '(' . implode(' OR ', $where) . ')');
-			
-			$search->callArray('addFilter', $or);
-		}	
-		
-		$rows = $search->getRows();
-		
-		for($i = 0; $i < count($rows); $i++) {
-			$this->unlinkFile(array(
-				'profile_id' => $profileId,
-				'file_id' => $rows[$i]['file_id'] ));
-		}
-		
-		return $rows;
-	}
-	
-	/**
-	 * Unlink address to profile
-	 *
-	 * @param int profile id
-	 * @param int address id
-	 * @return Eden\Mysql\Model
-	 */
-	public function unlinkFile($profileId, $fileId) 
-	{
-		//argument test
-		Argument::i()->test(1, 'int')->test(2, 'int');
-		
-		$model = eve()
-			->database()
-			->model()
-			->setProfileFileProfile($profileId)
-			->setProfileFileFile($fileId)
-			->remove('profile_file');
-		
-		$this->trigger('profile-unlink-file', $model);
-		
-		return $model;
-	}
-	
-	/**
-	 * Factory for update
-	 *
-	 * @return Api\Model\Profile\Update
-	 */
-	public function update()
-	{
-		return Update::i();
-	}
+    /**
+     * Factory for create
+     *
+     * @return Api\Model\Profile\Create
+     */
+    public function create()
+    {
+        return Create::i();
+    }
+    
+    /**
+     * Factory for detail
+     *
+     * @return Api\Model\Profile\Detail
+     */
+    public function detail()
+    {
+        return Detail::i();
+    }
+    
+    
+    /**
+     * Factory for search
+     *
+     * @return Api\Model\Profile\Search
+     */
+    public function search()
+    {
+        return Search::i();
+    }
+    
+    /**
+     * Factory for remove
+     *
+     * @return Api\Model\Profile\Remove
+     */
+    public function remove()
+    {
+        return Remove::i();
+    }
+    
+    /**
+     * Factory for restore
+     *
+     * @return Api\Model\Profile\Restore
+     */
+    public function restore()
+    {
+        return Restore::i();
+    }
+    
+    /**
+     * Factory for update
+     *
+     * @return Api\Model\Profile\Update
+     */
+    public function update()
+    {
+        return Update::i();
+    }
 }

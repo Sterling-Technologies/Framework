@@ -15,8 +15,7 @@ return array(
 		'update',		//add a Sink/Update Action 
 		'remove',		//add a Sink/Remove Action 
 		'restore',		//add a Sink/Restore Action 
-		'search',		//add a Sink/Search Action 
-		'detail'		//add a Sink/Detail Action 
+		'search'		//add a Sink/Search Action 
 	), 				
 	'model' => array(
 		'create',		//add a Sink/Create Model 
@@ -27,7 +26,7 @@ return array(
 		'detail',		//add a Sink/Detail Model
 		'index',		//add a Sink/Index Model
 	),			
-	//'permissions' => 'profile',	//session or source must have a linked profile_id
+	'permissions' => 'profile',	//session or source must have a linked profile_id
 	'relations' => array(
 		'profile'	=> false,
 		'app'		=> false,
@@ -97,8 +96,7 @@ return array(
         'sink_email' => array(
             'label' => 'Email Example',
             'type' => 'string',
-            'field' => 'email',
-			'unique' => true
+            'field' => 'email'
         ),
         'sink_color' => array(
             'label' => 'Color Example',
@@ -109,7 +107,7 @@ return array(
         'sink_file' => array(
             'label' => 'File Example',
             'type' => 'string',
-            'field' => array('file', 'image/*', false),
+            'field' => array('file', 'accept' => 'image/*'),
 			'valid' => 'required'
         ),
         'sink_cc' => array(

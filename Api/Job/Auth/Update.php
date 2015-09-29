@@ -1,9 +1,8 @@
 <?php //-->
 /*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+ * A Custom Library
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
@@ -14,9 +13,25 @@ use Api\Job\Argument;
 use Api\Job\Exception;
 
 /**
- * Job Update
+ * Auth Job Update
  *
- * @vendor Api
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
+ *
+ * -- $this->data - Provides all raw data
+ *    originally passed into the job
  */
 class Update extends Base 
 {
@@ -27,26 +42,26 @@ class Update extends Base
 	 */
 	public function run() 
 	{
-		if(!isset($this->data['item'])) {
-			throw new Exception('Missing item key in data.');
-		}
+		//if no data
+        if(empty($this->data)) {
+            //there should be a global catch somewhere
+            throw new Exception(self::FAIL_406);
+        }
 		
-		//need to have
-		// item 	- auth/profile item
-		$item = $this->data['item'];
-		$results = array();
-		
+		//this will be returned at the end
+        $results = array();
+        
 		//update profile
 		$results['profile'] = eve()
 			->model('profile')
 			->update()
-			->process($item);
+			->process($this->data);
 		
 		//update auth
 		$results['auth'] = eve()
 			->model('auth')
 			->update()
-			->process($item);
+			->process($this->data);
 		
 		return $results;
 	}

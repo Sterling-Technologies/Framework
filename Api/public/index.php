@@ -13,8 +13,11 @@ Eve\Framework\Index::i(dirname(__DIR__), 'Api')
 //HTPASSWD
 ->add(Eden\Middleware\Htpasswd\Plugin::i()->import(array('admin' => 'admin')))
 
-//ACCESS_TOKEN / SECRET Validator
-->all('/rest', Api\Plugin\Validator::i()->import())
+//Rest Validator
+->all('/rest', Api\Plugin\Rest::i()->import())
+
+//Dialog Validator
+->all('/dialog', Api\Plugin\Dialog::i()->import())
 
 //and this is the default
 ->defaultBootstrap();

@@ -1,9 +1,8 @@
 <?php //-->
 /*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+ * A Custom Library
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
@@ -14,175 +13,269 @@ use Eve\Framework\Model\Argument;
 use Eve\Framework\Model\Exception;
 
 /**
- * Model Create
+ * Profile Model Create
  *
- * @vendor Api
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
  */
 class Create extends Base
 {
-	const INVALID_PARAMETERS = 'Invalid Parameters';
-	const INVALID_EMPTY = 'Cannot be empty!';
-	const INVALID_SET = 'Cannot be empty, if set';
-	const INVALID_FLOAT = 'Should be a valid floating point';
-	const INVALID_INTEGER = 'Should be a valid integer';
-	const INVALID_NUMBER = 'Should be a valid number';
-	const INVALID_BOOL = 'Should either be 0 or 1';
-	const INVALID_SMALL = 'Should be between 0 and 9';
-	const INVALID_EMAIL = 'Invalid Email Format!';
-	const INVALID_DATE = 'Invalid Date Format!';
-	
-	/**
-	 * Returns errors if any
-	 *
-	 * @param object submitted profile object
-	 * @return object error object
-	 */
-	public function errors(array $item = array(), array $errors = array()) 
+    /**
+     * Returns errors if any
+     *
+     * @param array submitted data
+     * @param array existing errors
+     * @return array error
+     */
+    public function errors(array $data = array(), array $errors = array()) 
     {
-		//prepare
-		$item = $this->prepare($item);
-		
-		//REQUIRED
-		
-		//profile_name		Required
-		if(!isset($item['profile_name'])
-		|| empty($item['profile_name'])) {
-			$errors['profile_name'] = self::INVALID_EMPTY;
-		}
-		
-		//OPTIONAL
-		
-		//profile_email	
-		if(isset($item['profile_email'])
-		&& !$this('validation', $item['profile_email'])->isType('email', true)) {
-			$errors['profile_email'] = self::INVALID_EMAIL;
-		}
-		
-		//profile_birth
-		if(isset($item['profile_birth'])
-		&& !$this('validation', $item['profile_birth'])->isType('date', true)) {
-			$errors['profile_birth'] = self::INVALID_DATE;
-		}
-		
-		// profile_flag
-		if(isset($item['profile_flag']) 
-		&& !$this('validation', $item['profile_flag'])->isType('small', true)) {
-			$errors['profile_flag'] = self::INVALID_SMALL;
-		}
-		
-		return $errors;
-	}
-	
-	/**
-	 * Processes the form
-	 *
-	 * @param object profile object
-	 * @return void
-	 */
-	public function process(array $item = array()) 
-	{
-		//prevent uncatchable error
-		if(count($this->errors($item))) {
-			throw new Exception(self::INVALID_PARAMETERS);
-		}
-		
-		//prepare
-		$item = $this->prepare($item);
-		
-		//generate dates
-		$created = date('Y-m-d H:i:s');
-		$updated = date('Y-m-d H:i:s');
-		
-		//SET WHAT WE KNOW
-		$model = eve()
-			->database()
-			->model()
-			
-			// profile_name			Required
-			->setProfileName($item['profile_name'])
+        //prepare
+        $data = $this->prepare($data);
+        
+        //REQUIRED
 
-			// profile_created
-			->setProfileCreated($created)
-			
-			// profile_updated
-			->setProfileUpdated($updated);
-		
-		// profile_email
-		if(isset($item['profile_email'])) {
-			$model->setProfileEmail($item['profile_email']);
-		}
-		
-		// profile_phone
-		if(isset($item['profile_phone'])) {
-			$model->setProfilePhone($item['profile_phone']);
-		}
-		
-		// profile_company		
-		if(isset($item['profile_company'])) {
-			$model->setProfileCompany($item['profile_company']);
-		}
-		
-		// profile_job			
-		if(isset($item['profile_job'])) {
-			$model->setProfileJob($item['profile_job']);
-		}
-		
-		// profile_gender		
-		if(isset($item['profile_gender'])) {
-			$model->setProfileGender($item['profile_gender']);
-		}
-		
-		// profile_birth		
-		if(isset($item['profile_birth'])) {
-			$model->setProfileBirth($item['profile_birth']);
-		}
+        // profile_name - required
+        if(!isset($data['profile_name']) || empty($data['profile_name'])) {
+            $errors['profile_name'] = self::INVALID_REQUIRED;
+        }
+        
+        //OPTIONAL
+        
+        // profile_gender - one of
+        $choices = array('male', 'female');
+        if(isset($data['profile_gender'])
+            && !empty($data['profile_gender']) 
+            && !in_array($data['profile_gender'], $choices)
+        ) {
+            $errors['profile_gender'] = sprintf(self::INVALID_ONEOF, implode(',', $choices));
+        }
+        
+        // profile_birth - date
+        if(isset($data['profile_birth']) 
+            && !empty($data['profile_birth'])
+            && !$this('validation', $data['profile_birth'])->isType('date')
+        ) {
+            $errors['profile_birth'] = self::INVALID_DATE;
+        }
+        
+        // profile_facebook - url
+        if(isset($data['profile_facebook']) 
+            && !empty($data['profile_facebook'])
+            && !$this('validation', $data['profile_facebook'])->isType('url')
+        ) {
+            $errors['profile_facebook'] = self::INVALID_URL;
+        }
+        
+        // profile_linkedin - url
+        if(isset($data['profile_linkedin']) 
+            && !empty($data['profile_linkedin'])
+            && !$this('validation', $data['profile_linkedin'])->isType('url')
+        ) {
+            $errors['profile_linkedin'] = self::INVALID_URL;
+        }
+        
+        // profile_twitter - url
+        if(isset($data['profile_twitter']) 
+            && !empty($data['profile_twitter'])
+            && !$this('validation', $data['profile_twitter'])->isType('url')
+        ) {
+            $errors['profile_twitter'] = self::INVALID_URL;
+        }
+        
+        // profile_google - url
+        if(isset($data['profile_google']) 
+            && !empty($data['profile_google'])
+            && !$this('validation', $data['profile_google'])->isType('url')
+        ) {
+            $errors['profile_google'] = self::INVALID_URL;
+        }
+        
+        // profile_flag - small
+        if(isset($data['profile_flag']) 
+            && !empty($data['profile_flag'])
+            && !$this('validate', $data['profile_flag'])->isType('small', true)
+        ) {
+            $errors['profile_flag'] = self::INVALID_SMALL;
+        }
+        
+        return $errors;
+    }
+    
+    /**
+     * Processes the form
+     *
+     * @param array data
+     * @return mixed
+     */
+    public function process(array $data = array()) 
+    {
+        //prevent uncatchable error
+        if(count($this->errors($data))) {
+            throw new Exception(self::FAIL_406);
+        }
+        
+        //prepare
+        $data = $this->prepare($data);
+        
+        //generate stuff
+        $created = date('Y-m-d H:i:s');
+        $updated = date('Y-m-d H:i:s');
+        
+        //upload profile_image
+        if(isset($_FILES['profile_image']['tmp_name'])
+            && !empty($_FILES['profile_image']['tmp_name'])
+        ) {
+            $destination = eve()->path('upload');
+            
+            if(!is_dir($destination)) {
+                   mkdir($destination);
+            }
+            
+            $destination .= '/' . md5(uniqid()) . '-' . $_FILES['profile_image']['name'];
+            
+            move_uploaded_file($_FILES['profile_image']['tmp_name'], $destination);
+            
+            $data['profile_image'] = $destination;
+        }
+        
+        //SET WHAT WE KNOW
+        $model = eve()
+            ->database()
+            ->model()
 
-		// profile_website		
-		if(isset($item['profile_website'])) {
-			$model->setProfileBirth($item['profile_website']);
-		}
+            // profile_name - required
+            ->setProfileName($data['profile_name'])
+            
+            // profile_created
+            ->setProfileCreated($created)
+            
+            // profile_updated
+            ->setProfileUpdated($updated);
+        
+        //OPTIONAL
+        
+        // profile_email
+        if(isset($data['profile_email'])
+            && !empty($data['profile_email'])
+        ) {
+            $model->setProfileEmail($data['profile_email']);
+        }
 
-		// profile_facebook		
-		if(isset($item['profile_facebook'])) {
-			$model->setProfileBirth($item['profile_facebook']);
-		}
+        // profile_phone
+        if(isset($data['profile_phone'])
+            && !empty($data['profile_phone'])
+        ) {
+            $model->setProfilePhone($data['profile_phone']);
+        }
 
-		// profile_linkedin		
-		if(isset($item['profile_linkedin'])) {
-			$model->setProfileLinkedin($item['profile_linkedin']);
-		}
+        // profile_detail
+        if(isset($data['profile_detail'])
+            && !empty($data['profile_detail'])
+        ) {
+            $model->setProfileDetail($data['profile_detail']);
+        }
 
-		// profile_twitter		
-		if(isset($item['profile_twitter'])) {
-			$model->setProfileTwitter($item['profile_twitter']);
-		}
+        // profile_image
+        if(isset($data['profile_image'])
+            && !empty($data['profile_image'])
+        ) {
+            $model->setProfileImage($data['profile_image']);
+        }
 
-		// profile_google		
-		if(isset($item['profile_google'])) {
-			$model->setProfileGoogle($item['profile_google']);
-		}
-		
-		// profile_reference
-		if(isset($item['profile_reference'])) {
-			$model->setProfileReference($item['profile_reference']);
-		}
-		
-		// profile_type
-		if(isset($item['profile_type'])) {
-			$model->setProfileType($item['profile_type']);
-		}
-		
-		// profile_flag
-		if(isset($item['profile_flag'])
-			&& $this('validation', $item['profile_flag'])->isType('small', true)) {
-			$model->setProfileFlag($item['profile_flag']);
-		}
-		
-		//what's left ?
-		$model->save('profile');
-		
-		 $this->trigger('profile-create', $model);
-		 
-		 return $model;
-	}
+        // profile_company
+        if(isset($data['profile_company'])
+            && !empty($data['profile_company'])
+        ) {
+            $model->setProfileCompany($data['profile_company']);
+        }
+
+        // profile_job
+        if(isset($data['profile_job'])
+            && !empty($data['profile_job'])
+        ) {
+            $model->setProfileJob($data['profile_job']);
+        }
+
+        // profile_gender
+        if(isset($data['profile_gender'])
+            && !empty($data['profile_gender'])
+        ) {
+            $model->setProfileGender($data['profile_gender']);
+        }
+
+        // profile_birth
+        if(isset($data['profile_birth'])
+            && !empty($data['profile_birth'])
+        ) {
+            $model->setProfileBirth($data['profile_birth']);
+        }
+
+        // profile_facebook
+        if(isset($data['profile_facebook'])
+            && !empty($data['profile_facebook'])
+        ) {
+            $model->setProfileFacebook($data['profile_facebook']);
+        }
+
+        // profile_linkedin
+        if(isset($data['profile_linkedin'])
+            && !empty($data['profile_linkedin'])
+        ) {
+            $model->setProfileLinkedin($data['profile_linkedin']);
+        }
+
+        // profile_twitter
+        if(isset($data['profile_twitter'])
+            && !empty($data['profile_twitter'])
+        ) {
+            $model->setProfileTwitter($data['profile_twitter']);
+        }
+
+        // profile_google
+        if(isset($data['profile_google'])
+            && !empty($data['profile_google'])
+        ) {
+            $model->setProfileGoogle($data['profile_google']);
+        }
+
+        // profile_reference
+        if(isset($data['profile_reference'])
+            && !empty($data['profile_reference'])
+        ) {
+            $model->setProfileReference($data['profile_reference']);
+        }
+        
+        // profile_type
+        if(isset($data['profile_type'])
+            && !empty($data['profile_type'])
+        ) {
+            $model->setProfileType($data['profile_type']);
+        }
+        
+        // profile_flag
+        if(isset($data['profile_flag'])
+            && !empty($data['profile_flag'])
+        ) {
+            $model->setProfileFlag($data['profile_flag']);
+        }
+        
+        //what's left ?
+        $model->save('profile');
+        
+        eve()->trigger('profile-create', $model);
+        
+        return $model;
+    }
 }

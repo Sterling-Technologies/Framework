@@ -2,7 +2,6 @@
 return array(
 	'singular' 	=> 'App',	//for pages and messages
     'plural' 	=> 'Apps',	//for pages and messages
-	'rest' => array(),
 	'page' => array(
 		'create',		//add a App/Create Action 
 		'update',		//add a App/Update Action 
@@ -52,21 +51,24 @@ return array(
             'field' => 'text',
             'holder' => 'Openovate Labs App',
             'valid' => 'required', 
-            'search' => true
+            'search' => true,
+			'show' => true
         ),
 		'app_domain' => array(
             'label' => 'Domain',
             'type' => 'string',
             'field' => 'text',
             'holder' => '*.openovate.com',
-            'search' => true
+            'valid' => 'required'
         ),
 		'app_website' => array(
             'label' => 'Domain',
             'type' => 'string',
             'field' => 'text',
             'holder' => 'http://openovate.com/',
-            'search' => true
+			'valid' => 'url',
+            'search' => true,
+			'show' => true
         ),
 		'app_permissions' => array(
             'label' => 'Permissions',
@@ -105,13 +107,15 @@ return array(
             'label' => 'Token',
             'type' => 'string',
             'field' => false,
-			'encode' => 'uuid'
+			'encoding' => 'uuid',
+			'show' => true
         ),
 		'app_secret' => array(
             'label' => 'Secret',
             'type' => 'string',
             'field' => false,
-			'encode' => 'uuid'
+			'encoding' => 'uuid',
+			'show' => true
         )
     ),
 	'fixture'  => array()

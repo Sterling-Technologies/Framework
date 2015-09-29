@@ -15,8 +15,7 @@ return array(
 		'update',		//add a Address/Update Action 
 		'remove',		//add a Address/Remove Action 
 		'restore',		//add a Address/Restore Action 
-		'search',		//add a Address/Search Action 
-		'detail'		//add a Address/Detail Action 
+		'search'		//add a Address/Search Action 
 	), 				
 	'model' => array(
 		'create',		//add a Address/Create Model 

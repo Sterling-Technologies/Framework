@@ -1,9 +1,8 @@
 <?php //-->
 /*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+ * A Custom Library
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
@@ -14,9 +13,25 @@ use Eve\Framework\Job\Argument;
 use Eve\Framework\Job\Exception;
 
 /**
- * Job Create
+ * Auth Job Create
  *
- * @vendor Api
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
+ *
+ * -- $this->data - Provides all raw data
+ *    originally passed into the job
  */
 class Create extends Base 
 {
@@ -67,25 +82,6 @@ class Create extends Base
 		
 		//store the profile
 		$results['profile'] = $row;
-		
-		//if there's a file
-		if(isset($this->data['file_link'])) {
-			//store the file
-			$results['file'] = eve()
-				->model('file')
-				->create()
-				->process(array( 
-					'file_link' => $this->data['file_link'], 
-					'file_type' => 'main_profile'))
-				->get();
-			
-			//link the file
-			eve()
-				->model('profile')
-				->linkFile(
-					$results['profile']['profile_id'], 
-					$results['file']['file_id']);
-		}
 		
 		//create the auth
 		$results['auth'] = eve()

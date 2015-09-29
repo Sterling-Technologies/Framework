@@ -1,71 +1,146 @@
-<span class="pull-right pad-vertical">
+<h3>Apps</h3>
+
+<!-- START: SEARCH FORM -->
+<form class="pull-right search form-inline" method="get">
+    <div class="form-group">
+        <input name="keyword" placeholder="Search Apps" type="text"
+        value="{{keyword}}" class="form-control" />
+        <input type="hidden" name="mode" value="{{mode}}" />
+    </div>
+    <button class="btn"><i class="fa fa-search"></i></button>    
+</form>
+<!-- END: SEARCH FORM -->
+
+<span>
     <a class="btn btn-success" href="/app/create">
         <i class="fa fa-plus"></i>
         Create New App
     </a>
 </span>
 
-<div class="panel panel-default clear" >
-    <div class="panel-heading brand">
-        <div class="panel-title">My Apps</div>
-    </div>
-    <div class="panel-body" >
-        {{#if rows}}
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Actions</th>
-                    <th>Name</th>
-                    <th>Website</th>
-                    <th>Key</th>
-                    <th>Secret</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{#each rows}}
-                <tr data-id="{{app_id}}">
-                    <td nowrap="nowrap">
+<!-- START: BULK FORM -->
+<form method="post" class="form-inline bulk-form">
+    <div class="panel panel-default clear">
+        <div class="panel-heading brand">
+            <div class="panel-title clearfix">
+                <!-- START: FILTER BUTTONS -->
+                <ul class="nav nav-pills pull-right" role="tablist">
+                    <li role="presentation" class="{{#when mode '!=' 'trash'}}active{{/when}}">
                         <a 
-                            title="Edit" 
-                            class="btn btn-info" 
-                            href="/app/update/{{app_id}}">
-                                <i class="fa fa-edit"></i>
+                            href="/app/search{{#if keyword}}?keyword={{keyword}}{{/if}}" 
+                            aria-controls="details" 
+                            role="tab">
+                            Active
                         </a>
+                    </li>
+                    <li role="presentation" class="{{#when mode '==' 'trash'}}active{{/when}}">
                         <a 
-                            title="Oauth Test" 
-                            class="btn btn-primary" 
-                            href="/dialog/login/?client_id={{app_token}}&redirect_uri=/app/list&scope=user_profile">
-                                <i class="fa fa-lock"></i>
+                            href="/app/search?mode=trash{{#if keyword}}&keyword={{keyword}}{{/if}}" 
+                            aria-controls="details" 
+                            role="tab">
+                            Trash
                         </a>
-                        <a 
-                            title="Reset Token" 
-                            class="btn btn-warning" 
-                            href="/app/refresh/{{app_id}}">
-                                <i class="fa fa-refresh"></i>
-                        </a>
-                        <a 
-                            title="Remove App" 
-                            class="btn btn-danger" 
-                            href="/app/remove/{{app_id}}">
-                                <i class="fa fa-times"></i>
-                        </a>
-                    </td>
-                    <td nowrap="nowrap" valign="middle">{{app_name}}</td>
-                    <td nowrap="nowrap" valign="middle">{{app_website}}</td>
-                    <td nowrap="nowrap" valign="middle">{{app_token}}</td>
-                    <td nowrap="nowrap" valign="middle">{{app_secret}}</td>
-                </tr>
-                {{/each}}
-            </tbody>
-        </table>
-        {{else}}
-        <div class="alert alert-warning">No Apps. Maybe 
-            <a class="btn btn-success" href="/app/create">
-                <i class="fa fa-plus"></i>
-                Create New App
-            </a>
-            ?
+                    </li>
+                </ul>
+                <!-- END: FILTER BUTTONS -->
+                
+                {{#if rows}}
+                <!-- START: BULK ACTION -->
+                <div>
+                    <select name="action" class="form-control">
+                        <option value="" selected="selected">Bulk Actions</option>
+                        <option value="remove">Remove</option>
+                        <option value="restore">Restore</option>
+                    </select>
+                    <button class="btn btn-primary">Apply</button>
+                </div>
+                <!-- END: BULK ACTION -->
+                {{/if}}
+            </div>
         </div>
-        {{/if}}
+        <div class="panel-body" >
+            {{#if rows}}
+            <!-- START: POST TABLE -->
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th><input class="checkall" type="checkbox" /></th>
+                        <th>Action</th>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Website</th>
+                        <th>Token</th>
+                        <th>Secret</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each rows}}
+                    <tr data-id="{{app_id}}">
+                        <td><input name="id[]" value="{{app_id}}" type="checkbox" class="form-control" /></td>
+                        <td>
+                            {{#when app_active '==' 1}}
+                            <a title="Edit" href="/app/update/{{app_id}}">
+                            <i class="fa fa-edit"></i></a>
+                            &nbsp; 
+                            <a title="OAUTH Test" 
+                            href="/dialog/login?client_id={{app_token}}&redirect_uri=/app/search"
+                            class="text-info refresh"><i class="fa fa-lock"></i></a> 
+                            &nbsp; 
+                            <a title="Refresh" href="/app/refresh/{{app_id}}"
+                            class="text-warning refresh"><i class="fa fa-retweet"></i></a> 
+                            &nbsp; 
+                            <a title="Remove" href="/app/remove/{{app_id}}"
+                            class="text-danger remove"><i class="fa fa-times"></i></a>
+                            {{/when}}
+                            {{#when app_active '==' 0}}
+                            <a title="Restore" href="/app/restore/{{app_id}}" class="text-success restore">
+                            <i class="fa fa-external-link"></i></a>
+                            {{/when}}
+                        </td>
+                        <td>{{app_id}}</td>
+                        <td>{{app_name}}</td>
+                        <td>{{app_website}}</td>
+                        <td>{{app_token}}</td>
+                        <td>{{app_secret}}</td>
+                    </tr>    
+                    {{/each}}
+                </tbody>    
+            </table>
+            <!-- END: POST TABLE -->
+            {{else}}
+            <!-- START: NO RESULTS -->
+            <div class="well no-results">No Apps Found</div>
+            <!-- END: NO RESULTS -->
+            {{/if}}
+        </div>
     </div>
-</div>
+    
+    <ul class="pagination">
+        {{#pagination total range}}
+        <li{{#if active}} class="active"{{/if}}><a href="?{{href}}">{{page}}</a></li>
+        {{/pagination}}
+    </ul>
+</form>
+
+<script type="text/javascript">
+$('tbody input[type="checkbox"]').click(function() {
+	setTimeout(function() {	
+		var allChecked = true;
+		$('tbody input[type="checkbox"]').each(function() {
+			if(!this.checked) {
+				allChecked = false;
+			}
+		});
+		
+		$('th input.checkall')[0].checked = allChecked;
+	}, 1);
+});
+
+//listen to remove restore
+$('th input.checkall').click(function() {
+	var checked = this.checked;
+	$('tbody input[type="checkbox"]').each(function() {
+		this.checked = checked;
+	});
+});
+</script>

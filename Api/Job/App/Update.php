@@ -1,45 +1,68 @@
 <?php //-->
 /*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+ * A Custom Library
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
 namespace Api\Job\App;
 
-use Api\Job\Base;
-use Api\Job\Argument;
-use Api\Job\Exception;
+use Eve\Framework\Job\Base;
+use Eve\Framework\Job\Exception;
 
 /**
- * Job Update
+ * App Job Update
  *
- * @vendor Api
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
+ *
+ * -- $this->data - Provides all raw data
+ *    originally passed into the job
  */
-class Remove extends Base 
+class Update extends Base 
 {
-	/**
-	 * Executes the job
-	 *
-	 * @return void
-	 */
-	public function run() 
-	{
-		if(!isset($this->data['item'])) {
-			throw new Exception('Missing item key in data.');
-		}
-		
-		//need to have
-		// item 	- app item
-		$item = $this->data['item'];
-		
-		$model = eve()
-			->model('app')
-			->remove()
-			->update($item);
-		
-		return array('app' => $model->get());
-	}
+    const FAIL_406 = 'Invalid Data';
+    
+    /**
+     * Executes the job
+     *
+     * @return void
+     */
+    public function run() 
+    {
+        //if no data
+        if(empty($this->data)) {
+            //there should be a global catch somewhere
+            throw new Exception(self::FAIL_406);
+        }
+        
+        //this will be returned at the end
+        $results = array();
+        
+        //NEXT ...
+        
+        //if there is a app_id
+        if(isset($this->data['app_id'])) {
+            //update the app
+            $results['app'] = eve()
+                ->model('app')
+                ->update()
+                ->process($this->data);
+        }
+                
+        return $results;
+    }
 }

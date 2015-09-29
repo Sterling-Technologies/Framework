@@ -21,29 +21,25 @@ use Api\Page;
  */
 class Create extends Page 
 {
-	const FAIL_NOT_ME = 'You do not have permissions to update';
-	const FAIL_VALIDATION = 'There are some errors on the form.';
-	const SUCCESS = 'Account settings updated!';
+	const FAIL_400 = 'You do not have permissions to update';
+	const FAIL_406 = 'There are some errors on the form.';
+	const SUCCESS_200 = 'Account settings updated!';
 
-	protected $title = 'Update Accoun';
+	protected $title = 'Update Account';
+	protected $layout = '_blank';
 
 	/**
 	 * Main action call
 	 *
-	 * @param object Request Object
-	 * @param object Response Object
-	 * @param function callback to pass to next Middleware
 	 * @return void
 	 */
 	public function render() 
 	{
-		$this->data['blank'] = true;
-		
 		//there should be a client_id, redirect_uri
 		//client_id is already checked in the router
 		//state is optional
 		if(!isset($_GET['redirect_uri'])) {
-			$this->data['template'] = 'dialog-invalid';
+			$this->template = 'dialog/invalid';
 			return $this->success();
 		}
 		
@@ -51,8 +47,7 @@ class Create extends Page
 		//we cannot redirect them to be logged in
 		//because we need to know the permissions
 		if(!isset($_SESSION['me'])) {
-			$this->redirect(array('error' => 'user_invalid' );
-			return;
+			return $this->redirect(array('error' => 'user_invalid'));
 		}
 		
 		//if it's a post
@@ -61,7 +56,7 @@ class Create extends Page
 		}
 		
 		$this->data['item'] = $_SESSION['me'];
-		$this->data['cancel'] = $this->redirect(array('error' => 'user_cancel'), true);
+		$this->data['cancel'] = $this->redirect(array('error' => 'user_cancel'));
 		
 		//Just load the page
 		return $this->success();

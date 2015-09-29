@@ -1,34 +1,32 @@
 <?php //-->
 return array(
-    'developer' => array(
-        '/create' => array(
-            'method' => 'ALL'
+	'roles' => array(
+		'public_profile' => array(
+            'title' => 'Profiles',
+            'description' => 'Get a profile detail from a buyer or seller',
+            'icon' => 'user'
         ),
-        '/update' => array(
-            'method' => 'ALL'
+        'public_sso' => array(
+            'title' => 'Single Sign On',
+            'description' => 'Use our Single Sign On',
+            'icon' => 'lock'
         ),
-        '/login' => array(
-            'method' => 'ALL'
+		'personal_profile' => array(
+            'title' => 'Profile',
+            'description' => 'Access user profile',
+            'icon' => 'user'
         ),
-        '/logout' => array(
-            'method' => 'GET'
+		'user_profile' => array(
+            'title' => 'Profile',
+            'description' => 'Access user profile',
+            'icon' => 'user'
         ),
-        '/app/list' => array(
-            'method' => 'GET'
-        ),
-        '/app/create' => array(
-            'method' => 'ALL'
-        ),
-        '/app/update/ =>id' => array(
-            'method' => 'ALL'
-        ),
-        '/app/remove/ =>id' => array(
-            'method' => 'GET'
-        ),
-        '/app/refresh/ =>id' => array(
-            'method' => 'GET'
+		'global_profile' => array(
+            'title' => 'Profile',
+            'description' => 'Access all profiles',
+            'icon' => 'user'
         )
-    ),
+	),
     'dialog' => array(
         '/dialog/login' => array(
             'method' => 'ALL',
@@ -56,7 +54,7 @@ return array(
         )
     ),
     'rest' => array(
-        '/rest/profile/list' => array(
+        '/rest/profile/search' => array(
             'method' => 'GET',
             'role' => 'public_profile'
         ),

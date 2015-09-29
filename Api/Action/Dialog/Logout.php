@@ -1,25 +1,64 @@
 <?php //-->
 /*
- * This file is part of the Openovate Labs Inc. framework library
- * (c) 2013-2014 Openovate Labs
+ * A Custom Library
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 namespace Api\Action\Dialog;
 
-use Api\Action;
-use Api\Page;
+use Eve\Framework\Action\Json;
+use Eve\Framework\Action\Html;
 
 /**
- * The base class for any class that defines a view.
- * A view controls how templates are loaded as well as 
- * being the final point where data manipulation can occur.
+ * Action
  *
- * @vendor Openovate
- * @package Framework
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
+ *
+ * -- $this->request - The Request Object using Eden\Registry\Index
+ *
+ *    -- $this->request->get('post') - $_POST data
+ *       You are free to use the $_POST variable if you like
+ *
+ *    -- $this->request->get('get') - $_GET data
+ *       You are free to use the $_GET variable if you like
+ *
+ *    -- $this->request->get('server') - $_SERVER data
+ *       You are free to use the $_SERVER variable if you like
+ *
+ *    -- $this->request->get('body') - raw body for 
+ *       POST requests that provide JSON data for example
+ *       instead of the default x-form-data
+ *
+ *    -- $this->request->get('method') - GET, POST, PUT or DELETE
+ *
+ * -- $this->response - The Response Object using Eden\Registry\Index
+ *
+ *    -- $this->response->set('body', 'Foo') - Sets the response body.
+ *       Alternative for returning a string in render()
+ *
+ *    -- $this->response->set('headers', 'Foo', 'Bar') - Sets a 
+ *       header item to 'Foo: Bar' given key/value
+ *
+ *    -- $this->response->set('headers', 'Foo', '') - Sets a 
+ *       header item to 'Foo' given that no value is present
+ *       QUIRK: $this->response->set('headers', 'Foo') will erase
+ *       all existing headers
  */
-class Index extends Page 
+class Index extends Html
 {
 	
 	public function render() 
@@ -28,7 +67,7 @@ class Index extends Page
 		//client_id is already checked in the router
 		//state is optional
 		if(!isset($_GET['redirect_uri'])) {
-			$this->data['template'] = 'dialog-invalid';
+			$this->template = 'dialog/invalid';
 			return $this->success();
 		}
 		
@@ -36,41 +75,39 @@ class Index extends Page
 			return $this-redirect(array('error' => 'user_invalid'));
 		}
 		
-		$item = array('auth_id' => $_SESSION['me']['auth_id']);
+		$data = array('auth_id' => $_SESSION['me']['auth_id']);
 		
 		if(isset($_GET['session_token'])) {
-			$item['session_token'] = $_GET['session_token'];
+			$data['session_token'] = $_GET['session_token'];
 		}
 		
 		$errors = eve()
 			->model('session')
 			->logout()
-			->errors($item);
+			->errors($data);
 		
-		if(isset($errors['auth_id']) {
+		if(isset($errors['auth_id'])) {
 			return $this->redirect(array('error' => 'user_invalid'));
 		}
 		
 		eve()
 			->model('session')
 			->logout()
-			->process($item);
+			->process($data);
 
-		unset($_SESSION['me'];
+		unset($_SESSION['me']);
 		
-		$this->redirect(array( 'success': 1 ));	
-		
+		$this->redirect(array( 'success' => 1 ));	
 	}
 
 	/**
 	 * Creates a redirect url
 	 *
-	 * @param string the url
 	 * @param object extra parameters
 	 * @return string
 	 */
-	protected function redirect(array $query = array()) {
-
+	protected function redirect(array $query = array()) 
+	{
 		$url = $_GET['redirect_uri'];
 		
 		if(isset($_GET['state'])) {
@@ -84,10 +121,10 @@ class Index extends Page
 		}
 		
 		$separator = '?';
-		if(strpos($url, '?') === false) {
+		if(strpos($url, '?') !== false) {
 			$separator = '&';
 		}
 		
-		eve()->redirect($url + $separator + $query);
+		eve()->redirect($url . $separator . $query);
 	}
 }

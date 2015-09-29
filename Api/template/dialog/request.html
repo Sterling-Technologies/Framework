@@ -1,5 +1,5 @@
 <div class="well well-lg pad-vertical">
-    <h3>Hello {{me.profile_name}},</h3>
+    <h3>Hello {{#session 'me'}}{{profile_name}}{{/session}},</h3>
     <p>
     	{{#if app.app_website}}
     	<a href="{{app.app_website}}" target="_blank">{{app.app_name}}</a>
@@ -23,7 +23,7 @@
                     </a>
                     <h4 class="media-heading">{{title}}</h4>
                     <p>{{description}}</p>
-                    <input type="hidden" name="session_permissions[]" value="{{name}}" />
+                    <input type="hidden" name="session_permissions[]" value="{{@key}}" />
                 </div>
             </div>
         </div>

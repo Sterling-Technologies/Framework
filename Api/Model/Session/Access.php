@@ -1,9 +1,8 @@
 <?php //-->
 /*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+ * A Custom Library
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
@@ -14,37 +13,54 @@ use Eve\Framework\Model\Argument;
 use Eve\Framework\Model\Exception;
 
 /**
- * Model Access
+ * Session Model Access
  *
- * @vendor Api
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
  */
 class Access extends Base
 {
-	const INVALID_PARAMETERS = 'Invalid Parameters';
-	const INVALID_EMPTY = 'Cannot be empty!';
-	const EXPIRED = 'Expired Token';
+	const FAIL_410 = 'Expired Token';
 	
 	/**
-	 * Returns errors if any
-	 *
-	 * @param array submitted item
-	 * @return array error
-	 */
-	public function errors(array $item = array(), array $errors = array()) 
+     * Returns errors if any
+     *
+     * @param array submitted data
+     * @param array existing errors
+     * @return array error
+     */
+	public function errors(array $data = array(), array $errors = array()) 
     {
 		//prepare
-		$item = $this->prepare($item);
+		$data = $this->prepare($data);
 		
-		if(empty($item['client_id'])) {
-			$errors['client_id'] = self::INVALID_EMPTY;
+        //REQUIRED
+
+		// client_id		required
+		if(!isset($data['client_id']) || empty($data['client_id'])) {
+			$errors['client_id'] = self::INVALID_REQUIRED;
 		}
 		
-		if(empty($item['client_secret'])) {
-			$errors['client_secret'] = self::INVALID_EMPTY;
+		// client_secret		required
+		if(!isset($data['client_secret']) || empty($data['client_secret'])) {
+			$errors['client_secret'] = self::INVALID_REQUIRED;
 		}
 		
-		if(empty($item['code'])) {
-			$errors['code'] = self::INVALID_EMPTY;
+		// code		required
+		if(!isset($data['code']) || empty($data['code'])) {
+			$errors['code'] = self::INVALID_REQUIRED;
 		}
 		
 		return $errors;
@@ -53,18 +69,18 @@ class Access extends Base
 	/**
 	 * Processes the form
 	 *
-	 * @param array item
-	 * @return void
+	 * @param array data
+	 * @return mixed
 	 */
-	public function process(array $item = array()) 
+	public function process(array $data = array()) 
 	{
 		//prevent uncatchable error
-		if(count($this->errors($item))) {
-			throw new Exception(self::INVALID_PARAMETERS);
+		if(count($this->errors($data))) {
+			throw new Exception(self::FAIL_406);
 		}
 		
 		//prepare
-		$item = $this->prepare($item);
+		$data = $this->prepare($data);
 		
 		$token = md5(uniqid());
 		$secret = md5(uniqid());
@@ -79,16 +95,14 @@ class Access extends Base
 			->innerJoinOn('session_auth', 'session_auth_session = session_id')
 			->innerJoinOn('auth_profile', 'session_auth_auth = auth_profile_auth')
 			->innerJoinOn('profile', 'auth_profile_profile = profile_id')
-			->innerJoinOn('profile_file', 'profile_file_profile = profile_id')
-			->innerJoinOn('file', "profile_file_file = file_id AND file_type='main_profile'")
-			->filterByAppToken($item['client_id'])
-			->filterByAppSecret($item['client_secret'])
-			->filterBySessionToken($item['code']);
+			->filterByAppToken($data['client_id'])
+			->filterByAppSecret($data['client_secret'])
+			->filterBySessionToken($data['code']);
 			
 		$model = $search->getModel();
 
 		if(!$model || $model['session_status'] !== 'PENDING') {
-			throw new Exception(self::EXPIRED);
+			throw new Exception(self::FAIL_410);
 		}
 		
 		//okay it matches
@@ -102,7 +116,7 @@ class Access extends Base
 		
 		$model->save();
 		
-		$this->trigger('user-request', $model);
+		eve()->trigger('session-access', $model);
 		
 		return array(
 			'profile_id' => $model['profile_id'],
@@ -110,15 +124,6 @@ class Access extends Base
 			'profile_email' => $model['profile_email'],
 			'profile_phone' => $model['profile_phone'],
 			'profile_detail' => $model['profile_detail'],
-			'profile_birth' => $model['profile_birth'],
-			'profile_gender' => $model['profile_gender'],
-			'profile_website' => $model['profile_website'],
-			'profile_facebook' => $model['profile_facebook'],
-			'profile_twitter' => $model['profile_twitter'],
-			'profile_linkedin' => $model['profile_linkedin'],
-			'profile_google' => $model['profile_google'],
-			'profile_type' => $model['profile_type'],
-			'profile_image'	=> $model['file_link'],
 			'access_token' => $model['session_token'],
 			'access_secret' => $model['session_secret'],
 			'access_permissions' => explode(',', $model['session_permissions']) );

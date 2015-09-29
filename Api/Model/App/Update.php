@@ -1,9 +1,8 @@
 <?php //-->
 /*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+ * A Custom Library
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
@@ -14,130 +13,161 @@ use Eve\Framework\Model\Argument;
 use Eve\Framework\Model\Exception;
 
 /**
- * Model Update
+ * App Model Update
  *
- * @vendor Api
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
  */
 class Update extends Base
 {
-	const INVALID_PARAMETERS = 'Invalid Parameters';
-	const INVALID_EMPTY = 'Cannot be empty!';
-	const INVALID_SET = 'Cannot be empty, if set';
-	const INVALID_FLOAT = 'Should be a valid floating point';
-	const INVALID_INTEGER = 'Should be a valid integer';
-	const INVALID_NUMBER = 'Should be a valid number';
-	const INVALID_BOOL = 'Should either be 0 or 1';
-	const INVALID_SMALL = 'Should be between 0 and 9';
-	const INVALID_ID = 'Invalid ID!';
-	
-	/**
-	 * Returns errors if any
-	 *
-	 * @param array submitted item
-	 * @return array error
-	 */
-	public function errors(array $item = array(), array $errors = array()) 
+    /**
+     * Returns errors if any
+     *
+     * @param array submitted data
+     * @param array existing errors
+     * @return array error
+     */
+    public function errors(array $data = array(), array $errors = array()) 
     {
-		//prepare
-		$item = $this->prepare($item);
-		
-		//REQUIRED
-		
-		// app_id			Required
-		if(isset($item['app_id'])
-			&& !$this('validation', $item['app_id'])->isType('integer', true)) {
-			$errors['app_id'] = self::INVALID_ID;
-		}
-		
-		// app_name				Required
-		if(isset($item['app_name']) 
-		&& empty($item['app_name'])) {
-			$errors['app_name'] = self::INVALID_SET;
-		}
-		
-		// app_permissions		Required
-		if(isset($item['app_permissions']) 
-		&& empty($item['app_permissions'])) {
-			$errors['app_permissions'] = self::INVALID_SET;
-		}
-		
-		//OPTIONAL
-		
-		// app_flag
-		if(isset($item['app_flag']) 
-		&& !$this('validation', $item['app_flag'])->isType('small', true)) {
-			$errors['app_flag'] = self::INVALID_SMALL;
-		}
-		
-		return $errors;
-	}
-	
-	/**
-	 * 1. Update the app
-	 *
-	 * @param array item
-	 * @return void
-	 */
-	public function process(array $item = array()) 
-	{
-		//prevent uncatchable error
-		if(count($this->errors($item))) {
-			throw new Exception(self::INVALID_PARAMETERS);
-		}
-		
-		//prepare
-		$item = $this->prepare($item);
-		
-		//generate dates
-		$updated = date('Y-m-d H:i:s');
-		
-		//SET WHAT WE KNOW
-		$model = eve()->database()->model()
-			// app_id
-			->setAppId($item['app_id'])
-			// app_updated
-			->setAppUpdated($updated);
-		
-		//REQUIRED
-		
-		// app_name				Required
-		if(!empty($item['app_name'])) {
-			$model->setAppName($item['app_name']);
-		}
-			
-		// app_permissions		Required
-		if(!empty($item['app_permissions'])) {
-			$model->setAppPermissions($item['app_permissions']);
-		}
-		
-		//OPTIONAL
-		
-		// app_domain
-		if(isset($item['app_domain'])) {
-			$model->setAppDomain($item['app_domain']);
-		}
+        //prepare
+        $data = $this->prepare($data);
+        
+        //REQUIRED
+        
+        // app_id - required
+        if(!isset($data['app_id'])
+        || !$this('validation', $data['app_id'])->isType('int', true)) {
+            $errors['app_id'] = self::INVALID_REQUIRED;
+        }
+        
+        // app_name - required
+        if(isset($data['app_name'])
+        && empty($data['app_name'])) {
+            $errors['app_name'] = self::INVALID_ID;
+        }
+        
+        // app_domain - required
+        if(isset($data['app_domain'])
+        && empty($data['app_domain'])) {
+            $errors['app_domain'] = self::INVALID_ID;
+        }
+        
+        // app_permissions - required
+        if(isset($data['app_permissions'])
+        && empty($data['app_permissions'])) {
+            $errors['app_permissions'] = self::INVALID_ID;
+        }
+        
+        //OPTIONAL
+        
+        // app_website - url
+        if(isset($data['app_website']) 
+            && !$this('validation', $data['app_website'])->isType('url')
+        ) {
+            $errors['app_website'] = self::INVALID_URL;
+        }
+        
+        // app_flag - small
+        if(isset($data['app_flag']) 
+        && !$this('validate', $data['app_flag'])->isType('small', true)) {
+            $errors['app_flag'] = self::INVALID_SMALL;
+        }
+        
+        return $errors;
+    }
+    
+    /**
+     * Processes the form
+     *
+     * @param array data
+     * @return mixed
+     */
+    public function process(array $data = array()) 
+    {
+        //prevent uncatchable error
+        if(count($this->errors($data))) {
+            throw new Exception(self::FAIL_406);
+        }
+        
+        //prepare
+        $data = $this->prepare($data);
+        
+        //generate stuff
+        $updated = date('Y-m-d H:i:s');
+        
+        //SET WHAT WE KNOW
+        $model = eve()
+            ->database()
+            ->model()
+            
+            // app_id
+            ->setAppId($data['app_id'])
+            
+            // app_updated
+            ->setAppUpdated($updated);
+        
+        //REQUIRED
+        
 
-		// app_website		
-		if(isset($item['app_website'])) {
-			$model->setAppWebsite($item['app_website']);
-		}
+        // app_name
+        if(isset($data['app_name'])) {
+            $model->setAppName($data['app_name']);
+        }
 
-		// app_type
-		if(isset($item['app_type'])) {
-			$model->setAppType($item['app_type']);
-		}
-		
-		// app_flag
-		if(isset($item['app_flag'])
-			&& $this('validation', $item['app_flag'])->isType('small', true)) {
-			$model->setAppFlag($item['app_flag']);
-		}
-		
-		//what's left ?
-		$model->save('app');
-		
-		$this->trigger('app-update', $model);
-		
-		return $model;
-	}
+        // app_domain
+        if(isset($data['app_domain'])) {
+            $model->setAppDomain($data['app_domain']);
+        }
+
+        // app_permissions
+        if(isset($data['app_permissions'])) {
+            $model->setAppPermissions($data['app_permissions']);
+        }
+        
+        //OPTIONAL
+        
+        // app_website
+        if(isset($data['app_website'])) {
+            $model->setAppWebsite($data['app_website']);
+        }
+
+        // app_token
+        if(isset($data['app_token'])) {
+            $model->setAppToken($data['app_token']);
+        }
+
+        // app_secret
+        if(isset($data['app_secret'])) {
+            $model->setAppSecret($data['app_secret']);
+        }
+        
+        // app_type
+        if(isset($data['app_type'])) {
+            $model->setAppType($data['app_type']);
+        }
+        
+        // app_flag
+        if(isset($data['app_flag'])) {
+            $model->setAppFlag($data['app_flag']);
+        }
+        
+        //what's left ?
+        $model->save('app');
+        
+        eve()->trigger('app-update', $model);
+        
+        return $model;
+    }
 }

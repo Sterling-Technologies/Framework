@@ -1,9 +1,8 @@
 <?php //-->
 /*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+ * A Custom Library
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
@@ -16,7 +15,20 @@ use Eve\Framework\Model\Exception;
 /**
  * Model Factory
  *
- * @vendor Api
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
  */
 class Index extends Base
 {
@@ -69,7 +81,7 @@ class Index extends Base
 			->setAuthProfileAuth($authId)
 			->insert('auth_profile');
 		
-		$this->trigger('auth-link-profile', $model);
+		eve()->trigger('auth-link-profile', $model);
 		
 		return $model;
 	}
@@ -103,7 +115,7 @@ class Index extends Base
 			->setAuthProfileAuth($authId)
 			->remove('auth_profile');
 		
-		$this->trigger('auth-unlink-profile', $model);
+		eve()->trigger('auth-unlink-profile', $model);
 		
 		return $model;
 	}

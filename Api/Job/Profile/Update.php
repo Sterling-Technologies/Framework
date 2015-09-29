@@ -1,95 +1,68 @@
 <?php //-->
 /*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+ * A Custom Library
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
 namespace Api\Job\Profile;
 
-use Api\Job\Base;
-use Api\Job\Argument;
-use Api\Job\Exception;
+use Eve\Framework\Job\Base;
+use Eve\Framework\Job\Exception;
 
 /**
- * Job Update
+ * Profile Job Update
  *
- * @vendor Api
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
+ *
+ * -- $this->data - Provides all raw data
+ *    originally passed into the job
  */
 class Update extends Base 
 {
-	/**
-	 * Executes the job
-	 *
-	 * @return void
-	 */
-	public function run() 
-	{
-		if(!isset($this->data['item'])) {
-			throw new Exception('Missing item key in data.');
-		}
-		
-		//need to have
-		// item 	- profile item
-		$item = $this->data['item'];
-		$results = array('image' => array());
-		
-		//update profile
-		$results['profile'] = eve()
-			->model('profile')
-			->update()
-			->process($item)
-			->get();
-		
-		//if there are images
-		if(!isset($item['images']) || !is_array($item['images'])) {
-			return $results;
-		}
-	
-		//first unlink all files
-		eve()
-			->model('profile')
-			->unlinkAllFiles(
-				$item['profile_id'], 
-				array(
-					'main_profile', 
-					'profile_image'));
-		
-		foreach($item['images'] as $i => $file) {
-			$file['file_type'] = 'profile_image';
-		
-			if($i === 0) {
-				$file['file_type'] = 'main_profile';
-			}
-			
-			//1. Validate
-			$file['imageOnly'] = true;
-			
-			$errors = eve()
-				->model('file')
-				->create()
-				->errors($file);
-			
-			if(count($errors)) {
-				continue;
-			}
-			
-			// 2. Process
-			$results['images'][] = $model = eve()
-				->model('file')
-				->create()
-				->process($file);
-				
-			//link
-			eve()
-				->model('profile')
-				->linkFile(
-					$item['profile_id'], 
-					$model['file_id']);
-		}
-		
-		return $results;
-	}
+    const FAIL_406 = 'Invalid Data';
+    
+    /**
+     * Executes the job
+     *
+     * @return void
+     */
+    public function run() 
+    {
+        //if no data
+        if(empty($this->data)) {
+            //there should be a global catch somewhere
+            throw new Exception(self::FAIL_406);
+        }
+        
+        //this will be returned at the end
+        $results = array();
+        
+        //NEXT ...
+        
+        //if there is a profile_id
+        if(isset($this->data['profile_id'])) {
+            //update the profile
+            $results['profile'] = eve()
+                ->model('profile')
+                ->update()
+                ->process($this->data);
+        }
+                
+        return $results;
+    }
 }

@@ -3,12 +3,16 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 09, 2015 at 02:20 PM
+-- Generation Time: Sep 28, 2015 at 01:11 PM
 -- Server version: 5.6.17
 -- PHP Version: 5.4.24
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
+
+--
+-- Database: `eden_v4`
+--
 
 -- --------------------------------------------------------
 
@@ -17,19 +21,19 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE IF NOT EXISTS `app` (
-`app_id` int(10) unsigned NOT NULL COMMENT 'Database Generated',
-  `app_name` varchar(255) NOT NULL COMMENT 'Name of App',
-  `app_domain` varchar(255) DEFAULT NULL COMMENT 'eg. example.com',
-  `app_token` varchar(255) NOT NULL COMMENT 'System Generated',
-  `app_secret` varchar(255) NOT NULL COMMENT 'System Generated',
-  `app_permissions` text NOT NULL COMMENT 'See permissions.json for options',
-  `app_website` varchar(255) DEFAULT NULL COMMENT 'eg. http://example.com/',
-  `app_active` int(1) unsigned NOT NULL DEFAULT '1' COMMENT 'Do not delete rows',
-  `app_type` varchar(255) DEFAULT NULL COMMENT 'General usage type',
-  `app_flag` int(1) unsigned NOT NULL DEFAULT '0' COMMENT 'General usage flag',
-  `app_created` datetime NOT NULL COMMENT 'System Generated',
-  `app_updated` datetime NOT NULL COMMENT 'System Generated'
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+`app_id` int(10) unsigned NOT NULL,
+  `app_name` varchar(255) NOT NULL,
+  `app_domain` varchar(255) DEFAULT NULL,
+  `app_website` varchar(255) DEFAULT NULL,
+  `app_permissions` varchar(255) NOT NULL,
+  `app_token` varchar(255) DEFAULT NULL,
+  `app_secret` varchar(255) DEFAULT NULL,
+  `app_active` int(1) unsigned NOT NULL DEFAULT '1',
+  `app_type` varchar(255) DEFAULT NULL,
+  `app_flag` int(1) unsigned NOT NULL DEFAULT '0',
+  `app_created` datetime NOT NULL,
+  `app_updated` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -84,60 +88,31 @@ CREATE TABLE IF NOT EXISTS `auth_profile` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `file`
---
-
-CREATE TABLE IF NOT EXISTS `file` (
-`file_id` int(10) unsigned NOT NULL COMMENT 'Database Generated',
-  `file_link` varchar(255) NOT NULL COMMENT 'eg. http://example.com/file.jpg',
-  `file_path` varchar(255) DEFAULT NULL COMMENT 'Real file name and path',
-  `file_mime` varchar(255) NOT NULL COMMENT 'Mime type',
-  `file_active` int(1) unsigned NOT NULL DEFAULT '1' COMMENT 'Do not delete rows',
-  `file_type` varchar(255) DEFAULT NULL COMMENT 'General usage type',
-  `file_flag` int(1) unsigned NOT NULL DEFAULT '0' COMMENT 'General usage flag',
-  `file_created` datetime NOT NULL COMMENT 'System Generated',
-  `file_updated` datetime NOT NULL COMMENT 'System Generated'
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `profile`
 --
 
 CREATE TABLE IF NOT EXISTS `profile` (
-`profile_id` int(10) unsigned NOT NULL COMMENT 'Database Generated',
-  `profile_name` varchar(255) NOT NULL COMMENT 'Full name of person',
-  `profile_email` varchar(255) DEFAULT NULL COMMENT 'Email of person',
-  `profile_phone` varchar(255) DEFAULT NULL COMMENT 'Phone number',
+`profile_id` int(10) unsigned NOT NULL,
+  `profile_name` varchar(255) NOT NULL,
+  `profile_email` varchar(255) DEFAULT NULL,
+  `profile_phone` varchar(255) DEFAULT NULL,
   `profile_detail` text,
-  `profile_company` varchar(255) DEFAULT NULL COMMENT 'Where they work',
-  `profile_job` varchar(255) DEFAULT NULL COMMENT 'Job title',
-  `profile_gender` varchar(255) DEFAULT NULL COMMENT 'male or female',
+  `profile_image` varchar(255) DEFAULT NULL,
+  `profile_company` varchar(255) DEFAULT NULL,
+  `profile_job` varchar(255) DEFAULT NULL,
+  `profile_gender` varchar(255) DEFAULT NULL,
   `profile_birth` datetime DEFAULT NULL,
-  `profile_website` varchar(255) DEFAULT NULL COMMENT 'Personal website',
-  `profile_facebook` varchar(255) DEFAULT NULL COMMENT 'Facebook website link',
-  `profile_linkedin` varchar(255) DEFAULT NULL COMMENT 'LinkedIn website link',
-  `profile_twitter` varchar(255) DEFAULT NULL COMMENT 'Twitter website link',
-  `profile_google` varchar(255) DEFAULT NULL COMMENT 'Google website link',
-  `profile_reference` varchar(255) DEFAULT NULL COMMENT 'Reference usually related to app',
-  `profile_active` int(1) unsigned NOT NULL DEFAULT '1' COMMENT 'Do not delete rows',
-  `profile_type` varchar(255) DEFAULT NULL COMMENT 'General usage type',
-  `profile_flag` int(1) unsigned NOT NULL DEFAULT '0' COMMENT 'General usage flag',
-  `profile_created` datetime NOT NULL COMMENT 'System Generated',
-  `profile_updated` datetime NOT NULL COMMENT 'System Generated'
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `profile_file`
---
-
-CREATE TABLE IF NOT EXISTS `profile_file` (
-  `profile_file_profile` int(10) unsigned NOT NULL,
-  `profile_file_file` int(10) unsigned NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `profile_facebook` varchar(255) DEFAULT NULL,
+  `profile_linkedin` varchar(255) DEFAULT NULL,
+  `profile_twitter` varchar(255) DEFAULT NULL,
+  `profile_google` varchar(255) DEFAULT NULL,
+  `profile_reference` varchar(255) DEFAULT NULL,
+  `profile_active` int(1) unsigned NOT NULL DEFAULT '1',
+  `profile_type` varchar(255) DEFAULT NULL,
+  `profile_flag` int(1) unsigned NOT NULL DEFAULT '0',
+  `profile_created` datetime NOT NULL,
+  `profile_updated` datetime NOT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -188,7 +163,7 @@ CREATE TABLE IF NOT EXISTS `session_auth` (
 -- Indexes for table `app`
 --
 ALTER TABLE `app`
- ADD PRIMARY KEY (`app_id`), ADD KEY `app_token` (`app_token`), ADD KEY `app_secret` (`app_secret`), ADD KEY `app_active` (`app_active`), ADD KEY `app_type` (`app_type`), ADD KEY `app_flag` (`app_flag`), ADD KEY `app_created` (`app_created`), ADD KEY `app_updated` (`app_updated`);
+ ADD PRIMARY KEY (`app_id`), ADD KEY `app_active` (`app_active`), ADD KEY `app_type` (`app_type`), ADD KEY `app_flag` (`app_flag`), ADD KEY `app_created` (`app_created`), ADD KEY `app_updated` (`app_updated`);
 
 --
 -- Indexes for table `app_profile`
@@ -209,22 +184,10 @@ ALTER TABLE `auth_profile`
  ADD PRIMARY KEY (`auth_profile_auth`,`auth_profile_profile`), ADD KEY `profile_id_idx` (`auth_profile_profile`);
 
 --
--- Indexes for table `file`
---
-ALTER TABLE `file`
- ADD PRIMARY KEY (`file_id`), ADD KEY `file_mime` (`file_mime`), ADD KEY `file_active` (`file_active`), ADD KEY `file_type` (`file_type`), ADD KEY `file_flag` (`file_flag`), ADD KEY `file_created` (`file_created`), ADD KEY `file_updated` (`file_updated`);
-
---
 -- Indexes for table `profile`
 --
 ALTER TABLE `profile`
- ADD PRIMARY KEY (`profile_id`), ADD KEY `profile_name` (`profile_name`), ADD KEY `profile_email` (`profile_email`), ADD KEY `profile_company` (`profile_company`), ADD KEY `profile_gender` (`profile_gender`), ADD KEY `profile_birth` (`profile_birth`), ADD KEY `profile_reference` (`profile_reference`), ADD KEY `profile_active` (`profile_active`), ADD KEY `profile_type` (`profile_type`), ADD KEY `profile_flag` (`profile_flag`), ADD KEY `profile_created` (`profile_created`), ADD KEY `profile_updated` (`profile_updated`);
-
---
--- Indexes for table `profile_file`
---
-ALTER TABLE `profile_file`
- ADD PRIMARY KEY (`profile_file_profile`,`profile_file_file`);
+ ADD PRIMARY KEY (`profile_id`), ADD KEY `profile_active` (`profile_active`), ADD KEY `profile_type` (`profile_type`), ADD KEY `profile_flag` (`profile_flag`), ADD KEY `profile_created` (`profile_created`), ADD KEY `profile_updated` (`profile_updated`);
 
 --
 -- Indexes for table `session`
@@ -258,11 +221,6 @@ MODIFY `app_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Database Gener
 --
 ALTER TABLE `auth`
 MODIFY `auth_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Database Generated';
---
--- AUTO_INCREMENT for table `file`
---
-ALTER TABLE `file`
-MODIFY `file_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Database Generated';
 --
 -- AUTO_INCREMENT for table `profile`
 --

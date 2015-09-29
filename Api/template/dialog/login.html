@@ -1,6 +1,14 @@
+<div class="center clear pad">
+    <img width="400" src="/logo.png" />
+</div>
+
+{{#if flash.message}}
+<div class="clear alert alert-{{flash.type}}">{{flash.message}}</div>
+{{/if}}
+
 <div class="panel panel-default" >
     <div class="panel-heading brand">
-        <span class="pull-right"><a href="/dialog/signup?{{query}}">No Login ?</a></span>
+        <span class="pull-right"><a href="/dialog/signup?{{querystring}}">No Login ?</a></span>
         <div class="panel-title">Login</div>
     </div>     
 
@@ -26,7 +34,7 @@
             </div>
             <div class="form-group">
                <button type="submit" class="btn btn-primary">Submit</button>
-               <a class="brand-text" href="/auth/forgot?{{query}}">Forgot Password ?</a>
+               <a class="brand-text" href="/auth/forgot?{{querystring}}">Forgot Password ?</a>
             </div>
         </form>
     </div>

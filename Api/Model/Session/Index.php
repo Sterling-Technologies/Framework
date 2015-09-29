@@ -1,9 +1,8 @@
 <?php //-->
 /*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+ * A Custom Library
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
@@ -14,16 +13,29 @@ use Eve\Framework\Model\Argument;
 use Eve\Framework\Model\Exception;
 
 /**
- * Model Index
+ * Session Model Index
  *
- * @vendor Api
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
  */
 class Index extends Base
 {
 	/**
 	 * Factory for access
 	 *
-	 * @return Eve\Framework\Model\Session\Access
+	 * @return Api\Model\Session\Access
 	 */
 	public function access()
 	{
@@ -57,9 +69,32 @@ class Index extends Base
 	}
 	
 	/**
+	 * Get profile by access token
+	 * Random function needed...
+	 *
+	 * @param string
+	 * @return array
+	 */
+	public function getAppByToken($token) 
+	{
+		return eve()
+			->database()
+			->search('session')
+			->setColumns('app.*')
+			->innerJoinOn(
+				'session_app', 
+				'session_app_session = session_id')
+			->innerJoinOn(
+				'app', 
+				'session_app_app = app_id')
+			->filterBySessionToken($token)
+			->getRow();
+	}
+	
+	/**
 	 * Factory for login
 	 *
-	 * @return Eve\Framework\Model\Session\Login
+	 * @return Api\Model\Session\Login
 	 */
 	public function login()
 	{
@@ -69,7 +104,7 @@ class Index extends Base
 	/**
 	 * Factory for logout
 	 *
-	 * @return Eve\Framework\Model\Session\Logout
+	 * @return Api\Model\Session\Logout
 	 */
 	public function logout()
 	{
@@ -79,7 +114,7 @@ class Index extends Base
 	/**
 	 * Factory for request
 	 *
-	 * @return Eve\Framework\Model\Session\Request
+	 * @return Api\Model\Session\Request
 	 */
 	public function request()
 	{

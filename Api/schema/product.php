@@ -15,8 +15,7 @@ return array(
 		'update',		//add a Product/Update Action 
 		'remove',		//add a Product/Remove Action 
 		'restore',		//add a Product/Restore Action 
-		'search',		//add a Product/Search Action 
-		'detail'		//add a Product/Detail Action 
+		'search'		//add a Product/Search Action 
 	), 				
 	'model' => array(
 		'create',		//add a Product/Create Model 

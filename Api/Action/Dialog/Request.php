@@ -1,63 +1,107 @@
 <?php //-->
 /*
- * This file is part of the Openovate Labs Inc. framework library
- * (c) 2013-2014 Openovate Labs
+ * A Custom Library
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 namespace Api\Action\Dialog;
 
-use Api\Action;
-use Api\Page;
+use Eve\Framework\Action\Json;
+use Eve\Framework\Action\Html;
 
 /**
- * The base class for any class that defines a view.
- * A view controls how templates are loaded as well as 
- * being the final point where data manipulation can occur.
+ * Action
  *
- * @vendor Openovate
- * @package Framework
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
+ *
+ * -- $this->request - The Request Object using Eden\Registry\Index
+ *
+ *    -- $this->request->get('post') - $_POST data
+ *       You are free to use the $_POST variable if you like
+ *
+ *    -- $this->request->get('get') - $_GET data
+ *       You are free to use the $_GET variable if you like
+ *
+ *    -- $this->request->get('server') - $_SERVER data
+ *       You are free to use the $_SERVER variable if you like
+ *
+ *    -- $this->request->get('body') - raw body for 
+ *       POST requests that provide JSON data for example
+ *       instead of the default x-form-data
+ *
+ *    -- $this->request->get('method') - GET, POST, PUT or DELETE
+ *
+ * -- $this->response - The Response Object using Eden\Registry\Index
+ *
+ *    -- $this->response->set('body', 'Foo') - Sets the response body.
+ *       Alternative for returning a string in render()
+ *
+ *    -- $this->response->set('headers', 'Foo', 'Bar') - Sets a 
+ *       header item to 'Foo: Bar' given key/value
+ *
+ *    -- $this->response->set('headers', 'Foo', '') - Sets a 
+ *       header item to 'Foo' given that no value is present
+ *       QUIRK: $this->response->set('headers', 'Foo') will erase
+ *       all existing headers
  */
-class Request extends Page 
+class Request extends Html
 {
-	const FAIL_SESSION = 'Failed to create session.';
-	const FAIL_VALIDATION = 'There are some errors on the form.';
+	const FAIL_400 = 'Failed to create session.';
+	const FAIL_406 = 'There are some errors on the form.';
 
-	protected $title = 'Log In';
+	protected $title = 'Requesting Access';
+	protected $layout = '_blank';
 
 	public function render() 
 	{
-
-		$this->data['blank'] = true;
+		$data = array('app' => $this->request->get('source'));
 		
 		//there should be a client_id, redirect_uri
 		//client_id is already checked in the router
 		//state is optional
 		if(!isset($_GET['redirect_uri'])) {
-			$this->data['template'] = 'dialog-invalid';
+			$this->template = 'dialog/invalid';
 			return $this->success();
 		}
 		
 		//scope by default is public_sso
-		$this->data['requestPermissions'] = $_GET['scope']  || 'public_sso';
-		$this->data['requestPermissions'] = explode(',', $this->data['requestPermissions']);
+		$data['request_permissions'] = 'public_sso';
 		
-		//okay it matches
+		if(isset($_GET['scope'])) {
+			$data['request_permissions'] = $_GET['scope'];
+		}
+		
+		$data['request_permissions'] = explode(',', $data['request_permissions']);
+		$data['app_permissions'] = $this->request->get('source', 'app_permissions');
+		
 		//make app permissions into an array
-		$appPermissions = explode(',', $this->data['source']['app_permissions']);
+		$data['app_permissions'] = explode(',', $data['app_permissions']);
 		
 		//check scopes with registered app permissions
 		$permitted = true;
-		foreach ($this->data['requestPermissions'] as $permission) {
-			if(strpos($appPermissions, $permission) === false) {
+		foreach ($data['request_permissions'] as $permission) {
+			if(!in_array($permission, $data['app_permissions'])) {
 				$permitted = false;
 			}
 		}
 		
 		//did they all match ?
 		if(!$permitted) {
-			$this->data['template'] = 'dialog-invalid';
+			$this->template = 'dialog/invalid';
 			return $this->success();
 		}
 		
@@ -66,8 +110,8 @@ class Request extends Page
 		if(!isset($_SESSION['me'])) {
 			//go back to the login
 			//pass the request query
-			$query = $_SERVER['QUERY_STRING'];
-			eve()->redirect('/dialog/login?' + $query);
+			$query = $this->request->get('query');
+			eve()->redirect('/dialog/login?' . $query);
 			return;
 		}
 		
@@ -78,38 +122,35 @@ class Request extends Page
 		
 		//no post, so we need to render
 		//we want to sparse the user and other permissions(global)
-		$roles = eve()->config('roles');
+		$routes = eve()->settings('routes');
+		$roles = $routes['roles'];
 		
-		$userPermissions 	= [];
-		$globalPermissions 	= [];
+		$data['user_permissions'] = array();
+		$data['global_permissions'] = array();
 		
-		//give public permissions
-		if(is_array($roles['Public']) {
-			$globalPermissions = array_keys($roles['Public']);
+		foreach($roles as $role => $meta) {
+			if(strpos($role, 'user_') !== 0) {
+				$data['global_permissions'][] = $role;
+			}
 		}
 		
-		foreach ($this->data['requestPermissions'] as $role) {
+		foreach($data['request_permissions'] as $role) {
+			//prevent random roles from being assigned
+			if(!isset($roles[$role])) {
+				continue;
+			}
+			
 			//if its not a user permission, it's a global permission
-			if(!is_array($roles['User'][$role]
-				|| empty($roles['User'][$role])) {
-				$globalPermissions = $role;
-				return;
+			if(strpos($role, 'user_') !== 0) {
+				continue;
 			}
 			
 			//okay it has to be a user permission
-			$userPermissions = array(
-				'name' => $role,
-				'icon' => $roles['User'][$role]['icon'] || 'user',
-				'title' => $roles['User'][$role]['title'],
-				'description' => $roles['User'][$role]['description']
-			});
+			$data['user_permissions'][$role] = $roles[$role];
 		}
 		
 		//Now we can load the page
-		$this->data['app'] = $this->data['source'];
-		$this->data['user_permissions'] = $userPermissions;
-		$this->data['global_permissions'] = $globalPermissions;
-		
+		$this->body = $data;
 		return $this->success();
 	}
 
@@ -120,18 +161,19 @@ class Request extends Page
 	 *
 	 * @return void
 	 */
-	protected function check() {
+	protected function check() 
+	{
 		//get the item
-		$item = $this->data['item'];
-		$item['app_id'] = this.request.source.app_id;
-		$item['auth_id'] = $_SESSION['me']['auth_id'];
+		$data = array('item' => $this->request->get('post'));
+		$data['item']['app_id'] = $this->request->get('source', 'app_id');
+		$data['item']['auth_id'] = $_SESSION['me']['auth_id'];
 		
-		if(is_array($item['session_permissions'])) {
-			$item['session_permissions'] = implode(',', $item['session_permissions']);
+		if(is_array($data['item']['session_permissions'])) {
+			$data['item']['session_permissions'] = implode(',', $data['item']['session_permissions']);
 		}
 		
 		//no need to process if the action is not allow
-		if($item['action'] !== 'allow') {
+		if($data['item']['action'] !== 'allow') {
 			//go back to the app
 			return $this->redirect(array('error' => 'access_denied'));
 		}
@@ -139,35 +181,37 @@ class Request extends Page
 		$errors = eve()
 			->model('session')
 			->request()
-			->errors($item);
+			->errors($data['item']);
 	
 		if(!empty($errors)) {
-			return $this->fail(self::FAIL_VALIDATION, $errors, $item);
+			return $this->fail(
+				self::FAIL_406, 
+				$errors, 
+				$data['item']);
 		}
 		
 		//process
 		$results = eve()
-			->job('session')
-			->request(array(
-				'data' => array(
-					'item' => $item)));
+			->job('session-request')
+			->setData($data['item'])
+			->run();
 
-		if(!isset($results['session']) {
-			return $this->fail(self::FAIL_SESSION);
+		if(!isset($results['session'])) {
+			return $this->fail(self::FAIL_400);
 		}
 		
 		//success
-		$this->redirect(array('code': $results['session']['session_token']));
+		$this->redirect(array('code' => $results['session']['session_token']));
 	}
 
 	/**
 	 * Creates a redirect url
 	 *
-	 * @param string the url
 	 * @param object extra parameters
 	 * @return string
 	 */
-	protected function redirect(array $query = array()) {
+	protected function redirect(array $query = array()) 
+	{
 		$url = $_GET['redirect_uri'];
 		
 		if(isset($_GET['state'])) {
@@ -181,10 +225,10 @@ class Request extends Page
 		}
 		
 		$separator = '?';
-		if(strpos($url, '?') === false) {
+		if(strpos($url, '?') !== false) {
 			$separator = '&';
 		}
 		
-		eve()->redirect($url + $separator + $query);
+		eve()->redirect($url . $separator . $query);
 	}
 }

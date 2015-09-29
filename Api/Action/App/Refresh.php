@@ -1,65 +1,150 @@
 <?php //-->
 /*
- * This file is part of the Openovate Labs Inc. framework library
- * (c) 2013-2014 Openovate Labs
+ * A Custom Library
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 namespace Api\Action\App;
 
-use Api\Action;
-use Api\Page;
+use Eve\Framework\Action\Json;
+use Eve\Framework\Action\Html;
 
 /**
- * The base class for any class that defines a view.
- * A view controls how templates are loaded as well as 
- * being the final point where data manipulation can occur.
+ * Action
  *
- * @vendor Openovate
- * @package Framework
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
+ *
+ * -- $this->request - The Request Object using Eden\Registry\Index
+ *
+ *    -- $this->request->get('post') - $_POST data
+ *       You are free to use the $_POST variable if you like
+ *
+ *    -- $this->request->get('get') - $_GET data
+ *       You are free to use the $_GET variable if you like
+ *
+ *    -- $this->request->get('server') - $_SERVER data
+ *       You are free to use the $_SERVER variable if you like
+ *
+ *    -- $this->request->get('body') - raw body for 
+ *       POST requests that provide JSON data for example
+ *       instead of the default x-form-data
+ *
+ *    -- $this->request->get('method') - GET, POST, PUT or DELETE
+ *
+ * -- $this->response - The Response Object using Eden\Registry\Index
+ *
+ *    -- $this->response->set('body', 'Foo') - Sets the response body.
+ *       Alternative for returning a string in render()
+ *
+ *    -- $this->response->set('headers', 'Foo', 'Bar') - Sets a 
+ *       header item to 'Foo: Bar' given key/value
+ *
+ *    -- $this->response->set('headers', 'Foo', '') - Sets a 
+ *       header item to 'Foo' given that no value is present
+ *       QUIRK: $this->response->set('headers', 'Foo') will erase
+ *       all existing headers
  */
-class Refresh extends Page 
+class Refresh extends Html
 {
-	const FAIL_NOT_EXISTS = 'App does not exist';
-	const FAIL_PERMISSIONS = 'You do not have permissions to update.';
-	const SUCCESS = 'App successfully refreshed!';
+    const FAIL_406 = 'No ID Provided';
+	const FAIL_404 = 'App does not exist';
+	const FAIL_401 = 'You do not have permissions to update.';
+	const SUCCESS_200 = 'App successfully refreshed!';
 	
-	protected $title = 'Updating App';
-
 	public function render() 
 	{
-		$item = $this->data['item'];
+		//-----------------------//
+        // 1. Get Data
+        $data = array();
+        
+        //get id from the url
+        $data['app_id'] = $this->request->get('variables', 0);
+        
+        //was it not included in the url ?
+        if(!$data['app_id'] 
+        && isset($_SESSION['me']['app_id'])) {
+            //get it from the session
+            $data['app_id'] = $_SESSION['me']['app_id'];
+        }
+        
+        //it's going to fail if we don't have the app_id
+        if(!$data['app_id']) {
+            //we might as we an fail it now
+            return $this->fail(
+                self::FAIL_404, 
+                '/app/search');
+        }
+        
+        //if no profile_id
+        if(!isset($_SESSION['me']['profile_id'])) {
+            //permission check failed
+            return $this->fail(
+                self::FAIL_401,
+                '/app/search');
+        }
+        
+        $data['profile_id'] = $_SESSION['me']['profile_id'];
+        
+        //-----------------------//
+        // 2. Validate
+        //check fields
+        $errors = eve()
+            ->model('app')
+            ->refresh()
+            ->errors($data);
+        
+        //if there are errors
+        if(!empty($errors)) {
+            return $this->fail(
+                self::FAIL_406, 
+                '/app/search');
+        }
+        
+        //check permissions
+        $yes = eve()
+            ->model('app')
+            ->permissions(
+                $data['app_id'], 
+                $data['profile_id']);
 
-		$item['app_id'] = (int) $this->data['params']['id'];
-		
-		//add profile_id
-		$item['profile_id'] = $_SESSION['me']['profile_id'];
-
-		//get app
-		$row = eve()
-			->model('app')
-			->detail()
-			->process($item)
-			->innerJoinOn(
-					'app_profile', 
-					'app_profile_app = app_id')
-			->getRow();
-
-		if(empty($row)) {
-			return $this->fail(self::FAIL_NOT_EXISTS, '/app/list');
+        //if not permitted, fail
+        if(!$yes) {
+            return $this->fail(
+                self::FAIL_401,
+                '/app/search');
+        }
+                
+        //-----------------------//
+        // 3. Process
+        try {
+			$results = eve()
+                ->job('app-refresh')
+                ->setData($data)
+                ->run();
+		} catch(\Exception $e) {
+        	return $this->fail(
+                $e->getMessage(),
+                '/app/search');
 		}
-
-		//if not matched, fail
-		if($row['app_profile_profile'] !== $this->data['me']['profile_id']) {
-			return $this->fail(self::FAIL_PERMISSIONS, '/app/list');
-		}
-		
-		eve()->job('app')
-			->referesh(array(
-				'data' => array(
-					'item' => $item)));
-		//success
-		$this->success(self::SUCCESS, '/app/list');
-	}
+        
+        //NOTE: do something with results here
+        
+        return $this->success(
+            self::SUCCESS_200, 
+            '/app/search');
+    }
 }

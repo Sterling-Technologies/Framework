@@ -1,9 +1,8 @@
 <?php //-->
 /*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+ * A Custom Library
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
@@ -16,7 +15,20 @@ use Eve\Framework\Model\Exception;
 /**
  * Model Set
  *
- * @vendor Api
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
  */
 class Set extends Base
 {
@@ -29,10 +41,10 @@ class Set extends Base
 	 * @param object submitted profile object
 	 * @return object error object
 	 */
-	public function errors(array $item = array(), array $errors = array()) 
+	public function errors(array $data = array(), array $errors = array()) 
     {
 		//prepare
-		$item = $this->prepare($item);
+		$data = $this->prepare($data);
 		
 		//the uniqueness of a profile is from their id or email
 		//if they change their email, they must provide a profile id
@@ -42,16 +54,16 @@ class Set extends Base
 		//if no profile id and email, $search for the email
 		//	and if found, update it
 		//	otherwise, insert it
-		if(!is_numeric($item['profile_id'])
-		&& !$this('validation', $item['profile_email'])->isType('email', true)) {
+		if(!is_numeric($data['profile_id'])
+		&& !$this('validation', $data['profile_email'])->isType('email', true)) {
 			$errors['profile_id'] 		= self::INVALID_REFERENCE;
 			$errors['profile_email'] 	= self::INVALID_REFERENCE;
 		}
 		
 		//if we do have a number, just update it
-		if(isset($item['profile_id']) 
-			&& is_numeric($item['profile_id'])) {
-			return eve()->model('profile')->update()->errors($item, $errors);
+		if(isset($data['profile_id']) 
+			&& is_numeric($data['profile_id'])) {
+			return eve()->model('profile')->update()->errors($data, $errors);
 		}
 		
 		//at this point we should have an email at least
@@ -66,12 +78,12 @@ class Set extends Base
 	 * @param object profile object
 	 * @return void
 	 */
-	public function process(array $item = array()) 
+	public function process(array $data = array()) 
 	{
 		//prevent uncatchable error
-		if(count($this->errors($item))) {
-			throw new Exception(self::INVALID_PARAMETERS);
-		}
+        if(count($this->errors($data))) {
+            throw new Exception(self::FAIL_406);
+        }
 		
 		//the uniqueness of a profile is from their id or email
 		//if they change their email, they must provide a profile id
@@ -83,8 +95,8 @@ class Set extends Base
 		//	otherwise, insert it
 		
 		//if we do have a number, just update it
-		if(is_numeric($item['profile_id'])) {
-			return Update::i()->process($item);
+		if(is_numeric($data['profile_id'])) {
+			return Update::i()->process($data);
 		}
 		
 		//at this point we should have an email at least
@@ -92,19 +104,19 @@ class Set extends Base
 		$search = eve()
 			->database()
 			->search('profile')
-			->filterByProfileEmail($item['profile_email']);
+			->filterByProfileEmail($data['profile_email']);
 			
 		$row = $search->getRow();
 		
 		//if we found it
 		if($row) {
 			//update it
-			$item['profile_id'] = $row['profile_id'];
+			$data['profile_id'] = $row['profile_id'];
 			
-			return Update::i()->process($item);
+			return Update::i()->process($data);
 		}
 		
 		//insert it
-		return Create::i()->process($item);
+		return Create::i()->process($data);
 	}
 }

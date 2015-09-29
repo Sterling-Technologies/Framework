@@ -1,9 +1,8 @@
 <?php //-->
 /*
- * This file is part of the Eden package.
- * (c) 2014-2016 Openovate Labs
+ * A Custom Library
  *
- * Copyright and license information can be found at LICENSE.txt
+ * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 
@@ -16,30 +15,42 @@ use Eve\Framework\Model\Exception;
 /**
  * Model Remove
  *
- * @vendor Api
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
  */
 class Remove extends Base
-{
-	const INVALID_PARAMETERS = 'Invalid Parameters';
-	const INVALID_ID = 'Invalid ID';
-	
+{	
 	/**
-	 * Returns errors if any
-	 *
-	 * @param array submitted item
-	 * @return array error
-	 */
-	public function errors(array $item = array(), array $errors = array()) 
+     * Returns errors if any
+     *
+     * @param array submitted data
+     * @param array existing errors
+     * @return array error
+     */
+	public function errors(array $data = array(), array $errors = array()) 
     {
 		//prepare
-		$item = $this->prepare($item);
+		$data = $this->prepare($data);
 		
 		//REQUIRED
 		
 		// auth_id			Required
-		if(isset($item['auth_id'])
-			&& !$this('validation', $item['auth_id'])->isType('integer', true)) {
-			$errors['auth_id'] = self::INVALID_ID;
+		if(!isset($data['auth_id'])
+			|| !$this('validation', $data['auth_id'])->isType('integer', true)
+		) {
+			$errors['auth_id'] = self::INVALID_REQUIRED;
 		}
 		
 		return $errors;
@@ -48,28 +59,28 @@ class Remove extends Base
 	/**
 	 * Processes the form
 	 *
-	 * @param array item
-	 * @return void
+	 * @param array data
+	 * @return mixed
 	 */
-	public function process(array $item = array()) 
+	public function process(array $data = array()) 
 	{
 		//prevent uncatchable error
-		if(count($this->errors($item))) {
-			throw new Exception(self::INVALID_PARAMETERS);
-		}
+        if(count($this->errors($data))) {
+            throw new Exception(self::FAIL_406);
+        }
 		
 		//prepare
-		$item = $this->prepare($item);
+		$data = $this->prepare($data);
 		
 		$model = eve()
 			->database()
 			->model()
-			->setAuthId($item['auth_id'])
+			->setAuthId($data['auth_id'])
 			->setAuthActive('0');
 			
 		$model->save('auth');
 		
-		$this->trigger('auth-remove', $model);
+		eve()->trigger('auth-remove', $model);
 		
 		return $model;
 	}

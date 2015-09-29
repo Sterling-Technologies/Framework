@@ -19,9 +19,9 @@ use Eve\Framework\Base;
  * @package Framework
  * @author Christian Blanquera cblanquera@openovate.com
  */
-class Validator extends Base 
+class Rest extends Base 
 {
-	const INVALID = 'Invalid Request';
+	const FAIL_401 = 'Invalid Request';
 	
 	/**
 	 * Main plugin method
@@ -40,20 +40,26 @@ class Validator extends Base
 			$path = $request->get('path', 'string');
 			
 			//find the route
-			foreach($routes as $route => $meta) {
-				$pattern = $route[0];
-				$callback = $route[1];
-				
+			$found = false;
+			foreach($routes['rest'] as $pattern => $meta) {
 				$regex = str_replace('**', '!!', $pattern);
 				$regex = str_replace('*', '([^/]*)', $regex);
 				$regex = str_replace('!!', '(.*)', $regex);
 				
 				$regex = '#^'.$regex.'(.*)#';
 				if(!preg_match($regex, $path, $matches)) {
+					echo $regex.' '.$path.'<br />';
 					continue;
 				}
 				
+				$found = true;
 				break;
+			}
+			
+			//if no path was found
+			if(!$found) {
+				//don't allow
+				return $self->fail($request, $response);
 			}
 			
 			//get dynamic variables
@@ -157,6 +163,8 @@ class Validator extends Base
 				}
 				
 				$request->set('source', $row);
+				$request->set('source', 'access_token', $token);
+				$request->set('source', 'access_secret', $secret);
 				
 				return;
 			}
@@ -179,7 +187,7 @@ class Validator extends Base
 				
 			if(isset($meta['role'])) {
 				$search->addFilter(
-					'app_permissions LIKE ?', 
+					'app_permissions LIKE %s', 
 					'%' . $meta['role'] . '%');
 			}
 			
@@ -232,7 +240,7 @@ class Validator extends Base
 	public function fail($request, $response) {
 		$response->set('body', json_encode(array( 
 			'error' => true, 
-			'message' => self::INVALID ), 
+			'message' => self::FAIL_401 ), 
 		JSON_PRETTY_PRINT));
 		
 		return false;
