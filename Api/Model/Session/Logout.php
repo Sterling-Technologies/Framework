@@ -73,6 +73,9 @@ class Logout extends Base
 			->innerJoinOn(
 				'session_auth', 
 				'session_auth_session = session_id')
+			->innerJoinOn(
+				'session_app', 
+				'session_app_session = session_id')
 			->filterBySessionAuthAuth($data['auth_id']);
 		
 		if(isset($data['session_token']) 
@@ -92,6 +95,7 @@ class Logout extends Base
 				
 				$this[$i]
 					->remove('session_auth')
+					->remove('session_app')
 					->remove('session');
 			});	
 		

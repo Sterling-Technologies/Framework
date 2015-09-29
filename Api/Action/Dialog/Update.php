@@ -1,25 +1,64 @@
 <?php //-->
 /*
- * This file is part of the Openovate Labs Inc. framework library
- * (c) 2013-2014 Openovate Labs
+ * A Custom Library
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
 namespace Api\Action\Dialog;
 
-use Api\Action;
-use Api\Page;
+use Eve\Framework\Action\Json;
+use Eve\Framework\Action\Html;
 
 /**
- * The base class for any class that defines a view.
- * A view controls how templates are loaded as well as 
- * being the final point where data manipulation can occur.
+ * Action
  *
- * @vendor Openovate
- * @package Framework
+ * GUIDE:
+ * -- eve() - The current server controller
+ *    use this to access the rest of the framework
+ *
+ *    -- eve()->database() - Returns the current database
+ *
+ *    -- eve()->model('noun') - Returns the given model factory
+ *
+ *    -- eve()->job('noun-action') - Returns a job following noun/action
+ *
+ *    -- eve()->settings('foo') - Returns a settings data originating
+ *    from the settings path. ie. settings/foo.php
+ *
+ *    -- eve()->registry() - Returns Eden\Registry\Index used globally
+ *
+ * -- $this->request - The Request Object using Eden\Registry\Index
+ *
+ *    -- $this->request->get('post') - $_POST data
+ *       You are free to use the $_POST variable if you like
+ *
+ *    -- $this->request->get('get') - $_GET data
+ *       You are free to use the $_GET variable if you like
+ *
+ *    -- $this->request->get('server') - $_SERVER data
+ *       You are free to use the $_SERVER variable if you like
+ *
+ *    -- $this->request->get('body') - raw body for 
+ *       POST requests that provide JSON data for example
+ *       instead of the default x-form-data
+ *
+ *    -- $this->request->get('method') - GET, POST, PUT or DELETE
+ *
+ * -- $this->response - The Response Object using Eden\Registry\Index
+ *
+ *    -- $this->response->set('body', 'Foo') - Sets the response body.
+ *       Alternative for returning a string in render()
+ *
+ *    -- $this->response->set('headers', 'Foo', 'Bar') - Sets a 
+ *       header item to 'Foo: Bar' given key/value
+ *
+ *    -- $this->response->set('headers', 'Foo', '') - Sets a 
+ *       header item to 'Foo' given that no value is present
+ *       QUIRK: $this->response->set('headers', 'Foo') will erase
+ *       all existing headers
  */
-class Create extends Page 
+class Update extends Html 
 {
 	const FAIL_400 = 'You do not have permissions to update';
 	const FAIL_406 = 'There are some errors on the form.';
@@ -27,6 +66,7 @@ class Create extends Page
 
 	protected $title = 'Update Account';
 	protected $layout = '_blank';
+	protected $template = 'update';
 
 	/**
 	 * Main action call
@@ -39,7 +79,7 @@ class Create extends Page
 		//client_id is already checked in the router
 		//state is optional
 		if(!isset($_GET['redirect_uri'])) {
-			$this->template = 'dialog/invalid';
+			$this->template = 'invalid';
 			return $this->success();
 		}
 		
@@ -55,8 +95,8 @@ class Create extends Page
 			return $this->check();
 		}
 		
-		$this->data['item'] = $_SESSION['me'];
-		$this->data['cancel'] = $this->redirect(array('error' => 'user_cancel'));
+		$this->body['item'] = $_SESSION['me'];
+		$this->body['logo'] = true;
 		
 		//Just load the page
 		return $this->success();
@@ -71,49 +111,69 @@ class Create extends Page
 	 */
 	protected function check()
 	{
-		//get the item
-		$item = $this->data['item'];
-		$item['auth_id'] = $_SESSION['me']['auth_id'];
-		$item['profile_id'] = $_SESSION['me']['profile_id'];
+		//-----------------------//
+        // 1. Get Data
+		$data = array();
 		
-		//validate 
+		$data['item'] = $this->request->get('post');
+		
+		$data['item']['auth_id'] = $_SESSION['me']['auth_id'];
+		$data['item']['profile_id'] = $_SESSION['me']['profile_id'];
+		$data['item']['auth_slug'] = $data['item']['profile_email'];
+
+		//-----------------------//
+        // 2. Validate
 		$errors = eve()
 			->model('auth')
 			->update()
-			->errors($item);
-		
+			->errors($data['item']);
+			
 		$errors = eve()
 			->model('profile')
 			->update()
-			->errors($item, $errors);
+			->errors(
+				$data['item'], 
+				$errors);
 		
 		//if there are errors
 		if(!empty($errors)) {
-			return $this->fail(self::FAIL_VALIDATION, $errors, $item);
-		}
+			return $this->fail(
+				self::FAIL_406, 
+				$errors, 
+				$data['item']);
+		}	
 		
-		//validate exists
 		$exists = eve()
 			->model('auth')
-			->exists($item['profile_email']);
+			->exists($data['item']['profile_email']);
 		
-		//process
 		//if exists, make sure it's me
-		if($exists && $_SESSION['me']['auth_slug'] !== $item['profile_email']) {
-			return $this->fail(self::FAIL_NOT_ME);	
+		if($exists && $_SESSION['me']['auth_slug'] !== $data['item']['profile_email']) {
+			return $this->fail(
+				self::FAIL_401,
+				array(),
+				$data['item']);
 		}
 		
-		$results = eve()
-			->job('auth')
-			->update(array('data' => array(
-				'item' => $item)));
+		//-----------------------//
+        // 3. Process
+		try {
+			$results = eve()
+				->job('auth-update')
+				->setData($data['item'])
+				->run();
+		} catch(\Exception $e) {
+			return $this->fail(
+				$e->getMessage(),
+				array(),
+				$data['item']
+			);	
+		}
 		
-		//end
-		//assign a update session
-		$_SESSION['me']['auth_slug'] = $item['auth_slug'];
+		$_SESSION['me']['auth_slug'] = $data['item']['profile_email'];
 		$_SESSION['me']['auth_updated']	= $results['auth']['auth_updated'];
-		$_SESSION['me']['profile_name']	= $item['profile_name'];
-		$_SESSION['me']['profile_email'] = $item['profile_email'];
+		$_SESSION['me']['profile_name']	= $data['item']['profile_name'];
+		$_SESSION['me']['profile_email']= $data['item']['profile_email'];
 		$_SESSION['me']['profile_updated'] = $results['profile']['profile_updated'];
 		
 		//success
@@ -123,11 +183,11 @@ class Create extends Page
 	/**
 	 * Creates a redirect url
 	 *
-	 * @param string the url
 	 * @param object extra parameters
 	 * @return string
 	 */
-	protected function redirect(array $query = array(), $returnUrl = null) {
+	protected function redirect(array $query = array()) 
+	{
 		$url = $_GET['redirect_uri'];
 		
 		if(isset($_GET['state'])) {
@@ -137,19 +197,14 @@ class Create extends Page
 		$query = http_build_query($query);
 		
 		if(empty($query)) {
-			if(!empty($returnUrl)) {
-				return $url;
-			}
-			
 			eve()->redirect($url);
-			return;
 		}
 		
 		$separator = '?';
-		if(strpos($url, '?') === false) {
+		if(strpos($url, '?') !== false) {
 			$separator = '&';
 		}
 		
-		eve()->redirect($url + $separator + $query);
+		eve()->redirect($url . $separator . $query);
 	}
 }

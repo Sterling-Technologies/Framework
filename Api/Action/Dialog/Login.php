@@ -65,6 +65,7 @@ class Login extends Html
 	
 	protected $title = 'Log In';
 	protected $layout = '_blank';
+	protected $template = 'login';
 	
 	public function render() 
 	{
@@ -72,7 +73,7 @@ class Login extends Html
 		//client_id is already checked in the router
 		//state is optional
 		if(!isset($_GET['redirect_uri'])) {
-			$this->template = 'dialog/invalid';
+			$this->template = 'invalid';
 			return $this->success();
 		}
 		

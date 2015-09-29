@@ -65,6 +65,7 @@ class Create extends Html
 
 	protected $title = 'Sign Up';
 	protected $layout = '_blank';
+	protected $template = 'create';
 
 	public function render() 
 	{
@@ -92,7 +93,10 @@ class Create extends Html
 		
 		$data['item']['auth_slug'] = $data['item']['profile_email'];
 		$data['item']['auth_permissions'] = implode(',', eve()->settings('scope'));
-		$data['item']['profile_type'] = 'buyer';
+		
+		$data['item']['profile_image'] = 
+			$_SERVER['HTTP_HOST'] . '/avatar/avatar-' 
+			. ((floor(rand() * 1000) % 11) + 1) . '.png';
 		
 		//-----------------------//
         // 2. Validate
@@ -135,6 +139,6 @@ class Create extends Html
 		$_SESSION['message'] = self::SUCCESS_200;
 		$_SESSION['type'] = 'success';
 
-		eve()->redirect('/dialog/login?' + $query);
+		eve()->redirect('/dialog/login?' . $query);
 	}
 }

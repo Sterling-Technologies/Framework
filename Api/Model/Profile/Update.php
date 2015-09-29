@@ -55,7 +55,7 @@ class Update extends Base
         // profile_name - required
         if(isset($data['profile_name'])
         && empty($data['profile_name'])) {
-            $errors['profile_name'] = self::INVALID_ID;
+            $errors['profile_name'] = self::INVALID_REQUIRED;
         }
         
         //OPTIONAL
@@ -149,11 +149,11 @@ class Update extends Base
                    mkdir($destination);
             }
             
-            $destination .= '/' . md5(uniqid()) . '-' . $_FILES['profile_image']['name'];
+            $file = '/' . md5(uniqid()) . '-' . $_FILES['profile_image']['name'];
             
-            move_uploaded_file($_FILES['profile_image']['tmp_name'], $destination);
+            move_uploaded_file($_FILES['profile_image']['tmp_name'], $destination.$file);
             
-            $data['profile_image'] = $destination;
+            $data['profile_image'] = 'http://'.$_SERVER['HTTP_HOST'].'/upload'.$file;
         }
         
         //SET WHAT WE KNOW

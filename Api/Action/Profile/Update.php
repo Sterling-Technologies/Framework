@@ -93,13 +93,19 @@ class Update extends Html
             //we might as we an fail it now
             return $this->fail(
                 self::FAIL_404,
-                '/profile/search');
+                '/app/search');
         }
-        
         
         //-----------------------//
         // 2. Validate
-        //does it exist?
+        //is it me ?
+		if($_SESSION['me']['profile_id'] !== $data['profile_id']) {
+			return $this->fail(
+				self::FAIL_401,
+                '/app/search');
+		}
+		
+		//does it exist?
         $row = eve()
             ->model('profile')
             ->detail()
@@ -109,7 +115,7 @@ class Update extends Html
         if(!$row) {
             return $this->fail(
                 self::FAIL_404,
-                '/profile/search');
+                '/app/search');
         }
         
         //-----------------------//
@@ -177,6 +183,6 @@ class Update extends Html
         
         return $this->success(
             self::SUCCESS_200, 
-            '/profile/search');
+            '/app/search');
     }
 }

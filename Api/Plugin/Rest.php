@@ -48,7 +48,6 @@ class Rest extends Base
 				
 				$regex = '#^'.$regex.'(.*)#';
 				if(!preg_match($regex, $path, $matches)) {
-					echo $regex.' '.$path.'<br />';
 					continue;
 				}
 				
@@ -145,11 +144,11 @@ class Rest extends Base
 					->innerJoinOn(
 						'profile', 
 						'auth_profile_profile = profile_id')
-					->filterBySessionToken(token)
+					->filterBySessionToken($token)
 					->filterBySessionStatus('ACCESS')
 					->addFilter(
-						'session_permissions LIKE ?', 
-						'%' + $meta['role'] . '%');
+						'session_permissions LIKE %s', 
+						'%' . $meta['role'] . '%');
 				
 				if($secret) {
 					$search->filterBySessionSecret($secret);
@@ -166,6 +165,11 @@ class Rest extends Base
 				$request->set('source', 'access_token', $token);
 				$request->set('source', 'access_secret', $secret);
 				
+				$originalPath = $request->get('path', 'string');
+				$newPath = str_replace('/rest/user', '/rest', $originalPath);
+				
+				$request->set('path', 'string', $newPath);
+				$request->set('path', 'array', explode('/', $newPath));
 				return;
 			}
 			

@@ -64,6 +64,8 @@ use Eve\Framework\Action\Json;
  */
 class Search extends Json 
 {
+	protected $range = 50;
+	
     /**
      * Main action call
      *
@@ -71,11 +73,20 @@ class Search extends Json
      */
     public function render() 
     {
+		$data = $this->request->get('get');
+		
+		$data['range'] = $this->range;
+		
         //get rows
         $rows = eve()
             ->model('profile')
             ->search()
-            ->process()
+            ->process($data)
+			->setColumns(
+				'profile_id',
+				'profile_name',
+				'profile_image',
+				'profile_created')
             ->getRows();
         
         //success

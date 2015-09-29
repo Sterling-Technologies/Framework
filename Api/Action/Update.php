@@ -58,9 +58,9 @@ use Eve\Framework\Action\Html;
  *       QUIRK: $this->response->set('headers', 'Foo') will erase
  *       all existing headers
  */
-class Update extends Page 
+class Update extends Html 
 {
-	const FAIL_401 = 'You do not have permissions to update';
+	const FAIL_401 = 'Email chosen already exists.';
 	const FAIL_406 = 'There are some errors on the form.';
 	const SUCCESS_200 = 'Account settings updated!';
 
@@ -72,6 +72,8 @@ class Update extends Page
 		if(!empty($_POST)) {
 			return $this->check();
 		}
+		
+		$this->body['item'] = $_SESSION['me'];
 		
 		//Just load the page
 		return $this->success();
@@ -89,9 +91,10 @@ class Update extends Page
 		$data = array();
 		
 		$data['item'] = $this->request->get('post');
-
+		
 		$data['item']['auth_id'] = $_SESSION['me']['auth_id'];
 		$data['item']['profile_id'] = $_SESSION['me']['profile_id'];
+		$data['item']['auth_slug'] = $data['item']['profile_email'];
 
 		//-----------------------//
         // 2. Validate
@@ -118,10 +121,13 @@ class Update extends Page
 		$exists = eve()
 			->model('auth')
 			->exists($data['item']['profile_email']);
-
+		
 		//if exists, make sure it's me
-		if(!empty($exists) 	&& $_SESSION['me']['auth_slug'] !== $item['profile_email']) {
-			return $this->fail(self::FAIL_401);
+		if($exists && $_SESSION['me']['auth_slug'] !== $data['item']['profile_email']) {
+			return $this->fail(
+				self::FAIL_401,
+				array(),
+				$data['item']);
 		}
 		
 		//-----------------------//
@@ -139,7 +145,7 @@ class Update extends Page
 			);	
 		}
 		
-		$_SESSION['me']['auth_slug'] = $data['item']['auth_slug'];
+		$_SESSION['me']['auth_slug'] = $data['item']['profile_email'];
 		$_SESSION['me']['auth_updated']	= $results['auth']['auth_updated'];
 		$_SESSION['me']['profile_name']	= $data['item']['profile_name'];
 		$_SESSION['me']['profile_email']= $data['item']['profile_email'];

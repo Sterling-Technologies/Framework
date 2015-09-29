@@ -8,9 +8,9 @@
 
 namespace Api\Job\Auth;
 
-use Api\Job\Base;
-use Api\Job\Argument;
-use Api\Job\Exception;
+use Eve\Framework\Job\Base;
+use Eve\Framework\Job\Argument;
+use Eve\Framework\Job\Exception;
 
 /**
  * Auth Job Update

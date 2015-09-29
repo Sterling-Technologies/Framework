@@ -143,11 +143,11 @@ class Create extends Base
                    mkdir($destination);
             }
             
-            $destination .= '/' . md5(uniqid()) . '-' . $_FILES['profile_image']['name'];
+            $file = '/' . md5(uniqid()) . '-' . $_FILES['profile_image']['name'];
             
-            move_uploaded_file($_FILES['profile_image']['tmp_name'], $destination);
+            move_uploaded_file($_FILES['profile_image']['tmp_name'], $destination.$file);
             
-            $data['profile_image'] = $destination;
+            $data['profile_image'] = 'http://'.$_SERVER['HTTP_HOST'].'/upload'.$file;
         }
         
         //SET WHAT WE KNOW

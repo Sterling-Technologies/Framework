@@ -6,7 +6,9 @@
     <div class="panel-body" >
         The application interacting with us has sent us an invalid request. 
         Please notify the application of this error.
-        <br />
+        {{#if message}}
+        <br /><br />
         {{message}}
+        {{/if}}
     </div>
 </div>

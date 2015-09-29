@@ -74,7 +74,7 @@ class Request extends Html
 		//client_id is already checked in the router
 		//state is optional
 		if(!isset($_GET['redirect_uri'])) {
-			$this->template = 'dialog/invalid';
+			$this->template = 'invalid';
 			return $this->success();
 		}
 		
@@ -101,7 +101,7 @@ class Request extends Html
 		
 		//did they all match ?
 		if(!$permitted) {
-			$this->template = 'dialog/invalid';
+			$this->template = 'invalid';
 			return $this->success();
 		}
 		

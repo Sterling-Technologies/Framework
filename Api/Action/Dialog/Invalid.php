@@ -61,6 +61,7 @@ use Eve\Framework\Action\Html;
 class Invalid extends Html 
 {
 	protected $layout = '_blank';
+	protected $template = 'invalid';
 	
 	public function render() {
 		//Just load the page

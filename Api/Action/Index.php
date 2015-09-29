@@ -61,9 +61,6 @@ use Eve\Framework\Action\Html;
 class Index extends Html 
 {
 	public function render() {
-		print_r($_SERVER['HTTP_HOST']);
-		return $this->success('yay');
-
-		//eve()->queue('app-create', array('name' => 'april'))->save();
+		return $this->success();
 	}
 }

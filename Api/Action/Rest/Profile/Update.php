@@ -75,7 +75,7 @@ class Update extends Json
      * @param $response Eden\Registry\Index the response object
      * @return string|null|void
      */
-    public function render($request, $response) 
+    public function render() 
     {
         //-----------------------//
         // 1. Get Data
@@ -126,9 +126,9 @@ class Update extends Json
             ->getTotal();
         
         if(!$total) {
-               return $this->fail(self::FAIL_404);
-           }
-        
+            return $this->fail(self::FAIL_404);
+        }
+		
         //-----------------------//
         // 3. Process
         try {

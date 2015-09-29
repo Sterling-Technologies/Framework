@@ -58,16 +58,15 @@ use Eve\Framework\Action\Html;
  *       QUIRK: $this->response->set('headers', 'Foo') will erase
  *       all existing headers
  */
-class Index extends Html
+class Logout extends Html
 {
-	
 	public function render() 
 	{
 		//there should be a client_id, redirect_uri
 		//client_id is already checked in the router
 		//state is optional
 		if(!isset($_GET['redirect_uri'])) {
-			$this->template = 'dialog/invalid';
+			$this->template = 'invalid';
 			return $this->success();
 		}
 		

@@ -58,32 +58,39 @@ use Eve\Framework\Action\Html;
  *       QUIRK: $this->response->set('headers', 'Foo') will erase
  *       all existing headers
  */
-class Access extends Html
+class Access extends Json
 {
-	const FAIL_EXPIRED = 'Expired Token';
-	
 	public function render() 
 	{
-		//get the data
-		$item = $this->data['item'];
-		$item['client_id'] = eve()->registry()->get('source', 'access_token');
-		$item['client_secret'] = eve()->registry()->get('source', 'access_secret');
+		//-----------------------//
+        // 1. Get Data
+		$data = array();
+		
+		$data['item'] = $this->request->get('post');
+		$data['item']['client_id'] = $this->request->get('source', 'access_token');
+		$data['item']['client_secret'] = $this->request->get('source', 'access_secret');
 
-		//validate
+		//-----------------------//
+        // 2. Validate
 		$errors = eve()
 			->model('session')
 			->access()
-			->errors($item);
+			->errors($data['item']);
 	
-		if(isset($errors['code']) {
+		if(isset($errors['code'])) {
 			return $this->fail($errors['code']);
 		}
 		
-		//process
-		$results = eve()
-			->job('session')
-			->access(array('data' => array(
-				'item' => $item)));
+		//-----------------------//
+        // 3. Process
+		try {
+			$results = eve()
+				->job('session-access')
+				->setData($data['item'])
+				->run();
+		} catch(\Exception $e) {
+			return $this->fail($e->getMessage());
+		}
 		
 		$this->success($results['session']);	
 	}
