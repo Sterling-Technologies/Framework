@@ -1,14 +1,30 @@
 <?php //-->
 /*
- * This file is part of the Type package of the Eden PHP Library.
- * (c) 2013-2014 Openovate Labs
+ * A Custom Library
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-
 class ApiModelAuthIndexTest extends PHPUnit_Framework_TestCase
 {
+	public function testCreate()
+	{
+		$class = eve()->model('auth')->create();
+		$this->assertInstanceOf('Api\\Model\\Auth\\Create', $class);
+	}
+	
+	public function testRemove()
+	{
+		$class = eve()->model('auth')->remove();
+		$this->assertInstanceOf('Api\\Model\\Auth\\Remove', $class);
+	}
+	
+	public function testUpdate()
+	{
+		$class = eve()->model('auth')->update();
+		$this->assertInstanceOf('Api\\Model\\Auth\\Update', $class);
+	}
+	
     public function testExist() 
 	{
         $auth = eve()->registry()->get('test', 'auth');
@@ -20,7 +36,7 @@ class ApiModelAuthIndexTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(1, $total);
     }
 	
-    public function testCreateAndLinkProfile() 
+    public function testLinkProfile() 
 	{
         $model = eve()
         	->model('profile')
@@ -47,7 +63,7 @@ class ApiModelAuthIndexTest extends PHPUnit_Framework_TestCase
 			$model['auth_profile_profile']);
     }
 
-    public function testCreateAndUnlinkProfile() 
+    public function testUnlinkProfile() 
     {
     	$profile = eve()->registry()->get('test', 'profile');
         $auth = eve()->registry()->get('test', 'auth');

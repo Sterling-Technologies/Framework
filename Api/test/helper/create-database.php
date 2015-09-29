@@ -2,20 +2,21 @@
 //not cool to just run it..
 return function() {
 	//Bootstrap
-	eve()->setPaths()->setDebug()->setTimezone('Asia/Manila');
+	eve()
+		->defaultPaths()
+		->defaultDebugging()
+		->defaultTimezone('Asia/Manila');
 	
 	//get test configs
 	$config = eve()->settings('test');
 	
 	//create the test db
-	eve()->setDatabases($config['database']);
-	eve()->database('build')->query('DROP DATABASE IF EXISTS `'.$db_name.'`');
-	eve()->database('build')->query('CREATE DATABASE `'.$db_name.'`');
+	eve()->defaultDatabases($config['database']);
+	eve()->database('build')->query('DROP DATABASE IF EXISTS `'.$config['database']['test']['name'].'`');
+	eve()->database('build')->query('CREATE DATABASE `'.$config['database']['test']['name'].'`');
 	
 	//get schema
-	$schema = eve('system')
-		->file(eve()->path('root').'/schema.sql')
-		->getContent();
+	$schema = eve('file', eve()->path('root').'/schema.sql')->getContent();
 	
 	//add queries
 	$queries = explode(';', $schema);
@@ -75,26 +76,6 @@ return function() {
 		'2015-09-11 23:05:17', '2015-09-11 23:05:17'
 	)";
 	
-	$queries[] = "INSERT INTO `file` (
-		`file_id`, 
-		`file_link`, 
-		`file_path`, 
-		`file_mime`, 
-		`file_active`, 
-		`file_type`, 
-		`file_flag`, 
-		`file_created`, 
-		`file_updated`
-	) VALUES (
-		1, 
-		'https://s3-ap-southeast-1.amazonaws.com/openovate/images/logo+square.jpg', 
-		NULL, 
-		'image/jpg', 
-		1, 
-		'main_profile', 
-		0, '2015-09-11 23:05:17', '2015-09-11 23:05:17'
-	)";
-	
 	$queries[] = "INSERT INTO `profile` (
 		`profile_id`, 
 		`profile_name`, 
@@ -124,13 +105,12 @@ return function() {
 		NULL, NULL, NULL, NULL, NULL, 1, NULL, 
 		0, '2015-09-11 23:05:16', '2015-09-11 23:05:16')";
 	
-	$queries[] = "INSERT INTO `profile_file` (`profile_file_profile`, `profile_file_file`) VALUES (1, 1)";
 	$queries[] = "INSERT INTO `app_profile` (`app_profile_app`, `app_profile_profile`) VALUES (1, 1)";
 	$queries[] = "INSERT INTO `auth_profile` (`auth_profile_auth`, `auth_profile_profile`) VALUES (1, 1)";
 	
 	//now call the queries
 	foreach($queries as $query) {
-		$lines = explode("n");
+		$lines = explode("\n", $query);
 		
 		foreach($lines as $i => $line) {
 			if(strpos($line, '--') === 0 || !trim($line)) {
@@ -139,7 +119,7 @@ return function() {
 			}
 		}
 		
-		$query = trim(implode("n", $lines));
+		$query = trim(implode("\n", $lines));
 		
 		if(!$query) {
 			continue;

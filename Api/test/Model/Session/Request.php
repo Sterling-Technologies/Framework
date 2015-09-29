@@ -1,23 +1,21 @@
 <?php //-->
 /*
- * This file is part of the Type package of the Eden PHP Library.
- * (c) 2013-2014 Openovate Labs
+ * A Custom Library
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-
 class ApiModelSessionRequestTest extends PHPUnit_Framework_TestCase
 {
-     public function testValidateRequestFields() 
+    public function testErrors() 
 	{
         $errors = eve()->model('session')->request()->errors();
 		
-		$this->assertEquals('Invalid ID', $errors['app_id']);
-		$this->assertEquals('Invalid ID', $errors['auth_id']);
+		$this->assertEquals('Cannot be empty', $errors['app_id']);
+		$this->assertEquals('Cannot be empty', $errors['auth_id']);
     }
 	
-    public function testRequest() 
+    public function testProcess() 
 	{
 		$auth = eve()->registry()->get('test', 'auth');
 		$app = eve()->registry()->get('test', 'app');

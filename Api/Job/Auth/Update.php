@@ -35,6 +35,8 @@ use Eve\Framework\Job\Exception;
  */
 class Update extends Base 
 {
+    const FAIL_406 = 'Invalid Data';
+	
 	/**
 	 * Executes the job
 	 *

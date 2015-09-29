@@ -89,11 +89,21 @@ class Index extends Base
 	/**
 	 * Factory for remove
 	 *
-	 * @return Eve\Framework\Model\Auth\Remove
+	 * @return Api\Model\Auth\Remove
 	 */
 	public function remove()
 	{
 		return Remove::i();
+	}
+	
+	/**
+	 * Factory for restore
+	 *
+	 * @return Api\Model\Auth\Restore
+	 */
+	public function restore()
+	{
+		return Restore::i();
 	}
 	
 	/**
@@ -123,7 +133,7 @@ class Index extends Base
 	/**
 	 * Factory for update
 	 *
-	 * @return Eve\Framework\Model\Auth\Update
+	 * @return Api\Model\Auth\Update
 	 */
 	public function update()
 	{

@@ -9,13 +9,10 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 
-Eve\Framework\Index::i(dirname(__DIR__), 'Api')
-->defaultPaths()
-// ->defaultDebugging()
-->defaultDatabases();
+Eve\Framework\Index::i(dirname(__DIR__), 'Api');
 
 //create db helper
-// $create = include('helper/create-database.php');
+$create = include('helper/create-database.php');
 
 //just call it
-// $create();
+$create();

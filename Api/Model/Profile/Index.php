@@ -52,7 +52,6 @@ class Index extends Base
         return Detail::i();
     }
     
-    
     /**
      * Factory for search
      *
@@ -61,6 +60,16 @@ class Index extends Base
     public function search()
     {
         return Search::i();
+    }
+    
+    /**
+     * Factory for set
+     *
+     * @return Api\Model\Profile\Set
+     */
+    public function set()
+    {
+        return Set::i();
     }
     
     /**

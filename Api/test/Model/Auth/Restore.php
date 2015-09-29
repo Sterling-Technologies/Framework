@@ -5,12 +5,15 @@
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-class ApiModelSessionLogoutTest extends PHPUnit_Framework_TestCase
+class ApiModelAuthRestoreTest extends PHPUnit_Framework_TestCase
 {
     public function testErrors() 
 	{
-        $errors = eve()->model('session')->logout()->errors();
-		
+        $errors = eve()
+			->model('auth')
+			->restore()
+			->errors();
+			
 		$this->assertEquals('Cannot be empty', $errors['auth_id']);
     }
 	
@@ -18,12 +21,12 @@ class ApiModelSessionLogoutTest extends PHPUnit_Framework_TestCase
 	{
 		$auth = eve()->registry()->get('test', 'auth');
 
-		$model = eve()
-        	->model('session')
-        	->logout()
-        	->process(array(
-				'auth_id' => $auth['auth_id']));
+        $row = eve()
+        	->model('auth')
+        	->restore()
+        	->process(array( 
+				'auth_id' => $auth['auth_id'] ));
 
-		$this->assertTrue(is_array($model->get()));
-	}
+		$this->assertEquals(1, $row['auth_active']);
+    }
 }

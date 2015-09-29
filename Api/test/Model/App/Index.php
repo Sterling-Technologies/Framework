@@ -1,38 +1,72 @@
 <?php //-->
 /*
- * This file is part of the Type package of the Eden PHP Library.
- * (c) 2013-2014 Openovate Labs
+ * A Custom Library
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-
 class ApiModelAppIndexTest extends PHPUnit_Framework_TestCase
 {
-    public function testCreateAndLinkProfile() 
+	public function testCreate()
 	{
-		$model = eve()
-			->model('profile')
-			->create()
-			->process(array('profile_name' => 'TEST FOR APP'));
-
-		eve()->registry()->set('test', 'profile', $model->get());
-
+		$class = eve()->model('app')->create();
+		$this->assertInstanceOf('Api\\Model\\App\\Create', $class);
+	}
+	
+	public function testDetail()
+	{
+		$class = eve()->model('app')->detail();
+		$this->assertInstanceOf('Api\\Model\\App\\Detail', $class);
+	}
+	
+	public function testRefresh()
+	{
+		$class = eve()->model('app')->refresh();
+		$this->assertInstanceOf('Api\\Model\\App\\Refresh', $class);
+	}
+	
+	public function testRemove()
+	{
+		$class = eve()->model('app')->remove();
+		$this->assertInstanceOf('Api\\Model\\App\\Remove', $class);
+	}
+	
+	public function testRestore()
+	{
+		$class = eve()->model('app')->restore();
+		$this->assertInstanceOf('Api\\Model\\App\\Restore', $class);
+	}
+	
+	public function testSearch()
+	{
+		$class = eve()->model('app')->search();
+		$this->assertInstanceOf('Api\\Model\\App\\Search', $class);
+	}
+	
+	public function testUpdate()
+	{
+		$class = eve()->model('app')->update();
+		$this->assertInstanceOf('Api\\Model\\App\\Update', $class);
+	}
+	
+    public function testLinkProfile() 
+	{
 		$app = eve()->registry()->get('test', 'app');
-		$profile = eve()->registry()->get('test', 'profile');
-
+		
+		//link
 		$model = eve()
 			->model('app')
 			->linkProfile(
 				$app['app_id'],
-				$profile['profile_id']);
-
+				400);
+		
+		//test
 		$this->assertEquals(
 			$app['app_id'],
 			$model['app_profile_app']);
 
 		$this->assertEquals(
-			$profile['profile_id'],
+			400,
 			$model['app_profile_profile']);
     }
 	
@@ -47,7 +81,7 @@ class ApiModelAppIndexTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('TEST FOR APP', $profile['profile_name']);
     }
 
-    public function testApprovePermissions() 
+    public function testPermissions() 
     {	
     	$app = eve()->registry()->get('test', 'app');
     	$profile = eve()->registry()->get('test', 'profile');
@@ -67,24 +101,22 @@ class ApiModelAppIndexTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse($yes);
     }
 
-    public function testUnlinkAndRemoveProfile() 
+    public function testUnlinkProfile() 
     {
     	$app = eve()->registry()->get('test', 'app');
-    	$profile = eve()->registry()->get('test', 'profile');
-
+    	
 		$model = eve()
 			->model('app')
 			->unlinkProfile(
 				$app['app_id'],
-				$profile['profile_id']);
+				400);
 		
 		$this->assertEquals(
 			$app['app_id'],
 			$model['app_profile_app']);
 
 		$this->assertEquals(
-			$profile['profile_id'],
+			400,
 			$model['app_profile_profile']);
     }
-
 }

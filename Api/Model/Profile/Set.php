@@ -32,7 +32,6 @@ use Eve\Framework\Model\Exception;
  */
 class Set extends Base
 {
-	const INVALID_PARAMETERS = 'Invalid Parameters';
 	const INVALID_REFERENCE = 'You need to provide either an email or id.';
 	
 	/**

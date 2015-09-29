@@ -102,6 +102,7 @@ CREATE TABLE IF NOT EXISTS `profile` (
   `profile_job` varchar(255) DEFAULT NULL,
   `profile_gender` varchar(255) DEFAULT NULL,
   `profile_birth` datetime DEFAULT NULL,
+  `profile_website` varchar(255) DEFAULT NULL,
   `profile_facebook` varchar(255) DEFAULT NULL,
   `profile_linkedin` varchar(255) DEFAULT NULL,
   `profile_twitter` varchar(255) DEFAULT NULL,

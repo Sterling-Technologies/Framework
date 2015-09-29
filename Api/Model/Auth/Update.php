@@ -49,9 +49,9 @@ class Update extends Base
 		//REQUIRED
 		
 		// auth_id			Required
-		if(isset($data['auth_id'])
-			&& !empty($data['auth_id'])
-			&& !$this('validation', $data['auth_id'])->isType('integer', true)
+		if(!isset($data['auth_id'])
+			|| empty($data['auth_id'])
+			|| !$this('validation', $data['auth_id'])->isType('integer', true)
 		) {
 			$errors['auth_id'] = self::INVALID_REQUIRED;
 		}

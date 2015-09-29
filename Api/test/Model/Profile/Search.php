@@ -1,15 +1,23 @@
 <?php //-->
 /*
- * This file is part of the Type package of the Eden PHP Library.
- * (c) 2013-2014 Openovate Labs
+ * A Custom Library
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-
 class ApiModelProfileSeachTest extends PHPUnit_Framework_TestCase
 {
-    public function testGetActiveApps() 
+    public function testErrors() 
+	{
+        $errors = eve()
+			->model('profile')
+			->search()
+			->errors();
+			
+		$this->assertCount(0, $errors);
+    }
+	
+    public function testProcess() 
 	{
         $rows = eve()
         	->model('profile')

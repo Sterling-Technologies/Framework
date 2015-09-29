@@ -52,7 +52,8 @@ class Request extends Base
 		$results['session'] = eve()
 			->model('session')
 			->request()
-			->process($this->data);
+			->process($this->data)
+			->get();
 		
 		return $results;
 	}

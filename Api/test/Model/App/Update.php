@@ -1,15 +1,19 @@
 <?php //-->
 /*
- * This file is part of the Type package of the Eden PHP Library.
- * (c) 2013-2014 Openovate Labs
+ * A Custom Library
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-
 class ApiModelAppUpdateTest extends PHPUnit_Framework_TestCase
 {
-    public function testUpdateApp() 
+	public function testErrors() 
+	{
+        $errors = eve()->model('app')->update()->errors();
+		$this->assertEquals('Cannot be empty', $errors['app_id']);
+    }
+	
+    public function testProcess() 
 	{
 		$app = eve()->registry()->get('test', 'app');
         

@@ -1,15 +1,23 @@
 <?php //-->
 /*
- * This file is part of the Type package of the Eden PHP Library.
- * (c) 2013-2014 Openovate Labs
+ * A Custom Library
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-
 class ApiModelAuthRemoveTest extends PHPUnit_Framework_TestCase
 {
-    public function testRemoveAuth() 
+    public function testErrors() 
+	{
+        $errors = eve()
+			->model('auth')
+			->remove()
+			->errors();
+			
+		$this->assertEquals('Cannot be empty', $errors['auth_id']);
+    }
+	
+    public function testProcess() 
 	{
 		$auth = eve()->registry()->get('test', 'auth');
 

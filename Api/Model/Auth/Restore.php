@@ -13,7 +13,7 @@ use Eve\Framework\Model\Argument;
 use Eve\Framework\Model\Exception;
 
 /**
- * Auth Model Remove
+ * Auth Model Restore
  *
  * GUIDE:
  * -- eve() - The current server controller
@@ -30,7 +30,7 @@ use Eve\Framework\Model\Exception;
  *
  *    -- eve()->registry() - Returns Eden\Registry\Index used globally
  */
-class Remove extends Base
+class Restore extends Base
 {	
 	/**
      * Returns errors if any
@@ -76,11 +76,11 @@ class Remove extends Base
 			->database()
 			->model()
 			->setAuthId($data['auth_id'])
-			->setAuthActive('0');
+			->setAuthActive('1');
 			
 		$model->save('auth');
 		
-		eve()->trigger('auth-remove', $model);
+		eve()->trigger('auth-restore', $model);
 		
 		return $model;
 	}

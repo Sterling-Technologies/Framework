@@ -51,6 +51,35 @@ class Index extends Base
     {
         return Detail::i();
     }
+	
+	/**
+	 * Get profile by app access token
+	 * Random function needed...
+	 *
+	 * @param string
+	 * @return array
+	 */
+	public function getProfileByToken($token) 
+	{
+		//argument test
+		Argument::i()->test(1, 'string');
+		
+		return eve()
+			->database()
+			->search('app')
+			->setColumns(
+				'profile.*', 
+				'app.*')
+			->innerJoinOn(
+				'app_profile', 
+				'app_profile_app = app_id')
+			->innerJoinOn(
+				'profile', 
+				'app_profile_profile = profile_id')
+			->filterByAppToken($token)
+			->getRow();
+	}
+	
     /**
      * Link app to profile
      *
@@ -165,7 +194,6 @@ class Index extends Base
         
         return $model;
     }
-    
     
     /**
      * Factory for update

@@ -1,23 +1,32 @@
 <?php //-->
 /*
- * This file is part of the Type package of the Eden PHP Library.
- * (c) 2013-2014 Openovate Labs
+ * A Custom Library
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-
 class ApiModelProfileDetailTest extends PHPUnit_Framework_TestCase
 {
-    public function testGetProfile() 
+    public function testErrors() 
+	{
+        $errors = eve()
+			->model('profile')
+			->detail()
+			->errors();
+			
+		$this->assertEquals('Cannot be empty', $errors['profile_id']);
+    }
+	
+    public function testProcess() 
 	{
 		$profile = eve()->registry()->get('test', 'profile');
      
         $row = eve()
 			->model('profile')
 			->detail()
-			->process(array('profile_id' => $profile['profile_id']));
-		echo $row;
-		// $this->assertNull($row);
+			->process(array('profile_id' => $profile['profile_id']))
+			->getRow();
+		
+		$this->assertEquals('123', $row['profile_name']);
     }
 }

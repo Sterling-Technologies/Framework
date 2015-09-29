@@ -1,22 +1,20 @@
 <?php //-->
 /*
- * This file is part of the Type package of the Eden PHP Library.
- * (c) 2013-2014 Openovate Labs
+ * A Custom Library
  *
  * Copyright and license information can be found at LICENSE
  * distributed with this package.
  */
-
 class ApiModelProfileCreateTest extends PHPUnit_Framework_TestCase
 {
-    public function testValidateFileFields() 
+    public function testErrors() 
 	{
         $errors = eve()->model('profile')->create()->errors();
 		
-		$this->assertEquals('Cannot be empty!', $errors['profile_name']);
+		$this->assertEquals('Cannot be empty', $errors['profile_name']);
     }
 	
-     public function testCreateProfile() 
+    public function testProcess() 
 	{
         $model = eve()
         	->model('profile')
