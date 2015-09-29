@@ -29,21 +29,19 @@ return array(
 	'permissions' => 'profile',	//session or source must have a linked profile_id
 	'relations' => array(
 		'profile'	=> false,
-		'app'		=> false,
-		'file'		=> true
+		'app'		=> true
 	),
 	'job'	=> array(			//Jobs can be created with the following instructions
 		'create' => array(		//add a Sink/Create Job
 			array('create'		, 'sink'),		//- create sink
 			array('link'		, 'profile'),	//- link profile
-			array('link'		, 'app'),		//- link app
-			array('linkAll'		, 'file'),		//- link all files
+			array('linkAll'		, 'app'),		//- link all apps
 		),
 			
 		'update' => array(		//add a Sink/Update Job
 			array('update'		, 'sink'),	//- update address
-			array('unlinkAll'	, 'file'),		//- unlink all file
-			array('linkAll'		, 'file'),		//- link all file
+			array('unlinkAll'	, 'app'),		//- unlink all app
+			array('linkAll'		, 'app'),		//- link all app
 		),
 		'remove' => array(		//add a Sink/Remove Job
 			array('remove'		, 'sink')	//- remove address
@@ -53,8 +51,8 @@ return array(
 		),
 		'custom' => array(		//add a Sink/Restore Job
 			array('update'		, 'sink'),	//- update address
-			array('unlinkAll'	, 'file'),		//- unlink all file
-			array('linkAll'		, 'file'),		//- link all file
+			array('unlinkAll'	, 'app'),		//- unlink all app
+			array('linkAll'		, 'app'),		//- link all app
 		)
 	),
 	'fields' => array(
