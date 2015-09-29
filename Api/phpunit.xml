@@ -43,7 +43,7 @@
       <file>test/Model/Profile/Set.php</file>
       <file>test/Model/Profile/Update.php</file>
 	  
-      <file>test/Job/App/Create.php</file>
+      <!--<file>test/Job/App/Create.php</file>
       <file>test/Job/App/Refresh.php</file>
       <file>test/Job/App/Remove.php</file>
       <file>test/Job/App/Restore.php</file>
@@ -55,7 +55,7 @@
       <file>test/Job/Profile/Update.php</file>
 	  
       <file>test/Job/Session/Request.php</file>
-      <file>test/Job/Session/Access.php</file>
+      <file>test/Job/Session/Access.php</file>-->
     </testsuite>
   </testsuites>
 

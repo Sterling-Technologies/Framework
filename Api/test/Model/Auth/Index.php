@@ -38,48 +38,38 @@ class ApiModelAuthIndexTest extends PHPUnit_Framework_TestCase
 	
     public function testLinkProfile() 
 	{
-        $model = eve()
-        	->model('profile')
-        	->create()
-        	->process(array(
-				'profile_name' => 'TEST FOR AUTH'));
-		
-		eve()->registry()->set('test', 'profile', $model->get());
-
-        $profile = eve()->registry()->get('test', 'profile');
         $auth = eve()->registry()->get('test', 'auth');
 
 		$model = eve()->model('auth')
 			->linkProfile(
 				$auth['auth_id'], 
-				$profile['profile_id']);
+				400);
 
 		$this->assertEquals(
 			$auth['auth_id'],
 			$model['auth_profile_auth']);
 
 		$this->assertEquals(
-			$profile['profile_id'],
+			400,
 			$model['auth_profile_profile']);
     }
 
     public function testUnlinkProfile() 
     {
-    	$profile = eve()->registry()->get('test', 'profile');
-        $auth = eve()->registry()->get('test', 'auth');
+    	$auth = eve()->registry()->get('test', 'auth');
 
     	$model = eve()
     		->model('auth')
     		->unlinkProfile(
     			$auth['auth_id'], 
-    			$profile['profile_id']);
+    			400);
     		
     	$this->assertEquals(
 			$auth['auth_id'],
 			$model['auth_profile_auth']);
 
 		$this->assertEquals(
-			$profile['profile_id'],
+			400,
 			$model['auth_profile_profile']);	
     }
 }

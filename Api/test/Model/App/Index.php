@@ -72,25 +72,24 @@ class ApiModelAppIndexTest extends PHPUnit_Framework_TestCase
 	
     public function testGetProfileByToken() 
 	{	
-		$app = eve()->registry()->get('test', 'app');
-
+		$config = eve()->settings('test');
+		
 		$profile = eve()
 			->model('app')
-			->getProfileByToken($app['app_token']);
+			->getProfileByToken($config['app_token']);
 
-		$this->assertEquals('TEST FOR APP', $profile['profile_name']);
+		$this->assertEquals('Admin', $profile['profile_name']);
     }
 
     public function testPermissions() 
     {	
     	$app = eve()->registry()->get('test', 'app');
-    	$profile = eve()->registry()->get('test', 'profile');
 
 		$yes = eve()
 			->model('app')
 			->permissions(
 				$app['app_id'], 
-				$profile['profile_id']);
+				400);
 		
 		$this->assertTrue($yes);
 
