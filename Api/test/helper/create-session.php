@@ -13,10 +13,9 @@ return function($settings) {
 		->model('app')
 		->search()
 		->process()
-		->filterByAppToken($config['app_token'])
-		->filterByAppSecret($config['app_secret'])
+		->filterByAppId(1)
 		->getRow();
-
+		
 	//request
 	$settings['session'] = eve()
 		->model('session')
@@ -32,8 +31,8 @@ return function($settings) {
 		->model('session')
 		->access()
 		->process(array(
-			'client_id'		=> $config['app_token'],
-			'client_secret'	=> $config['app_secret'],
+			'client_id'		=> $settings['app']['app_token'],
+			'client_secret'	=> $settings['app']['app_secret'],
 			'code'			=> $settings['session']['session_token']
 	));
 

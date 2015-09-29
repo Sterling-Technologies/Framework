@@ -31,9 +31,9 @@ class ApiJobAppCreateTest extends PHPUnit_Framework_TestCase
 			))
 			->run();
 		
-		$this->assertTrue(is_int($results['app']['app_id']));
-		$this->assertEquals('*.test.com', $results['app']['app_name']);
-		$this->assertEquals('Test Job App Create', $results['app']['app_domain']);
+		$this->assertTrue(is_numeric($results['app']['app_id']));
+		$this->assertEquals('Test Job App Create', $results['app']['app_name']);
+		$this->assertEquals('*.test.com', $results['app']['app_domain']);
 		$this->assertEquals('public_sso,user_profile,global_profile', $results['app']['app_permissions']);
 		
 		eve()->registry()->set('test', 'app', $results['app']);

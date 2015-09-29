@@ -28,6 +28,6 @@ class ApiJobAppRemoveTest extends PHPUnit_Framework_TestCase
 			->setData(array('app_id' => $app['app_id']))
 			->run();
 		
-		$this->assertTrue(is_int($results['app']['app_id']));
+		$this->assertTrue(is_numeric($results['app']['app_id']));
 	}
 }

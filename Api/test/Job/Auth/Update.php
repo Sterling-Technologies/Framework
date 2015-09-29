@@ -33,8 +33,8 @@ class ApiJobAuthUpdateTest extends PHPUnit_Framework_TestCase
 			))
 			->run();
 		
-		$this->assertTrue(is_int($results['auth']['auth_id']));
-		$this->assertTrue(is_int($results['profile']['profile_id']));
+		$this->assertTrue(is_numeric($results['auth']['auth_id']));
+		$this->assertTrue(is_numeric($results['profile']['profile_id']));
 		
 		$this->assertEquals('Test Job Auth Update', $results['profile']['profile_name']);
 	}

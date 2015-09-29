@@ -24,14 +24,14 @@ class ApiJobAppUpdateTest extends PHPUnit_Framework_TestCase
 		$app = eve()->registry()->get('test', 'app');
 		
 		$results = eve()
-			->job('app-refresh')
+			->job('app-update')
 			->setData(array(
 				'app_id' => $app['app_id'],
 				'app_name' => 'Test Job App Update'
 			))
 			->run();
 		
-		$this->assertTrue(is_int($results['app']['app_id']));
-		$this->assertEquals('Test Job App Create', $results['app']['app_domain']);
+		$this->assertTrue(is_numeric($results['app']['app_id']));
+		$this->assertEquals('Test Job App Update', $results['app']['app_name']);
 	}
 }

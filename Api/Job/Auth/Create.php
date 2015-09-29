@@ -89,7 +89,8 @@ class Create extends Base
 		$results['auth'] = eve()
 			->model('auth')
 			->create()
-			->process($this->data);
+			->process($this->data)
+			->get();
 		
 		//link profile
 		eve()

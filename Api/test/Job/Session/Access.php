@@ -24,14 +24,14 @@ class ApiJobSessionAccessTest extends PHPUnit_Framework_TestCase
 		$results = eve()
 			->job('session-access')
 			->setData(array(
-				'app_token' => eve()->registry()->get('test', 'app', 'app_token'),
-				'app_secret' => eve()->registry()->get('test', 'app', 'app_secret'),
+				'client_id' => eve()->registry()->get('test', 'app', 'app_token'),
+				'client_secret' => eve()->registry()->get('test', 'app', 'app_secret'),
 				'code' => eve()->registry()->get('test', 'session', 'session_token')
 			))
 			->run();
 			
 		$this->assertEquals(
 			eve()->registry()->get('test', 'profile', 'profile_name'),
-			$results['sesion']['profile_name']);
+			$results['session']['profile_name']);
 	}
 }
