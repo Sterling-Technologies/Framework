@@ -94,7 +94,7 @@ class Create extends Html
 		$data['item']['auth_permissions'] = implode(',', eve()->settings('scope'));
 		
 		$data['item']['profile_image'] = 
-			$_SERVER['HTTP_HOST'] . '/avatar/avatar-' 
+			'http://' . $_SERVER['HTTP_HOST'] . '/avatar/avatar-' 
 			. ((floor(rand() * 1000) % 11) + 1) . '.png';
 		
         //-----------------------//

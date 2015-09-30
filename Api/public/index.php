@@ -11,7 +11,7 @@ Eve\Framework\Index::i(dirname(__DIR__), 'Api')
 //Add any middleware here
 
 //HTPASSWD
-->add(Eden\Middleware\Htpasswd\Plugin::i()->import(array('admin' => 'admin')))
+//->add(Eden\Middleware\Htpasswd\Plugin::i()->import(array('admin' => 'admin')))
 
 //Rest Validator
 ->all('/rest', Api\Plugin\Rest::i()->import())

@@ -60,7 +60,8 @@ use Eve\Framework\Action\Html;
  */
 class Index extends Html 
 {
-	public function render() {
+	public function render() 
+	{
 		return $this->success();
 	}
 }

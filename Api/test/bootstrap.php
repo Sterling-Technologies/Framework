@@ -7,7 +7,8 @@
  * distributed with this package.
  */
 require_once __DIR__ . '/../vendor/autoload.php';
-
+require_once __DIR__ . '/BrowserSetup.php';
+require_once __DIR__ . '/BrowserTest.php';
 
 Eve\Framework\Index::i(dirname(__DIR__), 'Api');
 
