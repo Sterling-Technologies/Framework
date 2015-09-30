@@ -219,10 +219,10 @@ pip-log.txt
 #############
 public/api
 archives
-Api/upload
-Api/public/upload
-Api/vendor
-Api/settings/databases.php
-Api/settings/mail.php
-Api/settings/s3.php
-Api/composer.lock
+api/upload
+api/public/upload
+api/vendor
+api/settings/databases.php
+api/settings/mail.php
+api/settings/s3.php
+api/composer.lock
