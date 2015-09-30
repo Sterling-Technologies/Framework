@@ -217,6 +217,7 @@ pip-log.txt
 #############
 ## Custom
 #############
+public/api
 archives
 Api/upload
 Api/public/upload

@@ -12,7 +12,7 @@
 <!-- END: SEARCH FORM -->
 
 <span>
-    <a class="btn btn-success" href="/app/create">
+    <a class="btn btn-success" href="{{root}}/app/create">
         <i class="fa fa-plus"></i>
         Create New App
     </a>
@@ -27,7 +27,7 @@
                 <ul class="nav nav-pills pull-right" role="tablist">
                     <li role="presentation" class="{{#when mode '!=' 'trash'}}active{{/when}}">
                         <a 
-                            href="/app/search{{#if keyword}}?keyword={{keyword}}{{/if}}" 
+                            href="{{root}}/app/search{{#if keyword}}?keyword={{keyword}}{{/if}}" 
                             aria-controls="details" 
                             role="tab">
                             Active
@@ -35,7 +35,7 @@
                     </li>
                     <li role="presentation" class="{{#when mode '==' 'trash'}}active{{/when}}">
                         <a 
-                            href="/app/search?mode=trash{{#if keyword}}&keyword={{keyword}}{{/if}}" 
+                            href="{{root}}/app/search?mode=trash{{#if keyword}}&keyword={{keyword}}{{/if}}" 
                             aria-controls="details" 
                             role="tab">
                             Trash
@@ -79,21 +79,21 @@
                         <td><input name="id[]" value="{{app_id}}" type="checkbox" class="form-control" /></td>
                         <td>
                             {{#when app_active '==' 1}}
-                            <a title="Edit" href="/app/update/{{app_id}}">
+                            <a title="Edit" href="{{root}}/app/update/{{app_id}}">
                             <i class="fa fa-edit"></i></a>
                             &nbsp; 
                             <a title="OAUTH Test" 
-                            href="/dialog/login?client_id={{app_token}}&redirect_uri=/app/search"
+                            href="{{root}}/dialog/login?client_id={{app_token}}&redirect_uri=/app/search"
                             class="text-info refresh"><i class="fa fa-lock"></i></a> 
                             &nbsp; 
-                            <a title="Refresh" href="/app/refresh/{{app_id}}"
+                            <a title="Refresh" href="{{root}}/app/refresh/{{app_id}}"
                             class="text-warning refresh"><i class="fa fa-retweet"></i></a> 
                             &nbsp; 
-                            <a title="Remove" href="/app/remove/{{app_id}}"
+                            <a title="Remove" href="{{root}}/app/remove/{{app_id}}"
                             class="text-danger remove"><i class="fa fa-times"></i></a>
                             {{/when}}
                             {{#when app_active '==' 0}}
-                            <a title="Restore" href="/app/restore/{{app_id}}" class="text-success restore">
+                            <a title="Restore" href="{{root}}/app/restore/{{app_id}}" class="text-success restore">
                             <i class="fa fa-external-link"></i></a>
                             {{/when}}
                         </td>

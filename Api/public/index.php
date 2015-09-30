@@ -6,7 +6,6 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-
 Eve\Framework\Index::i(dirname(__DIR__), 'Api')
 //Add any middleware here
 
