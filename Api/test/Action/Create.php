@@ -9,29 +9,18 @@ class ApiActionCreateTest extends PHPUnit_Framework_TestCase
 {
     public function testRender()
 	{
-		$self = $this;
-		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$_SERVER['QUERY_STRING'] = '';
-		$_SERVER['REQUEST_URI'] = '/create';
-		
-		$request = eve()->getRequest();
-		$response = eve()->getResponse();
-		
-		$action = Api\Action\Create::i()
-			->setRequest($request)
-			->setResponse($response);
-		
-		$results = $action->render();
-		
-		if($response->isKey('body')) {
-			$results = $response->get('body');
-		}
-		
+		$results = BrowserTest::i()->testValidGet($this, '/create');
 		$this->assertContains('Developer Sign Up', $results);
 	}
 	
 	public function testInvalid()
 	{
+		BrowserTest::i()->testInvalidPost($this, '/create', array(
+			'profile_name' => 'Test Action Create',
+			'profile_email' => 'test321@test.com',
+			'auth_password' => '123'
+		));
+		
 		$self = $this;
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_SERVER['QUERY_STRING'] = '';
