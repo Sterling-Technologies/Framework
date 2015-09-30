@@ -97,7 +97,6 @@ class ApiActionCreateTest extends PHPUnit_Framework_TestCase
 			$check->stop = true;
 			$self->assertEquals('/login', $path);
 			$triggered = true;
-			eve()->off('redirect');
 		});
 		
 		//trigger
