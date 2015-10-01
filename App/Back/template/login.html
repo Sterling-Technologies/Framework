@@ -1,0 +1,41 @@
+<div class="center clear pad">
+    <img width="400" src="{{root}}/logo.png" />
+</div>
+    
+{{#if flash.message}}
+<div class="clear alert alert-{{flash.type}}">{{flash.message}}</div>
+{{/if}}
+
+<div class="panel panel-default" >
+    <div class="panel-heading brand">
+        <span class="pull-right"><a href="{{root}}/control/create?{{querystring}}">No Login ?</a></span>
+        <div class="panel-title">Developer Login</div>
+    </div>
+
+    <div class="panel-body" >
+        <form method="post">
+            <div class="form-group{{#if errors.auth_slug}} has-error{{/if}}">
+                <label class="control-label">Email</label>
+                <div>
+                    <input type="text" name="auth_slug" class="form-control" value="{{item.auth_slug}}" />
+                    {{#if errors.auth_slug}}
+                    <span class="help-text">{{errors.auth_slug}}</span>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="form-group{{#if errors.auth_password}} has-error{{/if}}">
+                <label class="control-label">Password</label>
+                <div>
+                    <input type="password" name="auth_password" class="form-control" value="{{item.auth_password}}" />
+                    {{#if errors.auth_password}}
+                    <span class="help-text">{{errors.auth_password}}</span>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="form-group">
+               <button type="submit" class="btn btn-primary">Submit</button>
+               <a class="brand-text" href="{{root}}/control/forgot">Forgot Password ?</a>
+            </div>
+        </form>
+    </div>
+</div>

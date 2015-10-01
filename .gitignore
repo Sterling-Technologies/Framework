@@ -217,12 +217,12 @@ pip-log.txt
 #############
 ## Custom
 #############
-public/api
+composer.lock
+vendor
 archives
-api/upload
-api/public/upload
-api/vendor
-api/settings/databases.php
-api/settings/mail.php
-api/settings/s3.php
-api/composer.lock
+upload
+public/upload
+settings/config.php
+settings/test.php
+settings/databases.php
+settings/mail.php
