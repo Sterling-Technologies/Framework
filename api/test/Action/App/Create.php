@@ -9,30 +9,48 @@ class ApiActionAppCreateTest extends PHPUnit_Framework_TestCase
 {
     public function testRender()
 	{
-		$results = BrowserTest::i()->testValidGet($this, '/app/create');
-		$this->assertContains('Create App', $results);
+		$results = BrowserTest::i()->setPath('/app/create')
+			->setMethod('GET')
+			->setIsTriggered(false)
+			->process();
+
+		$this->assertContains('Create App', $results['data']);
 	}
 	
 	public function testInvalid()
 	{
-		list($triggered, $results) = BrowserTest::i()->testInvalidPost($this, '/app/create', array(
+		$data = array(
 			'app_name' => 'Test Job App Create',
 			'app_permissions' => 'public_sso,user_profile,global_profile',
-		));
+		);
+
+		$results = BrowserTest::i()->setPath('/app/create')
+			->setMethod('POST')
+			->setData($data)
+			->setIsValid(false)
+			->setIsTriggered(true)
+			->process();
 		
-		$this->assertFalse($triggered);
-		$this->assertContains('Cannot be empty', $results);
+		$this->assertFalse($results['triggered']);
+		$this->assertContains('Cannot be empty', $results['data']);
 	}
 	
 	public function testValid()
 	{
-		list($triggered, $results) = BrowserTest::i()->testValidPost($this, '/app/create', array(
+		$data = array(
 			'app_name' => 'Test Job App Create',
 			'app_domain' => '*.test.com',
 			'app_permissions' => 'public_sso,user_profile,global_profile', 
 			'profile_id' => 1
-		));
+		);
 
-		$this->assertTrue($triggered);
+		$results = BrowserTest::i()->setPath('/app/create')
+			->setMethod('POST')
+			->setData($data)
+			->setIsValid(true)
+			->setIsTriggered(true)
+			->process();
+		
+		$this->assertTrue($results['triggered']);
 	}
 }

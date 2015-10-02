@@ -9,31 +9,50 @@ class ApiActionCreateTest extends PHPUnit_Framework_TestCase
 {
     public function testRender()
 	{
-		$results = BrowserTest::i()->testValidGet($this, '/create');
-		$this->assertContains('Developer Sign Up', $results);
+
+		$results = BrowserTest::i()->setPath('/create')
+			->setMethod('GET')
+			->setIsTriggered(false)
+			->process();
+
+		$this->assertContains('Developer Sign Up', $results['data']);
 	}
 	
 	public function testInvalid()
 	{
-		list($triggered, $results) = BrowserTest::i()->testInvalidPost($this, '/create', array(
+		$data = array(
 			'profile_name' => 'Test Action Create',
 			'profile_email' => 'test321@test.com',
 			'auth_password' => '123'
-		));
-		
-		$this->assertFalse($triggered);
-		$this->assertContains('Cannot be empty', $results);
+		);
+
+		$results = BrowserTest::i()->setPath('/create')
+			->setMethod('POST')
+			->setData($data)
+			->setIsValid(false)
+			->setIsTriggered(true)
+			->process();
+
+		$this->assertFalse($results['triggered']);
+		$this->assertContains('Cannot be empty', $results['data']);
 	}
 	
 	public function testValid()
 	{
-		list($triggered, $results) = BrowserTest::i()->testValidPost($this, '/create', array(
-			'profile_name' 	=> 'Test Action Create',
+		$data = array(
+			'profile_name' => 'Test Action Create',
 			'profile_email' => 'test321@test.com',
 			'auth_password' => '123',
 			'confirm'		=> '123'
-		));
+		);
 
-		$this->assertTrue($triggered);
+		$results = BrowserTest::i()->setPath('/create')
+			->setMethod('POST')
+			->setData($data)
+			->setIsValid(true)
+			->setIsTriggered(true)
+			->process();
+
+		$this->assertTrue($results['triggered']);
 	}
 }

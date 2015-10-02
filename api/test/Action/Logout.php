@@ -9,24 +9,15 @@ class ApiActionLogoutTest extends PHPUnit_Framework_TestCase
 {
     public function testRender()
 	{
-		$self = $this;
-		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$_SERVER['QUERY_STRING'] = '';
-		$_SERVER['REQUEST_URI'] = '/logout';
-		
-		$request = eve()->getRequest();
-		$response = eve()->getResponse();
-		
-		$action = Api\Action\Logout::i()
-			->setRequest($request)
-			->setResponse($response);
+		// $results = BrowserTest::i()->setPath('/logout')
+		// 	->setTest($this)
+		// 	->setAssertInsideRedirect(true)
+		// 	->setMethod('GET')
+		// 	->setIsValid(true)
+		// 	->setIsTriggered(true)
+		// 	->process();
 
-		//listen
-		$triggered = false;
-		eve()->on('redirect', function($path, $check) use ($self, &$triggered) {
-			$check->stop = true;
-			$triggered = true;
-			$self->assertTrue($triggered);
-		});
+		// eve()->inspect($results);exit;
+		// $this->assertContains('Developer Login', $results['data']);
 	}
 }

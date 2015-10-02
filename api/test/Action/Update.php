@@ -9,32 +9,50 @@ class ApiActionUpdateTest extends PHPUnit_Framework_TestCase
 {
     public function testRender()
 	{
-		$results = BrowserTest::i()->testValidGet($this, '/update');
-		$this->assertContains('Update Account', $results);
+		$results = BrowserTest::i()->setPath('/update')
+			->setMethod('GET')
+			->setIsTriggered(false)
+			->process();
+
+		$this->assertContains('Update Account', $results['data']);
 	}
 	
 	public function testInvalid()
 	{
-		list($triggered, $results) = BrowserTest::i()->testInvalidPost($this, '/update', array(
+		$data = array(
 			'profile_name' => 'Test Action Create',
 			'profile_email' => 'test321@test.com',
 			'auth_password' => '123',
 			'confirm'		=> '1234'
-		));
-		
-		$this->assertFalse($triggered);
-		$this->assertContains('Passwords do not match!', $results);
+		);
+
+		$results = BrowserTest::i()->setPath('/update')
+			->setMethod('POST')
+			->setData($data)
+			->setIsValid(false)
+			->setIsTriggered(true)
+			->process();
+
+		$this->assertFalse($results['triggered']);
+		$this->assertContains('Passwords do not match!', $results['data']);
 	}
-	
+
 	public function testValid()
 	{
-		list($triggered, $results) = BrowserTest::i()->testValidPost($this, '/update', array(
+		$data = array(
 			'profile_name' 	=> 'Test Action Create',
 			'profile_email' => 'test3212@test.com',
 			'auth_password' => '123',
 			'confirm'		=> '123'
-		));
+		);
 
-		$this->assertTrue($triggered);
+		$results = BrowserTest::i()->setPath('/update')
+			->setMethod('POST')
+			->setData($data)
+			->setIsValid(true)
+			->setIsTriggered(true)
+			->process();
+
+		$this->assertTrue($results['triggered']);
 	}
 }

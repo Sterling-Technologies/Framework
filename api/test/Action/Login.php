@@ -9,27 +9,46 @@ class ApiActionLoginTest extends PHPUnit_Framework_TestCase
 {
     public function testRender()
 	{
-		$results = BrowserTest::i()->testValidGet($this, '/login');
-		$this->assertContains('Developer Login', $results);
+		$results = BrowserTest::i()->setPath('/login')
+			->setMethod('GET')
+			->setIsTriggered(false)
+			->process();
+
+		$this->assertContains('Developer Login', $results['data']);
 	}
 
 	public function testInvalid()
 	{
-		list($triggered, $results) = BrowserTest::i()->testInvalidPost($this, '/login', array(
+
+		$data = array(
 			'profile_email' => 'admin@openovate.com',
-		));
-		
-		$this->assertFalse($triggered);
-		$this->assertContains('Cannot be empty', $results);
+		);
+
+		$results = BrowserTest::i()->setPath('/login')
+			->setMethod('POST')
+			->setData($data)
+			->setIsValid(false)
+			->setIsTriggered(true)
+			->process();
+
+		$this->assertFalse($results['triggered']);
+		$this->assertContains('Cannot be empty', $results['data']);
 	}
 	
 	public function testValid()
 	{
-		list($triggered, $results) = BrowserTest::i()->testValidPost($this, '/login', array(
+		$data = array(
 			'auth_slug' => 'admin@openovate.com',
 			'auth_password' => 'admin'
-		));
-		
-		$this->assertTrue($triggered);
+		);
+
+		$results = BrowserTest::i()->setPath('/login')
+			->setMethod('POST')
+			->setData($data)
+			->setIsValid(true)
+			->setIsTriggered(true)
+			->process();
+
+		$this->assertTrue($results['triggered']);
 	}
 }

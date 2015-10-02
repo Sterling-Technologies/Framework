@@ -9,8 +9,11 @@ class ApiActionIndexTest extends PHPUnit_Framework_TestCase
 {
     public function testRender()
 	{
-		$results = BrowserTest::i()->testValidGet($this, '/index');
-		
-		$this->assertContains('<!DOCTYPE html>', $results);
+		$results = BrowserTest::i()->setPath('/index')
+			->setMethod('GET')
+			->setIsTriggered(false)
+			->process();
+
+		$this->assertContains('<!DOCTYPE html>', $results['data']);
 	}
 }
