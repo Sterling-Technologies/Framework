@@ -2,6 +2,14 @@
 return array(
 	'singular' 	=> 'Sink',		//for pages and messages
     'plural' 	=> 'Dishes',	//for pages and messages
+	'url'	=> '/control',		//root URL for pages
+	'paths'	=> array(
+		'rest' => '/App/Rest/Action',		//default path for rest actions
+		'page' => '/App/Back/Action',		//default path for page actions
+		'model' => '/Model',				//default path for models
+		'job' => '/Job',					//default path for jobs
+		'template' => '/App/Back/template',	//default path for templates
+	),
 	'rest' => array(
 		'create',		//add a Rest/Sink/Create Action 
 		'update',		//add a Rest/Sink/Update Action
@@ -40,8 +48,8 @@ return array(
 			
 		'update' => array(		//add a Sink/Update Job
 			array('update'		, 'sink'),	//- update address
-			array('unlinkAll'	, 'app'),		//- unlink all app
-			array('linkAll'		, 'app'),		//- link all app
+			array('unlinkAll'	, 'app'),	//- unlink all app
+			array('linkAll'		, 'app'),	//- link all app
 		),
 		'remove' => array(		//add a Sink/Remove Job
 			array('remove'		, 'sink')	//- remove address
@@ -51,8 +59,8 @@ return array(
 		),
 		'custom' => array(		//add a Sink/Restore Job
 			array('update'		, 'sink'),	//- update address
-			array('unlinkAll'	, 'app'),		//- unlink all app
-			array('linkAll'		, 'app'),		//- link all app
+			array('unlinkAll'	, 'app'),	//- unlink all app
+			array('linkAll'		, 'app'),	//- link all app
 		)
 	),
 	'fields' => array(

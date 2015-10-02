@@ -2,6 +2,14 @@
 return array(
 	'singular' 	=> 'File',	//for pages and messages
     'plural' 	=> 'Files',	//for pages and messages
+	'url'	=> '/control',	//root URL for pages
+	'paths'	=> array(
+		'rest' => '/App/Rest/Action',		//default path for rest actions
+		'page' => '/App/Back/Action',		//default path for page actions
+		'model' => '/Model',				//default path for models
+		'job' => '/Job',					//default path for jobs
+		'template' => '/App/Back/template',	//default path for templates
+	),
 	'model' => array(
 		'create',		//add a Address/Create Model 
 		'remove',		//add a Address/Remove Model

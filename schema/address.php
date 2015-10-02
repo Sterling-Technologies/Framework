@@ -2,6 +2,14 @@
 return array(
 	'singular' 	=> 'Address',	//for pages and messages
     'plural' 	=> 'Addresses',	//for pages and messages
+	'url'	=> '/control',		//root URL for pages
+	'paths'	=> array(
+		'rest' => '/App/Rest/Action',		//default path for rest actions
+		'page' => '/App/Back/Action',		//default path for page actions
+		'model' => '/Model',				//default path for models
+		'job' => '/Job',					//default path for jobs
+		'template' => '/App/Back/template',	//default path for templates
+	),
 	'rest' => array(
 		'create',		//add a Rest/Address/Create Action 
 		'update',		//add a Rest/Address/Update Action

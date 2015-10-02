@@ -73,7 +73,7 @@ class Route extends Base
         '/control/profile/update' => array(
             'method' => 'ALL',
             'class' => '\\OL\\App\\Back\\Action\\Profile\\Update'
-        ),
+        )
     );
     
     /**
